@@ -8,3 +8,6 @@ def faq(request):
 
 def features(request):
     return render(request=request, template_name='condo_me/pages/features.html')
+
+def pricing(request):
+    return render(request=request, template_name='condo_me/pages/pricing.html')
