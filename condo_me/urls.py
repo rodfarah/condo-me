@@ -5,4 +5,5 @@ app_name = 'condo_me'
 
 urlpatterns = [
     path('', views.home, name='home'),
+    path('condo_me/faqs', views.faq, name='faqs'),
 ]
