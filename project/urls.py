@@ -5,7 +5,7 @@ from django.conf import settings
 
 
 urlpatterns = [
-    path('', include('condo_me.urls'))
+    path('', include('core.urls'))
 ]
 
 
