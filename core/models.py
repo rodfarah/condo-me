@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import RegexValidator
+from django_countries.fields import CountryField
 
 
 class Condominium(models.Model):
@@ -17,7 +18,7 @@ class Condominium(models.Model):
     neighborwood = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=30)
-    country = models.CharField(max_length=100)
+    country = CountryField()
     postal_code = models.CharField(max_length=20)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -38,7 +39,7 @@ class Condominium(models.Model):
 
 class Block(models.Model):
     name = models.CharField(max_length=50)
-    condominium = models.ForeignKey(to=Condominium, on_delete=models.cascade)
+    condominium = models.ForeignKey(to=Condominium, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return self.name
@@ -50,3 +51,14 @@ class Block(models.Model):
 class Apartment(models.Model):
     number = models.IntegerField()
     block = models.ForeignKey(to=Block, on_delete=models.CASCADE)
+    condominium = models.ForeignKey(to=Condominium, on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return f"Apt. {self.number}, Block: {self.block.name}"
+
+
+class CommonArea(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __str__(self) -> str:
+        return self.name
