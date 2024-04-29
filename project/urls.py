@@ -3,9 +3,8 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 
-
 urlpatterns = [
-    path('', include('core.urls'))
+    path('', include('condo.urls'))
 ]
 
 
