@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import RegexValidator
 from django_countries.fields import CountryField
+from users.models import CustomUser
 
 
 class Condominium(models.Model):
@@ -52,7 +53,7 @@ class Apartment(models.Model):
     number = models.IntegerField()
     block = models.ForeignKey(to=Block, on_delete=models.CASCADE)
     condominium = models.ForeignKey(to=Condominium, on_delete=models.CASCADE)
-    residents = models.ManyToManyField(Resident, through='ResidentApartment')
+    residents = models.ManyToManyField(CustomUser, through='ResidentApartment')
 
     def __str__(self) -> str:
         return f"Apt. {self.number}, Block: {self.block.name}"
