@@ -52,6 +52,7 @@ class Apartment(models.Model):
     number = models.IntegerField()
     block = models.ForeignKey(to=Block, on_delete=models.CASCADE)
     condominium = models.ForeignKey(to=Condominium, on_delete=models.CASCADE)
+    residents = models.ManyToManyField(Resident, through='ResidentApartment')
 
     def __str__(self) -> str:
         return f"Apt. {self.number}, Block: {self.block.name}"
@@ -59,6 +60,7 @@ class Apartment(models.Model):
 
 class CommonArea(models.Model):
     name = models.CharField(max_length=50)
+    condominium = models.ForeignKey(to=Condominium, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return self.name
