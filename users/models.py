@@ -36,7 +36,7 @@ class CommonUser(AbstractUser):
         # If user is administrator, remove resident relations
         if self.adm_or_res == 'administrator':
             self.resident_condominium = None
-            self.apartments.clear()
+            self.ResidentApartment.clear()
         # If user is resident, remove administrator relations
         else:
             self.administrator_condominium = None
