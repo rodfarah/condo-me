@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
 
 
@@ -12,6 +12,13 @@ class CommonUser(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     image = models.ImageField(upload_to='condo_me/users/%Y/%m/%d/')
+
+    # Some conflicts happened with these two Django classes.
+    # Need this changes bellow
+    groups = models.ManyToManyField(
+        to=Group, related_name="custom_user_groups")
+    user_permissions = models.ManyToManyField(
+        to=Permission, related_name="custom_user_permissions")
 
     administrator_condominium = models.ForeignKey(
         to='condo.Condominium',
