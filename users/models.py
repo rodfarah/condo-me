@@ -1,12 +1,43 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from condo.models import Condominium
 
 
-class CustomUser(AbstractUser):
-    USER_TYPE_CHOICES = (
-        ('admin', 'Administrator'),
-        ('resident', 'Resident'),
+class CommonUser(AbstractUser):
+    USER_TYPE_CHOICES = [
+        ('administrator', 'Administrator'),
+        ('resident', 'Resident')
+    ]
+
+    user_type = models.CharField(max_length=50, choices=USER_TYPE_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    image = models.ImageField(upload_to='condo_me/users/%Y/%m/%d/')
+
+    administrator_condominium = models.ForeignKey(
+        to='condo.Condominium',
+        related_name='administrators',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True
     )
-    user_type = models.CharField(max_length=20, choices=USER_TYPE_CHOICES)
-    condominium = models.ForeignKey(to=Condominium, on_delete=models.CASCADE)
+
+    resident_condominium = models.ForeignKey(
+        to='condo.Condominium',
+        related_name='residents',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True
+    )
+
+    def __str__(self) -> str:
+        return f'{self.first_name} {self.last_name}'
+
+    def save(self, *args, **kwargs):
+        # If user is administrator, remove resident relations
+        if self.user_type == 'administrator':
+            self.resident_condominium = None
+            self.apartments.clear()
+        # If user is resident, remove administrator relations
+        else:
+            self.administrator_condominium = None
+        super().save(*args, **kwargs)
