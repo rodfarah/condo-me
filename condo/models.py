@@ -2,7 +2,7 @@ from typing import Any
 from django.db import models
 from django.core.validators import RegexValidator
 from django_countries.fields import CountryField
-from users.models import CustomUser
+from users.models import CommonUser
 from django.core.exceptions import ValidationError
 
 
@@ -61,7 +61,7 @@ class Apartment(models.Model):
         to=Block, on_delete=models.CASCADE, related_name="apartments")
     condominium = models.ForeignKey(
         to=Condominium, on_delete=models.CASCADE, related_name="apartments")
-    residents = models.ManyToManyField(CustomUser, through="ResidentApartment")
+    residents = models.ManyToManyField(CommonUser, through="ResidentApartment")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
