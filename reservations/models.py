@@ -18,7 +18,7 @@ class Reservation(models.Model):
         verbose_name="Time user will start to use the common area",
         blank=False, null=False)
     end_time = models.TimeField(
-        verbose_name="Time user will start to use the common area",
+        verbose_name="Time user will end to use the common area",
         blank=False, null=False)
     share_with_others = models.BooleanField(
         verbose_name="Main user may share common area with other users?")
