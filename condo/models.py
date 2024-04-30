@@ -61,7 +61,8 @@ class Apartment(models.Model):
         to=Block, on_delete=models.CASCADE, related_name="apartments")
     condominium = models.ForeignKey(
         to=Condominium, on_delete=models.CASCADE, related_name="apartments")
-    residents = models.ManyToManyField(CommonUser, through="ResidentApartment")
+    residents = models.ManyToManyField(
+        CommonUser, related_name="ResidentApartment")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -74,7 +75,10 @@ class Apartment(models.Model):
 
 class CommonArea(models.Model):
 
-    MINIMUM_USING_MINUTES = [30, 60]
+    MINIMUM_USING_MINUTES = [
+        (30, '30'),
+        (60, '60')
+    ]
 
     name = models.CharField(max_length=50)
     opens_at = models.TimeField(auto_now=False, blank=False)
