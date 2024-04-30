@@ -8,7 +8,7 @@ class CommonUser(AbstractUser):
         ('resident', 'Resident')
     ]
 
-    user_type = models.CharField(max_length=50, choices=USER_TYPE_CHOICES)
+    adm_or_res = models.CharField(max_length=50, choices=USER_TYPE_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     image = models.ImageField(upload_to='condo_me/users/%Y/%m/%d/')
@@ -34,7 +34,7 @@ class CommonUser(AbstractUser):
 
     def save(self, *args, **kwargs):
         # If user is administrator, remove resident relations
-        if self.user_type == 'administrator':
+        if self.adm_or_res == 'administrator':
             self.resident_condominium = None
             self.apartments.clear()
         # If user is resident, remove administrator relations
