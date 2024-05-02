@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import CommonUser
 
-# Register your models here.
+
+@admin.register(CommonUser)
+class CommonUserAdmin(admin.ModelAdmin):
+    pass
