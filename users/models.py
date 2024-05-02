@@ -18,7 +18,11 @@ class CommonUser(AbstractUser):
     groups = models.ManyToManyField(
         to=Group, related_name="custom_user_groups")
     user_permissions = models.ManyToManyField(
-        to=Permission, related_name="custom_user_permissions")
+        to=Permission,
+        related_name="custom_user_permissions",
+        null=True,
+        blank=True
+    )
 
     administrator_condominium = models.ForeignKey(
         to='condo.Condominium',
@@ -33,7 +37,9 @@ class CommonUser(AbstractUser):
         related_name='residents',
         on_delete=models.CASCADE,
         blank=True,
-        null=True
+        null=True,
+        verbose_name="Leave this field blank if you do not want to \
+            add more privileges than already set from its group"
     )
 
     def __str__(self) -> str:
