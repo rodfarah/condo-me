@@ -4,18 +4,14 @@ from .models import Condominium, Block, Apartment, CommonArea
 # Register models into admin interface:
 
 
+@admin.register(Condominium)
 class CondominiumAdmin(admin.ModelAdmin):
     ...
 
 
+@admin.register(Block)
 class BlockAdmin(admin.ModelAdmin):
     ...
-
-
-admin.site.register(Condominium, CondominiumAdmin)
-admin.site.register(Block, BlockAdmin)
-
-# There is another (similar) way to register models into admin interface:
 
 
 @admin.register(Apartment)

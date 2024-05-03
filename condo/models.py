@@ -25,7 +25,8 @@ class Condominium(models.Model):
     postal_code = models.CharField(max_length=20)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    image = models.ImageField(upload_to='condo_me/condominiums/%Y/%m/%d/')
+    image = models.ImageField(
+        upload_to='condo_me/condominiums/%Y/%m/%d/', blank=True)
 
     def __str__(self) -> str:
         return self.name
@@ -56,13 +57,13 @@ class Block(models.Model):
 
 
 class Apartment(models.Model):
-    number = models.IntegerField()
+    number = models.CharField(max_length=5,)
     block = models.ForeignKey(
         to=Block, on_delete=models.CASCADE, related_name="apartments")
     condominium = models.ForeignKey(
         to=Condominium, on_delete=models.CASCADE, related_name="apartments")
     residents = models.ManyToManyField(
-        CommonUser, related_name="ResidentApartment")
+        CommonUser, related_name="ResidentApartment", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -105,7 +106,8 @@ class CommonArea(models.Model):
         return self.name
 
     def calc_maximum_usage(self):
-        return self.minimum_using_minutes * self.maximum_using_fraction
+        if self.minimum_using_minutes and self.maximum_using_fraction:
+            return self.minimum_using_minutes * self.maximum_using_fraction
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)

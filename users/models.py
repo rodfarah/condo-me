@@ -20,7 +20,6 @@ class CommonUser(AbstractUser):
     user_permissions = models.ManyToManyField(
         to=Permission,
         related_name="custom_user_permissions",
-        null=True,
         blank=True
     )
 
