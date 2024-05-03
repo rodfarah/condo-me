@@ -11,7 +11,7 @@ class CommonUser(AbstractUser):
     adm_or_res = models.CharField(max_length=50, choices=USER_TYPE_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    image = models.ImageField(upload_to='condo_me/users/%Y/%m/%d/')
+    image = models.ImageField(upload_to='condo_me/users/%Y/%m/%d/', blank=True)
 
     # Some conflicts happened with these two Django classes.
     # Need this changes bellow
@@ -45,6 +45,7 @@ class CommonUser(AbstractUser):
         return f'{self.first_name} {self.last_name}'
 
     def save(self, *args, **kwargs):
+        self.name = f'{self.first_name} {self.last_name}'
         # If user is administrator, remove resident relations
         if self.adm_or_res == 'administrator':
             self.resident_condominium = None
