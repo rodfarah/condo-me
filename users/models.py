@@ -3,6 +3,8 @@ from django.db import models
 
 
 class CommonUser(AbstractUser):
+
+    name = models.CharField(max_length=120, null=True, blank=True)
     USER_TYPE_CHOICES = [
         ('administrator', 'Administrator'),
         ('resident', 'Resident')
