@@ -57,7 +57,7 @@ class Block(models.Model):
 
 
 class Apartment(models.Model):
-    number = models.CharField(max_length=5,)
+    number = models.CharField(max_length=5)
     block = models.ForeignKey(
         to=Block, on_delete=models.CASCADE, related_name="apartments")
     condominium = models.ForeignKey(
@@ -67,8 +67,11 @@ class Apartment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ['number', 'block']
+
     def __str__(self) -> str:
-        return f"Apt. {self.number}, Block: {self.block.name}"
+        return self.number
 
     def num_of_residents(self):
         return self.residents.count()
