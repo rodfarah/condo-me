@@ -3,7 +3,9 @@ from django.db import models
 
 
 class CommonUser(AbstractUser):
-
+    # "name" field is not suposed to be shown on admin panel.
+    # Abstract User only has "first_name" and "last_name"
+    # be aware that "name" will be saved on "save" method down bellow
     name = models.CharField(max_length=120, null=True, blank=True)
     USER_TYPE_CHOICES = [
         ('administrator', 'Administrator'),
@@ -47,6 +49,7 @@ class CommonUser(AbstractUser):
         return f'{self.first_name} {self.last_name}'
 
     def save(self, *args, **kwargs):
+        # AbstractUser does not have "name" field, so let's create one
         self.name = f'{self.first_name} {self.last_name}'
         # If user is administrator, remove resident relations
         if self.adm_or_res == 'administrator':
