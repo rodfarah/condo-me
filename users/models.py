@@ -7,12 +7,12 @@ class CommonUser(AbstractUser):
     # Abstract User only has "first_name" and "last_name"
     # be aware that "name" will be saved on "save" method down bellow
     name = models.CharField(max_length=120, null=True, blank=True)
-    USER_TYPE_CHOICES = [
-        ('administrator', 'Administrator'),
-        ('resident', 'Resident')
-    ]
+    # USER_TYPE_CHOICES = [
+    #     ('administrator', 'Administrator'),
+    #     ('resident', 'Resident')
+    # ]
 
-    adm_or_res = models.CharField(max_length=50, choices=USER_TYPE_CHOICES)
+    # adm_or_res = models.CharField(max_length=50, choices=USER_TYPE_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     image = models.ImageField(upload_to='condo_me/users/%Y/%m/%d/', blank=True)
