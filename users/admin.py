@@ -1,23 +1,9 @@
 from django.contrib import admin
-from .models import Manager, Caretaker, Resident
+from .models import CommonUser
 
 
-@admin.register(Manager)
-class ManagerAdmin(admin.ModelAdmin):
+@admin.register(CommonUser)
+class CommonUserAdmin(admin.ModelAdmin):
     # items to be shown in users admin main list
+    list_display = ["name", "adm_or_res"]
     search_fields = ("name",)
-    exclude = ["name", ]
-
-
-@admin.register(Caretaker)
-class CaretakerAdmin(admin.ModelAdmin):
-    # items to be shown in users admin main list
-    search_fields = ("name",)
-    exclude = ["name", ]
-
-
-@admin.register(Resident)
-class ResidentAdmin(admin.ModelAdmin):
-    # items to be shown in users admin main list
-    search_fields = ("name",)
-    exclude = ["name", ]
