@@ -1,9 +1,9 @@
 from django.contrib import admin
-from .models import CommonUser
+from .models import RealUser
 
 
-@admin.register(CommonUser)
-class CommonUserAdmin(admin.ModelAdmin):
+@admin.register(RealUser)
+class UserAdmin(admin.ModelAdmin):
     # items to be shown in users admin main list
     # list_display = ["name", "groups"]
     search_fields = ("name",)
@@ -11,7 +11,7 @@ class CommonUserAdmin(admin.ModelAdmin):
         "created_at",
         "updated_at",
         "ResidentApartment",
-        "reservations"
+        "reservation"
     ]
     fields = [
         "username",
