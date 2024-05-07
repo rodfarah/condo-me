@@ -10,8 +10,8 @@ class UserAdmin(admin.ModelAdmin):
     readonly_fields = [
         "created_at",
         "updated_at",
-        "ResidentApartment",
-        "reservation"
+        "apartments",
+        "reservations"
     ]
     fields = [
         "username",
@@ -20,7 +20,6 @@ class UserAdmin(admin.ModelAdmin):
         "email",
         "password",
         "groups",
-        "resident_condominium",
         "is_active",
         "date_joined",
         "last_login",

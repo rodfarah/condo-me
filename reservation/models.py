@@ -1,15 +1,12 @@
 from django.db import models
-from condo.models import Apartment, CommonArea, Condominium
-from users.models import CommonUser
+from condo.models import CommonArea, Condominium
 
 
 class Reservation(models.Model):
-    owner = models.ForeignKey(
-        to=CommonUser, on_delete=models.CASCADE, related_name="reservations")
-    apartment = models.ForeignKey(
-        to=Apartment, on_delete=models.CASCADE, related_name="reservations")
     common_area = models.ForeignKey(
         to=CommonArea, on_delete=models.CASCADE, related_name="reservations")
+    # According to chatGPT, it is not necessary to create "apartments" or even
+    # "users" here. Once both are many-to-many, Django creates it automaticaly.
     condominium = models.ForeignKey(
         to=Condominium, on_delete=models.CASCADE, related_name="reservations")
     date = models.DateField(
