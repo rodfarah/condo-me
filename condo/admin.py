@@ -21,7 +21,7 @@ class BlockAdmin(admin.ModelAdmin):
 @admin.register(Apartment)
 class ApartmentAdmin(admin.ModelAdmin):
     # items to be shown in users admin main list
-    list_display = ["number", "block"]
+    list_display = ["number_or_name", "block"]
     search_fields = ["number"]
 
 

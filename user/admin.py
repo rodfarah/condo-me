@@ -11,7 +11,8 @@ class UserAdmin(admin.ModelAdmin):
         "created_at",
         "updated_at",
         "apartments",
-        "reservations"
+        "reservations",
+        "groups",
     ]
     fields = [
         "username",
@@ -19,7 +20,7 @@ class UserAdmin(admin.ModelAdmin):
         "last_name",
         "email",
         "password",
-        "groups",
+        "user_role",
         "is_active",
         "date_joined",
         "last_login",

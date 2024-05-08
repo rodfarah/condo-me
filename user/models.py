@@ -36,4 +36,6 @@ class User(AbstractUser):
     def save(self, *args, **kwargs):
         # AbstractUser does not have "name" field, so let's create one
         self.name = f'{self.first_name} {self.last_name}'
+        if self.user_role == "MANAGER":
+            pass
         super().save(*args, **kwargs)

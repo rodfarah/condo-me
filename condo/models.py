@@ -56,7 +56,8 @@ class Block(models.Model):
 
 
 class Apartment(models.Model):
-    number = models.CharField(max_length=5)
+    number_or_name = models.CharField(
+        max_length=20, verbose_name="Number (or name)")
     block = models.ForeignKey(
         to=Block, on_delete=models.CASCADE, related_name="apartments")
     condominium = models.ForeignKey(
@@ -67,10 +68,10 @@ class Apartment(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['number', 'block']
+        ordering = ['number_or_name', 'block']
 
     def __str__(self) -> str:
-        return self.number
+        return self.number_or_name
 
     def num_of_residents(self):
         return self.residents.count()
@@ -104,7 +105,8 @@ class CommonArea(models.Model):
         blank=True,
         null=True)
     # this field will be automaticaly calculated on __init__
-    maximum_using_time = models.IntegerField(blank=True, null=True)
+    maximum_using_time = models.IntegerField(
+        blank=True, null=True, verbose_name="Maximum using time (minutes)")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     image = models.ImageField(
@@ -122,7 +124,7 @@ class CommonArea(models.Model):
         self.maximum_using_time = self.calc_maximum_usage()
 
     def clean(self):
-        if self.whole_day and self.max_minutes_day:
+        if self.whole_day and self.maximum_using_time:
             raise ValidationError(
                 "No need to choose maximum minutes of use per day in case \
                     of whole day reservation")
