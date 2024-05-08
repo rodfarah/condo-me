@@ -3,8 +3,6 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django_countries.fields import CountryField
-from user.models import User
-from reservation.models import Reservation
 
 
 class Condominium(models.Model):
@@ -64,9 +62,11 @@ class Apartment(models.Model):
     condominium = models.ForeignKey(
         to=Condominium, on_delete=models.CASCADE, related_name="apartments")
     residents = models.ManyToManyField(
-        User, related_name="apartments", blank=True)
+        to="user.User", related_name="apartments", blank=True)
     reservations = models.ManyToManyField(
-        to=Reservation, related_name="apartments", blank=True)
+        to="reservation.Reservation",
+        related_name="apartments",
+        blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

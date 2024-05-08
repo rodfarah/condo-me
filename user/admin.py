@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import RealUser
+from .models import User
 
 
-@admin.register(RealUser)
+@admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     # items to be shown in users admin main list
     # list_display = ["name", "groups"]
