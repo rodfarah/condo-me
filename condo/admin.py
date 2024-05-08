@@ -21,9 +21,10 @@ class BlockAdmin(admin.ModelAdmin):
 @admin.register(Apartment)
 class ApartmentAdmin(admin.ModelAdmin):
     # items to be shown in users admin main list
-    list_display = ['number', 'block']
+    list_display = ["number", "block"]
+    search_fields = ["number"]
 
 
 @admin.register(CommonArea)
 class CommonAreaAdmin(admin.ModelAdmin):
-    ...
+    readonly_fields = ["maximum_using_time"]

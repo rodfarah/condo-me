@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
 from condo.models import Condominium
-from reservation.models import Reservation
 
 
 class User(AbstractUser):
@@ -22,10 +21,6 @@ class User(AbstractUser):
         related_name="users",
         on_delete=models.CASCADE
     )
-
-    reservations = models.ManyToManyField(
-        to=Reservation, related_name="users", blank=True)
-
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     image = models.ImageField(upload_to='condo_me/users/%Y/%m/%d/', blank=True)

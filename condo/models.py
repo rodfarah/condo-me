@@ -63,10 +63,6 @@ class Apartment(models.Model):
         to=Condominium, on_delete=models.CASCADE, related_name="apartments")
     residents = models.ManyToManyField(
         to="user.User", related_name="apartments", blank=True)
-    reservations = models.ManyToManyField(
-        to="reservation.Reservation",
-        related_name="apartments",
-        blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -88,25 +84,31 @@ class CommonArea(models.Model):
     ]
 
     name = models.CharField(max_length=50)
+    condominium = models.ForeignKey(
+        to=Condominium, on_delete=models.CASCADE, related_name="common_areas")
     opens_at = models.TimeField(auto_now=False, blank=False)
     closes_at = models.TimeField(auto_now=False, blank=False)
     whole_day = models.BooleanField(
-        verbose_name="Whole day Reservation applied?")
+        verbose_name="Must be a whole day reservation?")
     paid_area = models.BooleanField(verbose_name="User have to pay for use?")
     price = models.DecimalField(
-        "Price", max_digits=5, decimal_places=2)
+        "Price", max_digits=5, decimal_places=2, blank=True, null=True)
     minimum_using_minutes = models.IntegerField(
-        "Minimum using time in minutes", choices=MINIMUM_USING_MINUTES)
+        "Minimum using time in minutes",
+        choices=MINIMUM_USING_MINUTES,
+        blank=True, null=True)
     maximum_using_fraction = models.IntegerField(
         verbose_name="Choose an integer. It will be multiplied by minimum \
-            using minutes in order to obtain maximum using time")
+            using minutes (above) in order to obtain maximum using time \
+                (bellow)",
+        blank=True,
+        null=True)
     # this field will be automaticaly calculated on __init__
-    maximum_using_time = models.IntegerField()
-    image = models.ImageField(upload_to='condo_me/common_areas/%Y/%m/%d/')
-    condominium = models.ForeignKey(
-        to=Condominium, on_delete=models.CASCADE, related_name="common_areas")
+    maximum_using_time = models.IntegerField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    image = models.ImageField(
+        upload_to='condo_me/common_areas/%Y/%m/%d/', blank=True, null=True)
 
     def __str__(self) -> str:
         return self.name
