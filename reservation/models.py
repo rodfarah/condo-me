@@ -9,9 +9,6 @@ class Reservation(models.Model):
         to=CommonArea, on_delete=models.CASCADE, related_name="reservations")
     apartments = models.ManyToManyField(
         to=Apartment, related_name="reservations", blank=True)
-    users = models.ManyToManyField(
-        to="user.User", related_name="reservations"
-    )
     # According to chatGPT, it is not necessary to create "apartments" or even
     # "users" here. Once both are many-to-many, Django creates it automaticaly.
     date = models.DateField(

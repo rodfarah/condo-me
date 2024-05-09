@@ -62,8 +62,6 @@ class Apartment(models.Model):
         to=Block, on_delete=models.CASCADE, related_name="apartments")
     condominium = models.ForeignKey(
         to=Condominium, on_delete=models.CASCADE, related_name="apartments")
-    residents = models.ManyToManyField(
-        to="user.User", related_name="apartments", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
