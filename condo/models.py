@@ -24,6 +24,8 @@ class Condominium(models.Model):
     postal_code = models.CharField(max_length=20)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    description = models.TextField(
+        help_text="Write details about your condominium.")
     image = models.ImageField(
         upload_to='condo_me/condominiums/%Y/%m/%d/', blank=True)
 
@@ -85,26 +87,39 @@ class CommonArea(models.Model):
     name = models.CharField(max_length=50)
     condominium = models.ForeignKey(
         to=Condominium, on_delete=models.CASCADE, related_name="common_areas")
+    description = models.TextField(
+        help_text="Write details and rules about this Common Area.")
     opens_at = models.TimeField(auto_now=False, blank=False)
     closes_at = models.TimeField(auto_now=False, blank=False)
     whole_day = models.BooleanField(
         verbose_name="Must be a whole day reservation?")
     paid_area = models.BooleanField(verbose_name="User have to pay for use?")
     price = models.DecimalField(
-        "Price", max_digits=5, decimal_places=2, blank=True, null=True)
+        "Price", max_digits=5, decimal_places=2, blank=True, null=True,
+        help_text="In Brazilian Reais")
     minimum_using_minutes = models.IntegerField(
         "Minimum using time in minutes",
         choices=MINIMUM_USING_MINUTES,
-        blank=True, null=True)
+        blank=True,
+        null=True,
+        help_text="Leave blank in case of whole day use."
+    )
     maximum_using_fraction = models.IntegerField(
         verbose_name="Choose an integer. It will be multiplied by minimum \
             using minutes (above) in order to obtain maximum using time \
                 (bellow)",
         blank=True,
-        null=True)
+        null=True,
+        help_text="Leave blank in case of whole day use."
+    )
+
     # this field will be automaticaly calculated on __init__
     maximum_using_time = models.IntegerField(
-        blank=True, null=True, verbose_name="Maximum using time (minutes)")
+        blank=True,
+        null=True,
+        verbose_name="Maximum using time (minutes)",
+        help_text="It will be blank in case of whole day use."
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     image = models.ImageField(
