@@ -35,5 +35,5 @@ class Reservation(models.Model):
     def clean(self):
         if self.common_area.whole_day and (self.start_time or self.end_time):
             raise ValidationError(
-                "No need to choose maximum minutes of use per day in case \
-                    of whole day reservation")
+                "No need to fill start and end fields. The common area you \
+                    selected can only be reserved for the entire day of use.")
