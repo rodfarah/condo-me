@@ -1,5 +1,6 @@
 from django.db import models
 from condo.models import CommonArea, Condominium, Apartment
+from django.core.exceptions import ValidationError
 
 
 class Reservation(models.Model):
@@ -15,12 +16,24 @@ class Reservation(models.Model):
         verbose_name="Reservation Date", blank=False, null=False)
     start_time = models.TimeField(
         verbose_name="User will start to use the common area at:",
-        blank=False, null=False)
+        blank=True,
+        null=True,
+        help_text="Leave blank if this is a whole day use common area"
+    )
     end_time = models.TimeField(
         verbose_name="User will end to use the common area at:",
-        blank=False, null=False)
+        blank=True,
+        null=True,
+        help_text="Leave blank if this is a whole day use common area"
+    )
     share_with_others = models.BooleanField(
         verbose_name="Main user may share common area with other users?")
     active = models.BooleanField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def clean(self):
+        if self.common_area.whole_day and (self.start_time or self.end_time):
+            raise ValidationError(
+                "No need to choose maximum minutes of use per day in case \
+                    of whole day reservation")
