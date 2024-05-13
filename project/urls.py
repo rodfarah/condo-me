@@ -7,7 +7,8 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('prelogin.urls')),
-    path('condo/', include('condo.urls'))
+    path('condo/', include('condo.urls')),
+    path('user/', include('user.urls'),)
 ]
 
 

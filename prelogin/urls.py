@@ -5,7 +5,7 @@ app_name = 'prelogin'
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('prelogin/faqs', views.faq, name='faqs'),
-    path('prelogin/features', views.features, name='features'),
-    path('prelogin/pricing', views.pricing, name='pricing'),
+    path('faqs', views.faq, name='faqs'),
+    path('features', views.features, name='features'),
+    path('pricing', views.pricing, name='pricing'),
 ]
