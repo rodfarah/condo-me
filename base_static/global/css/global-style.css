@@ -5,3 +5,7 @@
 .buildings {
   fill: white;
 }
+
+.text-danger-custom {
+  color: red !important;
+}

@@ -12,6 +12,8 @@ def register_view(request):
         if form.is_valid():
             form.save()
             return redirect("user:success")
+        # else:
+        #     return render(request, "user/pages/register.html", {"form": form, "errors": })
     else:
         form = RegisterForm()
     return render(request, "user/pages/register.html", {"form": form})
