@@ -1,7 +1,6 @@
-from typing import Any
-from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
+from django.db import models
 from django_countries.fields import CountryField
 
 
@@ -132,7 +131,7 @@ class CommonArea(models.Model):
         if self.minimum_using_minutes and self.maximum_using_fraction:
             return self.minimum_using_minutes * self.maximum_using_fraction
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.maximum_using_time = self.calc_maximum_usage()
 
