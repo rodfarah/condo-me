@@ -13,7 +13,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body p-5 pt-0">
-          <form name="register_form" autocomplete="on" action="{% url "user:register" %}" method="POST">
+          <form name="register_form" autocomplete="on" action="{% url "users:register" %}" method="POST">
             {% csrf_token %}
             <div class="form-floating mb-3">
               <input type="text" name="first_name" class="form-control rounded-3" id="floatingFirstName" placeholder="first name" value="{{ form.data.first_name }}"">

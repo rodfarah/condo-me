@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'prelogin',
     'condo',
     'reservation',
-    'user',
+    'users',
 ]
 
 MIDDLEWARE = [
