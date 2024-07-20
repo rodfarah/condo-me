@@ -5,7 +5,8 @@ from django_countries.fields import CountryField
 
 
 class Condominium(models.Model):
-    name = models.CharField(max_length=120, blank=False, null=False)
+    name = models.CharField(max_length=120, blank=False,
+                            null=False, unique=True)
     cnpj = models.CharField(
         max_length=18,
         validators=[
@@ -42,7 +43,7 @@ class Condominium(models.Model):
 
 
 class Block(models.Model):
-    name = models.CharField(max_length=50, default="Main Block")
+    name = models.CharField(max_length=50, default="Main Block", unique=True)
     condominium = models.ForeignKey(
         to=Condominium, on_delete=models.CASCADE, related_name="blocks",
         blank=True, null=True)
@@ -70,7 +71,7 @@ class Apartment(models.Model):
         ordering = ['number_or_name', 'block']
 
     def __str__(self) -> str:
-        return self.number_or_name
+        return f'{self.number_or_name}{self.block}'
 
     def num_of_residents(self):
         return self.residents.count()

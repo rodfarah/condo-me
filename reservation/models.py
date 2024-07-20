@@ -1,6 +1,8 @@
-from django.db import models
-from condo.models import CommonArea, Condominium, Apartment
 from django.core.exceptions import ValidationError
+from django.db import models
+
+from condo.models import CommonArea, Condominium
+from condo_people.models import User
 
 
 class Reservation(models.Model):
@@ -8,20 +10,17 @@ class Reservation(models.Model):
         to=Condominium, on_delete=models.CASCADE, related_name="reservations")
     common_area = models.ForeignKey(
         to=CommonArea, on_delete=models.CASCADE, related_name="reservations")
-    apartments = models.ManyToManyField(
-        to=Apartment, related_name="reservations", blank=True)
-    # According to chatGPT, it is not necessary to create "apartments" or even
-    # "users" here. Once both are many-to-many, Django creates it automaticaly.
+    user = models.ManyToManyField(to=User, related_name="reservations")
     date = models.DateField(
         verbose_name="Reservation Date", blank=False, null=False)
     start_time = models.TimeField(
-        verbose_name="User will start to use the common area at:",
+        verbose_name="From:",
         blank=True,
         null=True,
         help_text="Leave blank if this is a whole day use common area"
     )
     end_time = models.TimeField(
-        verbose_name="User will end to use the common area at:",
+        verbose_name="Until:",
         blank=True,
         null=True,
         help_text="Leave blank if this is a whole day use common area"
@@ -37,3 +36,9 @@ class Reservation(models.Model):
             raise ValidationError(
                 "No need to fill start and end fields. The common area you \
                     selected can only be reserved for the entire day of use.")
+
+    def get_apartments(self):
+        users = self.user.all()
+        return ", ".join(str(user.apartment) for user in users)
+
+    get_apartments.short_description = "Apartments"
