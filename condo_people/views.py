@@ -1,5 +1,7 @@
 from django.shortcuts import redirect, render
 
+from .forms import RegisterForm
+
 
 def register_success(request):
     return render(request, "condo_people/pages/success.html")
