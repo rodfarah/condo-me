@@ -76,6 +76,12 @@ class Apartment(models.Model):
     def num_of_residents(self):
         return self.residents.count()
 
+    def get_residents(self):
+        names = [
+            f'{resident.first_name} {resident.last_name}'
+            for resident in self.residents.all()]
+        return ", ".join(names)
+
 
 class CommonArea(models.Model):
 

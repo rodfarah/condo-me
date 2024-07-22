@@ -26,4 +26,5 @@ class UserAdmin(admin.ModelAdmin):
         'date_joined',
         'is_active',
         'last_login',
+        'image'
     ]

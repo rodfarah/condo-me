@@ -12,6 +12,11 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body p-5 pt-0">
+          {% if messages %}
+          <div class="form-floating mb-3">
+            {% include "global/success.html" %}
+          </div>
+          {% endif %}
           <form name="register_form" autocomplete="on" action="/condo_people/register/" method="POST">
             <input type="hidden" name="csrfmiddlewaretoken" value="U1sjFfWlx5J8UG3AoGYjSQ0wDE5pJO7w8Rrml24cSqgqhhB4SvMQGV9lSMLMmmzL">
             <div class="form-floating mb-3">
