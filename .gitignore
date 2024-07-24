@@ -61,6 +61,7 @@ htmlcov/
 .tox/
 .coverage
 .coverage.*
+.coveragerc
 .cache
 .pytest_cache/
 nosetests.xml
@@ -133,3 +134,5 @@ gunicorn-error-log
 db.sqlite3
 db copy.sqlite3
 static/
+fast_tries.py
+.ruff_cache
