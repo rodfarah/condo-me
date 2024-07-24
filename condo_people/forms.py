@@ -19,7 +19,7 @@ class RegisterForm(UserCreationForm):
 
     class Meta:
         model = User
-        # which fiels I want to use?
+        # which fields I want to use?
         fields = {
             'first_name',
             'last_name',
