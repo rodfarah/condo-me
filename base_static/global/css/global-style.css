@@ -1,9 +1,9 @@
-.nav-link.text-white svg {
-    fill: white;
-  }
+.nav-link{
+  color: white;
+}
 
-.buildings {
-  fill: white;
+.nav-link:hover{
+  color: rgb(255, 193, 7);
 }
 
 .text-danger-custom {

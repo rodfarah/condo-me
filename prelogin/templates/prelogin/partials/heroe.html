@@ -29,15 +29,16 @@
           important for collective living.
         </p>
         <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-          <button type="button" class="btn btn-primary btn-lg px-4 me-md-2">
+          <a type="button" href="{% url "condo_people:login" %}"  class="btn btn-outline-dark btn-lg px-4 me-md-2">
             Login
-          </button>
-          <button
+          </a>
+          <a
             type="button"
-            class="btn btn-outline-secondary btn-lg px-4"
+            href="{% url "condo_people:register" %}"
+            class="btn btn-outline-dark btn-lg px-4"
           >
             Sign-up
-          </button>
+        </a>
         </div>
       </div>
     </div>
