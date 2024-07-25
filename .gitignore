@@ -136,3 +136,4 @@ db copy.sqlite3
 static/
 fast_tries.py
 .ruff_cache
+base_texts.txt
