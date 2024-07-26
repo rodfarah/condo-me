@@ -1,11 +1,41 @@
-.nav-link{
+.nav-link {
   color: white;
-}
-
-.nav-link:hover{
-  color: rgb(255, 193, 7);
 }
 
 .text-danger-custom {
   color: red !important;
+}
+
+.nav-link svg {
+  fill: white;
+}
+
+/* Hover effects for nav and link ellements*/
+.nav-link:hover,
+.nav-link:focus {
+  color: rgb(255, 193, 7);
+}
+
+.nav-link:hover svg,
+.nav-link:focus svg {
+  fill: rgb(255, 193, 7);
+}
+
+.squared-card {
+  background-size: cover;
+  background-position: center;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.2); /* Black collor 50% oppacity */
+  z-index: 1;
+}
+
+.text-shadow-1 {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 1); 
 }

@@ -30,43 +30,43 @@
   <nav class="px-3 py-2 text-bg-dark border-bottom">
     <div class="container">
       <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-        <a href="/" class="d-flex align-items-center my-2 my-lg-0 me-lg-auto text-white text-decoration-none buildings">
-          <svg class="bi me-2" width="40" height="32" role="img" aria-label="Custom Icon"><use xlink:href="#buildings"></use></svg>
+        <a href="{% url "condo:home" %}" class="d-flex align-items-center my-2 my-lg-0 me-lg-auto text-white text-decoration-none buildings">
+          <svg class="bi me-2 buildings" fill="white" width="40" height="32" role="img" aria-label="Custom Icon"><use xlink:href="#buildings"></use></svg>
           Condo-Me
         </a>
         <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
           <li>
-            <a href="{% url "condo:home" %}" class="nav-link text-secondary">
+            <a href="{% url "condo:home" %}" class="nav-link">
               <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#home"></use></svg>
               Home
             </a>
           </li>
           <li>
-            <a href="{% url "condo:condominium" %}" class="nav-link text-white">
+            <a href="{% url "condo:condominium" %}" class="nav-link">
               <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#building"></use></svg>
               [condo_name]
             </a>
           </li>
           <li>
-            <a href="{% url "condo:common_areas" %}" class="nav-link text-white">
+            <a href="{% url "condo:common_areas" %}" class="nav-link">
               <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#common-a"></use></svg>
               Common Areas
             </a>
           </li>
           <li>
-            <a href="#" class="nav-link text-white">
+            <a href="#" class="nav-link">
               <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#all-events"></use></svg>
               Reserve Here
             </a>
           </li>
           <li>
-            <a href="#" class="nav-link text-white">
+            <a href="#" class="nav-link">
               <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#one-event"></use></svg>
               Your Reservations
             </a>
           </li>
           <li>
-            <a href="#" class="nav-link text-white">
+            <a href="#" class="nav-link">
               <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#people-circle"></use></svg>
               Profile
             </a>
