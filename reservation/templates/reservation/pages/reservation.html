@@ -1,0 +1,9 @@
+{% extends "global/post_login_base.html" %}
+
+{% block title %}Make a Reservation |{% endblock title %}
+
+{% block content %}
+{% for field in form %}
+{{ field }}
+{% endfor %}
+{% endblock content %}
