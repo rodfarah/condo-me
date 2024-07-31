@@ -8,7 +8,7 @@ class CondoPeopleURLsTest(TestCase):
         self.assertEqual(url, "/condo_people/register/")
 
     def test_condo_people_register_create_url_is_correct(self):
-        url = reverse("condo_people:create")
+        url = reverse("condo_people:register_create")
         self.assertEqual(url, "/condo_people/register/create/")
 
     def test_condo_people_login_url_is_correct(self):

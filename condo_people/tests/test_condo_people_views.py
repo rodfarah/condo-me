@@ -10,7 +10,7 @@ class CondoPeopleViewsTest(TestCase):
         self.assertIs(view.func, views.register_view)
 
     def test_condo_people_register_create_view_function_is_correct(self):
-        view = resolve(reverse("condo_people:create"))
+        view = resolve(reverse("condo_people:register_create"))
         self.assertIs(view.func, views.register_create)
 
     def test_condo_people_login_view_function_is_correct(self):
