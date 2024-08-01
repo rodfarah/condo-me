@@ -15,4 +15,4 @@ class CondoPeopleViewsTest(TestCase):
 
     def test_condo_people_login_view_function_is_correct(self):
         view = resolve(reverse("condo_people:login"))
-        self.assertIs(view.func, views.login)
+        self.assertIs(view.func, views.login_view)

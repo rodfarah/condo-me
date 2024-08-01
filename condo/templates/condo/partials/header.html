@@ -66,10 +66,26 @@
             </a>
           </li>
           <li>
-            <a href="#" class="nav-link">
-              <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#people-circle"></use></svg>
-              Profile
-            </a>
+            <div class="dropdown text-end">
+              <a href="#" class="dropdown-toggle nav-link " data-bs-toggle="dropdown" aria-expanded="false">
+                <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#people-circle"></use></svg>
+                Profile
+              </a>
+              <ul class="dropdown-menu text-small" style="">
+                <li><a class="dropdown-item" href="#">New project...</a></li>
+                <li><a class="dropdown-item" href="#">Settings</a></li>
+                <li><a class="dropdown-item" href="#">Profile</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <form action="{% url "condo_people:logout" %}" method="POST" class="dropdown-item" name="logout">
+                    {% csrf_token %}
+                    <input type="hidden" name="username" value={{ request.user.username }}>
+                    <input type="hidden" name="csrfmiddlewaretoken" value={{ csrf_token }}>
+                    <button type="submit" class="logout-button">Logout</button>
+                  </form>
+                </li>
+              </ul>
+            </div>
           </li>
         </ul>
       </div>
