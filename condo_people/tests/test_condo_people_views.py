@@ -16,3 +16,11 @@ class CondoPeopleViewsTest(TestCase):
     def test_condo_people_login_view_function_is_correct(self):
         view = resolve(reverse("condo_people:login"))
         self.assertIs(view.func, views.login_view)
+
+    def test_condo_people_login_create_view_is_correct(self):
+        view = resolve(reverse("condo_people:login_create"))
+        self.assertIs(view.func, views.login_create)
+
+    def test_condo_people_logout_view_is_correct(self):
+        view = resolve(reverse("condo_people:logout"))
+        self.assertIs(view.func, views.logout_view)
