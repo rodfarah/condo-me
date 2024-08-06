@@ -72,9 +72,8 @@
                 Profile
               </a>
               <ul class="dropdown-menu text-small" style="">
-                <li><a class="dropdown-item" href="#">New project...</a></li>
-                <li><a class="dropdown-item" href="#">Settings</a></li>
-                <li><a class="dropdown-item" href="#">Profile</a></li>
+                <li><a class="dropdown-item" href="#">Statistics</a></li>
+                <li><a class="dropdown-item" href="{% url "condo:user_profile_settings" %}">Settings</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li>
                   <form action="{% url "condo_people:logout" %}" method="POST" class="dropdown-item" name="logout">

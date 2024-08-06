@@ -65,7 +65,6 @@ def login_create(request):
             messages.error(
                 request, "Invalid username and/or password. Please, try again."
             )
-
     else:
         return render(request, "condo_people/pages/login.html", context={"form": form})
     return redirect(reverse("condo_people:login"))

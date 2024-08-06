@@ -1,10 +1,14 @@
 from django.urls import path
+
 from . import views
 
-app_name = 'condo'
+app_name = "condo"
 
 urlpatterns = [
-    path('', views.home, name='home'),
-    path('condominium', views.condominium, name='condominium'),
-    path('common_areas', views.common_areas, name='common_areas'),
+    path("", views.home, name="home"),
+    path("condominium", views.condominium, name="condominium"),
+    path("condominium/common_areas", views.common_areas, name="common_areas"),
+    path(
+        "user/profile/settings/", views.user_profile_view, name="user_profile_settings"
+    ),
 ]

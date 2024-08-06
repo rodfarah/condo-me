@@ -13,3 +13,8 @@ def condominium(request):
 
 def common_areas(request):
     return render(request, "condo/pages/common_areas.html")
+
+
+@login_required(login_url="condo_people:login", redirect_field_name="redirect_to")
+def user_profile_view(request):
+    return render(request, "condo/pages/user_profile.html")
