@@ -56,12 +56,16 @@ def login_create(request):
         authenticated_user = authenticate(request, username=username, password=password)
 
         if authenticated_user is not None:
-            login(request, authenticated_user)
-            return redirect(reverse("condo:home"), {"user": authenticated_user})
+            if authenticated_user.is_active:
+                login(request, authenticated_user)
+                return redirect(reverse("condo:home"), {"user": authenticated_user})
+            else:
+                messages.error(request, "Disabled Account")
         else:
             messages.error(
                 request, "Invalid username and/or password. Please, try again."
             )
+
     else:
         return render(request, "condo_people/pages/login.html", context={"form": form})
     return redirect(reverse("condo_people:login"))
