@@ -1,8 +1,8 @@
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 
 from condo.models import CommonArea, Condominium
-from condo_people.models import User
 
 
 class Reservation(models.Model):
@@ -12,7 +12,9 @@ class Reservation(models.Model):
     common_area = models.ForeignKey(
         to=CommonArea, on_delete=models.CASCADE, related_name="reservations"
     )
-    user = models.ManyToManyField(to=User, related_name="reservations")
+    user = models.ManyToManyField(
+        to=settings.AUTH_USER_MODEL, related_name="reservations"
+    )
     date = models.DateField(verbose_name="Reservation Date", blank=False, null=False)
     start_time = models.TimeField(
         verbose_name="From:",
