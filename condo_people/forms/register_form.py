@@ -1,6 +1,10 @@
 # there is this forms library
 from django import forms
 
+# Instead of declaring which User model to use in the form,
+# it ishighly reccomended to use get_user_model function
+from django.contrib.auth import get_user_model
+
 # there is this class that deals with password check and hash
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
@@ -19,7 +23,7 @@ class RegisterForm(UserCreationForm):
     # Meta sends metadata from my model to Django
 
     class Meta:
-        model = User
+        model = get_user_model()
         # which fields I want to use?
         fields = {
             "first_name",
@@ -45,6 +49,6 @@ class RegisterForm(UserCreationForm):
         cleaned_data = super().clean()
         password1 = cleaned_data.get("password1")
         password2 = cleaned_data.get("password2")
-        if password1 and password2 and password1 != password2:
+        if password1 and password2 and (password1 != password2):
             self.add_error(field="password2", error="The two passwords must match.")
         return cleaned_data
