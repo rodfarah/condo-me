@@ -46,6 +46,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "project.urls"
 
+APPEND_SLASH = True
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -131,3 +133,5 @@ MEDIA_ROOT = BASE_DIR / "media"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
