@@ -30,7 +30,8 @@ INSTALLED_APPS = [
     "django_countries",
     "prelogin",
     "condo",
-    "condo_people",
+    # custom setup for condo_people in order to create groups and permissions
+    "condo_people.apps.CondoPeopleConfig",
     "reservation",
 ]
 
