@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser, Group
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 from condo.models import Apartment, Condominium
@@ -23,9 +23,6 @@ class User(AbstractUser):
         null=True,
         blank=True,
         related_name="residents",
-    )
-    group = models.ForeignKey(
-        Group, on_delete=models.SET_NULL, null=True, blank=True, related_name="groups"
     )
     image = models.ImageField(upload_to="condo_me/condominiums/%Y/%m/%d/", blank=True)
 
