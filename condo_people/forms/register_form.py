@@ -2,19 +2,16 @@
 from django import forms
 
 # Instead of declaring which User model to use in the form,
-# it ishighly reccomended to use get_user_model function
+# it is highly reccomended to use get_user_model function
 from django.contrib.auth import get_user_model
 
 # there is this class that deals with password check and hash
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 
-# we need to import User class in order to associate users with forms
-from ..models import User
-
 
 # it is VERY IMPORTANT to use UserCreationForm because it deals with
-# password check and hashing
+# password check, hashing and other validations
 class RegisterForm(UserCreationForm):
     first_name = forms.CharField(max_length=150, required=True)
     last_name = forms.CharField(max_length=150, required=True)
@@ -36,7 +33,7 @@ class RegisterForm(UserCreationForm):
 
     def clean_email(self):
         email_in_form = self.cleaned_data.get("email")
-        email_in_db = User.objects.filter(email__exact=email_in_form)
+        email_in_db = get_user_model().objects.filter(email__exact=email_in_form)
         if email_in_db.exists():
             raise ValidationError(
                 "This e-mail address has been already used. Please, choose "
