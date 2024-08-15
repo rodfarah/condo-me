@@ -30,6 +30,7 @@ def create_user_groups(sender, **kwargs):
             ("change_commonarea", CommonArea),
             ("change_condominium", Condominium),
             ("view_condominium", Condominium),
+            ("add_condominium", Condominium),
             ("add_reservation", Reservation),
             ("delete_reservation", Reservation),
             ("view_reservation", Reservation),

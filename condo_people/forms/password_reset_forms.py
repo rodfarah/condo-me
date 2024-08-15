@@ -1,5 +1,3 @@
-from re import A
-
 from django import forms
 from django.contrib.auth import forms as auth_forms
 
