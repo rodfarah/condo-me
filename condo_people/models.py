@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -29,10 +28,3 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
-
-
-# class ManagerRegistationLink(models.Model):
-#     user = models.OneToOneField(to=get_user_model(), on_delete=models.CASCADE)
-#     code = models.CharField(max_length=64, unique=True)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     used = models.BooleanField(default=False)
