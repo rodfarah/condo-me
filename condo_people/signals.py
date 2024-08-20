@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import post_migrate
@@ -5,8 +6,6 @@ from django.dispatch import receiver
 
 from condo.models import Apartment, Block, CommonArea, Condominium
 from reservation.models import Reservation
-
-from .models import User
 
 
 @receiver(post_migrate)
@@ -35,7 +34,7 @@ def create_user_groups(sender, **kwargs):
             ("delete_reservation", Reservation),
             ("view_reservation", Reservation),
             ("change_reservation", Reservation),
-            ("view_user", User),
+            ("view_user", get_user_model()),
             ("view_group", Group),
         ],
         "caretaker": [
@@ -47,7 +46,7 @@ def create_user_groups(sender, **kwargs):
             ("delete_reservation", Reservation),
             ("view_reservation", Reservation),
             ("change_reservation", Reservation),
-            ("view_user", User),
+            ("view_user", get_user_model()),
             ("view_group", Group),
         ],
         "resident": [
@@ -59,7 +58,7 @@ def create_user_groups(sender, **kwargs):
             ("delete_reservation", Reservation),
             ("view_reservation", Reservation),
             ("change_reservation", Reservation),
-            ("view_user", User),
+            ("view_user", get_user_model()),
         ],
     }
 
