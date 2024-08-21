@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import redirect, render
@@ -9,8 +9,11 @@ from .forms import LoginForm, RegisterForm
 
 
 def register_view(request):
+    # If there is no session, variable equals None ...
     register_form_data = request.session.get("register_form_data", None)
+    # ...and form will be empty
     form = RegisterForm(register_form_data)
+    # clear session
     if "register_form_data" in request.session:
         del request.session["register_form_data"]
     return render(
@@ -39,6 +42,9 @@ def register_create(request):
 
 
 def login_view(request):
+    # if user is already authenticated
+    if request.user.is_authenticated:
+        return redirect(reverse("condo:home"))
     form = LoginForm()
     return render(
         request, "condo_people/registration/login.html", context={"form": form}
@@ -54,23 +60,27 @@ def login_create(request):
         username = form.cleaned_data["username"]
         password = form.cleaned_data["password"]
 
-        # returns an authenticated user object
-        authenticated_user = authenticate(request, username=username, password=password)
+    user_model = get_user_model()
+    # Check if user exists in db in order to differenciate "is_active" users.
+    # consider Django does not authenticate inactive users. So we have to authenticate
+    # later on.
+    try:
+        user = user_model.objects.get(username=username)
+    except user_model.DoesNotExist:
+        user = None
 
+    if user is not None:
+        # If user is not active
+        if not user.is_active:
+            messages.error(request, "Disabled Account")
+            return redirect(reverse("condo_people:login"))
+        # may return an authenticated user object (if username and pwd are correct)
+        authenticated_user = authenticate(request, username=username, password=password)
         if authenticated_user is not None:
-            if authenticated_user.is_active:
-                login(request, authenticated_user)
-                return redirect(reverse("condo:home"), {"user": authenticated_user})
-            else:
-                messages.error(request, "Disabled Account")
-        else:
-            messages.error(
-                request, "Invalid username and/or password. Please, try again."
-            )
-    else:
-        return render(
-            request, "condo_people/registration/login.html", context={"form": form}
-        )
+            login(request, authenticated_user)
+            return redirect(reverse("condo:home"), {"user": authenticated_user})
+
+    messages.error(request, "Invalid username and/or password. Please, try again.")
     return redirect(reverse("condo_people:login"))
 
 
