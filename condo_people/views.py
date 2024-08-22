@@ -59,29 +59,32 @@ def login_create(request):
     if form.is_valid():
         username = form.cleaned_data["username"]
         password = form.cleaned_data["password"]
+        user_model = get_user_model()
+        # Check if user exists in db in order to differenciate "is_active" users.
+        # consider Django does not authenticate inactive users. So we have to authenticate
+        # later on.
+        try:
+            user = user_model.objects.get(username=username)
+        except user_model.DoesNotExist:
+            user = None
 
-    user_model = get_user_model()
-    # Check if user exists in db in order to differenciate "is_active" users.
-    # consider Django does not authenticate inactive users. So we have to authenticate
-    # later on.
-    try:
-        user = user_model.objects.get(username=username)
-    except user_model.DoesNotExist:
-        user = None
+        if user is not None:
+            # If user is not active
+            if not user.is_active:
+                messages.error(request, "Disabled Account")
+                return redirect(reverse("condo_people:login"))
+            # may return an authenticated user object (if username and pwd are correct)
+            authenticated_user = authenticate(
+                request, username=username, password=password
+            )
+            if authenticated_user is not None:
+                login(request, authenticated_user)
+                return redirect(reverse("condo:home"), {"user": authenticated_user})
 
-    if user is not None:
-        # If user is not active
-        if not user.is_active:
-            messages.error(request, "Disabled Account")
-            return redirect(reverse("condo_people:login"))
-        # may return an authenticated user object (if username and pwd are correct)
-        authenticated_user = authenticate(request, username=username, password=password)
-        if authenticated_user is not None:
-            login(request, authenticated_user)
-            return redirect(reverse("condo:home"), {"user": authenticated_user})
-
-    messages.error(request, "Invalid username and/or password. Please, try again.")
-    return redirect(reverse("condo_people:login"))
+        messages.error(request, "Invalid username and/or password. Please, try again.")
+        return redirect(reverse("condo_people:login"))
+    # if form is not valid
+    return render(request, "condo_people/registration/login.html", {"form": form})
 
 
 # login_url: where django will send user in case he/she is not logged in
