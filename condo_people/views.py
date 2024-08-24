@@ -80,7 +80,7 @@ def login_create(request):
             if authenticated_user is not None:
                 login(request, authenticated_user)
                 return redirect(reverse("condo:home"), {"user": authenticated_user})
-
+        # user is None
         messages.error(request, "Invalid username and/or password. Please, try again.")
         return redirect(reverse("condo_people:login"))
     # if form is not valid
@@ -89,14 +89,11 @@ def login_create(request):
 
 # login_url: where django will send user in case he/she is not logged in
 # redirect_field_name: /login/?redirect_to=/logout_view/ means that after log in,
-# django will send user to "logout_view" view.
+# django will send user to "logout_view".
+# @login_required(login_url="condo_people:login", redirect_field_name="redirect_to")
 @login_required(login_url="condo_people:login", redirect_field_name="redirect_to")
 def logout_view(request):
-    if (
-        request.method != "POST"
-        or request.POST.get("username") != request.user.username
-    ):
-        return redirect(reverse("condo_people:login"))
-
-    logout(request)
+    # Ensure the logout is only done via POST
+    if request.method == "POST":
+        logout(request)
     return redirect(reverse("condo_people:login"))
