@@ -1,12 +1,13 @@
 from django.contrib.auth import get_user_model
 from django.contrib.messages import get_messages
-from django.test import TestCase
 from django.urls import resolve, reverse
 
 from condo_people import views
 
+from .base_test_condo_people import CondoPeopleTestBase
 
-class CondoPeopleViewsTest(TestCase):
+
+class CondoPeopleViewsTest(CondoPeopleTestBase):
     # REGISTER VIEW TESTS
     def test_condo_people_register_view_function_is_correct(self):
         view = resolve(reverse("condo_people:register"))
@@ -73,15 +74,8 @@ class CondoPeopleViewsTest(TestCase):
     def test_condo_people_login_view_redirects_condo_home_if_user_already_athenticated(
         self,
     ):
-        user_model = get_user_model()
-        self.user = user_model.objects.create_user(
-            first_name="Elliot",
-            last_name="Smith",
-            email="elliot@smith.com",
-            username="elliotsmith",
-            password="BetweenTheBars",
-        )
-        self.client.login(username="elliotsmith", password="BetweenTheBars")
+        self.create_test_user()
+        self.login_test_user()
         response = self.client.get(reverse("condo_people:login"))
         self.assertRedirects(response, reverse("condo:home"), status_code=302)
 
@@ -99,6 +93,7 @@ class CondoPeopleViewsTest(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_condo_people_login_create_user_is_none_if_username_not_in_db(self):
+        # no user created. Just login.
         login_data = {"username": "johndoe", "password": "DummyTest"}
         response = self.client.post(
             reverse("condo_people:login_create"), data=login_data
@@ -116,14 +111,7 @@ class CondoPeopleViewsTest(TestCase):
     def test_condo_people_login_create_authenticates_active_user_if_valid_data_and_redirects(
         self,
     ):
-        user_model = get_user_model()
-        self.user = user_model.objects.create_user(
-            first_name="Elliot",
-            last_name="Smith",
-            email="elliot@smith.com",
-            username="elliotsmith",
-            password="BetweenTheBars",
-        )
+        self.create_test_user()
         form_data = {"username": "elliotsmith", "password": "BetweenTheBars"}
         response = self.client.post(
             reverse("condo_people:login_create"), data=form_data
@@ -138,14 +126,7 @@ class CondoPeopleViewsTest(TestCase):
     def test_condo_people_login_create_renders_wright_template_if_not_valid_data(
         self,
     ):
-        user_model = get_user_model()
-        self.user = user_model.objects.create_user(
-            first_name="Elliot",
-            last_name="Smith",
-            email="elliot@smith.com",
-            username="elliotsmith",
-            password="BetweenTheBars",
-        )
+        self.create_test_user()
         # Invalid data
         form_data = {"username": "", "password": "BetweenTheBar"}
         response = self.client.post(
@@ -157,15 +138,7 @@ class CondoPeopleViewsTest(TestCase):
     def test_condo_people_login_create_view_sends_error_message_if_not_active_user(
         self,
     ):
-        user_model = get_user_model()
-        user_model.objects.create_user(
-            first_name="Elliot",
-            last_name="Smith",
-            email="elliot@smith.com",
-            username="elliotsmith",
-            password="BetweenTheBars",
-            is_active=False,
-        )
+        self.create_test_user(is_active=False)
         # first response, related to login_create view
         response = self.client.post(
             reverse("condo_people:login_create"),
@@ -181,14 +154,7 @@ class CondoPeopleViewsTest(TestCase):
     def test_condo_people_login_create_view_error_msg_and_redirects_if_not_authenticated_user(
         self,
     ):
-        user_model = get_user_model()
-        user_model.objects.create_user(
-            first_name="Elliot",
-            last_name="Smith",
-            email="elliot@smith.com",
-            username="elliotsmith",
-            password="BetweenTheBars",
-        )
+        self.create_test_user()
         # wrong password
         form_data = {"username": "elliotsmith", "password": "AnyDumb_pswd"}
         response = self.client.post(
@@ -215,19 +181,10 @@ class CondoPeopleViewsTest(TestCase):
     def test_condo_people_logout_view_logout_and_redirects_login_view_if_post_method(
         self,
     ):
-        user_model = get_user_model()
         # Create user in db
-        user_model.objects.create_user(
-            first_name="Elliot",
-            last_name="Smith",
-            email="elliot@smith.com",
-            username="elliotsmith",
-            password="BetweenTheBars",
-        )
+        self.create_test_user()
         # login user
-        login_request = self.client.login(
-            username="elliotsmith", password="BetweenTheBars"
-        )
+        login_request = self.login_test_user()
         self.assertTrue(login_request)
         # logout user
         response = self.client.post(reverse("condo_people:logout"))
@@ -240,17 +197,10 @@ class CondoPeopleViewsTest(TestCase):
         self.assertTemplateUsed(response, "condo_people/registration/login.html")
 
     def test_condo_people_logout_view_only_redirects_if_get_method(self):
-        user_model = get_user_model()
         # Create user in db
-        user_model.objects.create_user(
-            first_name="Elliot",
-            last_name="Smith",
-            email="elliot@smith.com",
-            username="elliotsmith",
-            password="BetweenTheBars",
-        )
+        self.create_test_user()
         # login user
-        self.client.login(username="elliotsmith", password="BetweenTheBars")
+        self.login_test_user()
         # user tries to logout via GET method (instead of POST)
         # follow=True deals with multiple redirections
         response = self.client.get(reverse("condo_people:logout"), follow=True)
