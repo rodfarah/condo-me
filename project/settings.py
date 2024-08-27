@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     # custom setup for condo_people in order to create groups and permissions
     "condo_people.apps.CondoPeopleConfig",
     "reservation",
+    "purchases",
 ]
 
 MIDDLEWARE = [
@@ -141,3 +142,5 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # to @login_required
 LOGIN_URL = reverse_lazy("condo_people:login")
+
+SITE_URL = "http://localhost:8000"
