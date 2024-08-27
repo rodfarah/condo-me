@@ -32,7 +32,10 @@ def register_create(request):
     form = RegisterForm(request.POST)
 
     if form.is_valid():
-        form.save()
+        # For security reasons, manually set password in order to hash it
+        new_user = form.save(commit=False)
+        new_user.set_password(form.cleaned_data["password1"])
+        new_user.save()
         messages.success(request, "You are now registered, please log in.")
         request.session.pop("register_form_data", None)
         return redirect("condo_people:login")
