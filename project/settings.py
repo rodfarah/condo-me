@@ -34,7 +34,7 @@ INSTALLED_APPS = [
     # custom setup for condo_people in order to create groups and permissions
     "condo_people.apps.CondoPeopleConfig",
     "reservation",
-    "purchases",
+    "purchase",
 ]
 
 MIDDLEWARE = [

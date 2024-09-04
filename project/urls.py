@@ -9,7 +9,7 @@ urlpatterns = [
     path("condo/", include("condo.urls")),
     path("condo_people/", include("condo_people.urls")),
     path("reservation/", include("reservation.urls")),
-    path("purchases/", include("purchases.urls")),
+    path("purchase/", include("purchase.urls")),
 ]
 
 
