@@ -12,7 +12,7 @@ app_name = "condo_people"
 
 urlpatterns = [
     # REGISTER
-    path("register/", views.register_view, name="register"),
+    path("register/<token>", views.register_view, name="register"),
     path("register/create/", views.register_create, name="register_create"),
     # LOGIN
     path("login/", views.login_view, name="login"),

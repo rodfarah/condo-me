@@ -5,22 +5,27 @@ from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
+from purchase.models import CreateManagerToken
+
 from .forms import LoginForm, RegisterForm
 
 
-def register_view(request):
+def register_view(request, token):
     # If there is no session, variable equals None ...
     register_form_data = request.session.get("register_form_data", None)
     # ...and form will be empty
     form = RegisterForm(register_form_data)
-    # clear session
+    # Clear session
     if "register_form_data" in request.session:
         del request.session["register_form_data"]
+    # Check for user details through token.
+    customer = CreateManagerToken.objects.get(token=token)
     return render(
         request,
         "condo_people/registration/register.html",
         context={
             "form": form,
+            "customer": customer,
         },
     )
 
@@ -41,13 +46,15 @@ def register_create(request):
         return redirect("condo_people:login")
     else:
         request.session["register_form_data"] = request.POST
-        return redirect(to="condo_people:register")
+        return redirect(
+            reverse("condo_people:register", args=[request.POST["customer-token"]])
+        )
 
 
 def login_view(request):
     # if user is already authenticated
-    if request.user.is_authenticated:
-        return redirect(reverse("condo:home"))
+    # if request.user.is_authenticated:
+    #     return redirect(reverse("condo:home"))
     form = LoginForm()
     return render(
         request, "condo_people/registration/login.html", context={"form": form}

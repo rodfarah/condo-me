@@ -16,3 +16,6 @@ class CreateManagerToken(models.Model):
     def is_valid(self):
         expiration_validation = self.expires_at > timezone.now()
         return self.not_used_yet and expiration_validation
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"

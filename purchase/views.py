@@ -2,8 +2,8 @@ from datetime import timedelta
 
 from django.contrib.auth.models import Group
 from django.core.mail import send_mail
-from django.http import Http404, JsonResponse
-from django.shortcuts import render
+from django.http import Http404
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
@@ -28,9 +28,10 @@ def purchase_create(request):
         customer_first_name = form.cleaned_data["first_name"]
         customer_last_name = form.cleaned_data["last_name"]
         customer_group = Group.objects.get(name__iexact="manager")
-        # Create a new token.
+        # Set up a new token.
         crypted_token = get_random_string(length=32)
         expires_at = timezone.now() + timedelta(days=7)
+        # Create a token object in db.
         CreateManagerToken.objects.create(
             first_name=customer_first_name,
             last_name=customer_last_name,
@@ -40,7 +41,7 @@ def purchase_create(request):
             expires_at=expires_at,
         )
         registration_link = request.build_absolute_uri(
-            reverse("purchase:purchase_order", args=[crypted_token])
+            reverse("condo_people:register", args=[crypted_token])
         )
         send_mail(
             subject="Your registration link",
@@ -50,10 +51,7 @@ def purchase_create(request):
             recipient_list=[customer_email],
             fail_silently=False,
         )
-
-        return JsonResponse(
-            {"message": "Token has been successfully created and sent via e-mail"}
-        )
+        return redirect(reverse("purchase:email_order"))
     return render(request, "purchase/pages/purchase.html", context={"form": form})
 
 
