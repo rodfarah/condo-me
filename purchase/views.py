@@ -24,19 +24,19 @@ def purchase_create(request):
     form = PurchaseForm(data=request.POST)
 
     if form.is_valid():
-        customer_email = form.cleaned_data["customer_email"]
-        customer_first_name = form.cleaned_data["customer_first_name"]
-        customer_last_name = form.cleaned_data["customer_last_name"]
-        customer_group = Group.objects.get(name__iexact="manager")
+        register_first_name = form.cleaned_data["register_first_name"]
+        register_last_name = form.cleaned_data["register_last_name"]
+        register_email = form.cleaned_data["register_email"]
+        register_group = Group.objects.get(name__iexact="manager")
         # Set up a new token.
         crypted_token = get_random_string(length=32)
         expires_at = timezone.now() + timedelta(days=7)
         # Create a token object in db.
         RegistrationToken.objects.create(
-            customer_first_name=customer_first_name,
-            customer_last_name=customer_last_name,
-            customer_email=customer_email,
-            customer_group=customer_group,
+            register_first_name=register_first_name,
+            register_last_name=register_last_name,
+            register_email=register_email,
+            register_group=register_group,
             token=crypted_token,
             expires_at=expires_at,
         )
@@ -48,7 +48,7 @@ def purchase_create(request):
             message=f"Please, click on the following link to complete your Condo_Me registration: {registration_link}",
             from_email="no-reply@condome.com",
             # Have to colect from a form
-            recipient_list=[customer_email],
+            recipient_list=[register_email],
             fail_silently=False,
         )
         return redirect(reverse("purchase:email_order"))

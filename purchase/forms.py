@@ -7,25 +7,45 @@ from .models import RegistrationToken
 
 class PurchaseForm(forms.ModelForm):
 
+    register_email2 = forms.EmailField(
+        max_length=200,
+        required=True,
+        label="Confirm your email",
+        error_messages={"required": "Please, insert a valid e-mail address."},
+        widget=forms.EmailInput(
+            attrs={
+                "class": "form-control",
+                "autocomplete": True,
+                "id": "email2",
+                "required": True,
+            }
+        ),
+    )
+
     class Meta:
         model = RegistrationToken
 
-        fields = ["customer_first_name", "customer_last_name", "customer_email"]
+        fields = [
+            "register_first_name",
+            "register_last_name",
+            "register_email",
+            "register_email2",
+        ]
 
         labels = {
-            "customer_first_name": "First Name",
-            "customer_last_name": "Last Name",
-            "customer_email": "E-mail",
+            "register_first_name": "First Name",
+            "register_last_name": "Last Name",
+            "register_email": "E-mail",
         }
 
         error_messages = {
-            "customer_first_name": {"required": "Please, insert a valid first name."},
-            "customer_last_name": {"required": "Please, insert a valid last name."},
-            "customer_email": {"required": "Please, insert a valid e-mail address."},
+            "register_first_name": {"required": "Please, insert a valid first name."},
+            "register_last_name": {"required": "Please, insert a valid last name."},
+            "register_email": {"required": "Please, insert a valid e-mail address."},
         }
 
         widgets = {
-            "customer_first_name": forms.TextInput(
+            "register_first_name": forms.TextInput(
                 attrs={
                     "class": "form-control",
                     "autofocus": True,
@@ -34,7 +54,7 @@ class PurchaseForm(forms.ModelForm):
                     "required": True,
                 }
             ),
-            "customer_last_name": forms.TextInput(
+            "register_last_name": forms.TextInput(
                 attrs={
                     "class": "form-control",
                     "autocomplete": True,
@@ -42,31 +62,54 @@ class PurchaseForm(forms.ModelForm):
                     "required": True,
                 }
             ),
-            "customer_email": forms.EmailInput(
+            "register_email": forms.EmailInput(
                 attrs={
                     "class": "form-control",
                     "autocomplete": True,
-                    "id": "firstName",
+                    "id": "email1",
                     "required": True,
                 }
             ),
         }
 
-    def clean_email(self):
-        email_in_form = self.cleaned_data.get("email")
-        email_in_user_db = get_user_model().objects.filter(email__iexact=email_in_form)
-        email_in_token_db = RegistrationToken.objects.filter(
-            customer_email__iexact=email_in_form
-        )
-        if email_in_user_db.exists():
+    def clean(self):
+        cleaned_data = super().clean()
+        register_email_in_form = self.cleaned_data.get("register_email")
+        register_email2_in_form = self.cleaned_data.get("register_email2")
+        # Check if form registration e-mail addresses are the same.
+        if register_email_in_form and register_email2_in_form:
+            if register_email_in_form != register_email2_in_form:
+                self.add_error(
+                    "register_email2",
+                    ValidationError(
+                        "E-mail addresses don't match. Please, make sure both are the same.",
+                        code="invalid",
+                    ),
+                )
+        return cleaned_data
+
+    def clean_register_email(self):
+        register_email_in_form = self.cleaned_data.get("register_email")
+
+        # Check if form registration e-mail is already in User main database.
+        if (
+            get_user_model()
+            .objects.filter(email__iexact=register_email_in_form)
+            .exists()
+        ):
             raise ValidationError(
-                "This e-mail address has been already used. Please, choose "
+                "This e-mail address has been already used by other user. Please, choose "
                 "a different one.",
                 code="invalid",
             )
-        elif email_in_token_db.exists():
+
+        # Check if form registration e-mail was already used before to ask for a token.
+        if RegistrationToken.objects.filter(
+            register_email__exact=register_email_in_form
+        ).exists():
             raise ValidationError(
                 "You have already sent a registration link to your email "
-                "address. Please, contact us for further information."
+                "address. Please, contact us for further information.",
+                code="invalid",
             )
-        return email_in_form
+        return register_email_in_form

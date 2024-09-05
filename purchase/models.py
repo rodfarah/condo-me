@@ -4,10 +4,10 @@ from django.utils import timezone
 
 
 class RegistrationToken(models.Model):
-    customer_first_name = models.CharField(max_length=100, blank=False, null=True)
-    customer_last_name = models.CharField(max_length=100, blank=False, null=True)
-    customer_email = models.EmailField(max_length=200, blank=False, null=True)
-    customer_group = models.ForeignKey(to=Group, on_delete=models.CASCADE)
+    register_first_name = models.CharField(max_length=100, blank=False, null=True)
+    register_last_name = models.CharField(max_length=100, blank=False, null=True)
+    register_email = models.EmailField(max_length=200, blank=False, null=True)
+    register_group = models.ForeignKey(to=Group, on_delete=models.CASCADE)
     token = models.CharField(max_length=64, unique=True)
     created_at = models.DateTimeField(default=timezone.now)
     expires_at = models.DateTimeField()
@@ -18,4 +18,4 @@ class RegistrationToken(models.Model):
         return self.not_used_yet and expiration_validation
 
     def __str__(self):
-        return f"Token created for {self.customer_group} {self.customer_email}"
+        return f"Token created for {self.register_group} {self.register_email}"
