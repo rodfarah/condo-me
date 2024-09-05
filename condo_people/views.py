@@ -5,7 +5,7 @@ from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from purchase.models import CreateManagerToken
+from purchase.models import RegistrationToken
 
 from .forms import LoginForm, RegisterForm
 
@@ -19,7 +19,7 @@ def register_view(request, token):
     if "register_form_data" in request.session:
         del request.session["register_form_data"]
     # Check for user details through token.
-    token_obj = CreateManagerToken.objects.get(token=token)
+    token_obj = RegistrationToken.objects.get(token=token)
     return render(
         request,
         "condo_people/registration/register.html",

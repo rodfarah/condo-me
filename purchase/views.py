@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 
 from .forms import PurchaseForm
-from .models import CreateManagerToken
+from .models import RegistrationToken
 
 
 def purchase_view(request):
@@ -32,7 +32,7 @@ def purchase_create(request):
         crypted_token = get_random_string(length=32)
         expires_at = timezone.now() + timedelta(days=7)
         # Create a token object in db.
-        CreateManagerToken.objects.create(
+        RegistrationToken.objects.create(
             customer_first_name=customer_first_name,
             customer_last_name=customer_last_name,
             customer_email=customer_email,

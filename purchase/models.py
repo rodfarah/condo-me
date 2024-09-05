@@ -3,7 +3,7 @@ from django.db import models
 from django.utils import timezone
 
 
-class CreateManagerToken(models.Model):
+class RegistrationToken(models.Model):
     customer_first_name = models.CharField(max_length=100, blank=False, null=True)
     customer_last_name = models.CharField(max_length=100, blank=False, null=True)
     customer_email = models.EmailField(max_length=200, blank=False, null=True)

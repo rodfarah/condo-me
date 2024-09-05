@@ -2,13 +2,13 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 
-from .models import CreateManagerToken
+from .models import RegistrationToken
 
 
 class PurchaseForm(forms.ModelForm):
 
     class Meta:
-        model = CreateManagerToken
+        model = RegistrationToken
 
         fields = ["customer_first_name", "customer_last_name", "customer_email"]
 
@@ -55,7 +55,7 @@ class PurchaseForm(forms.ModelForm):
     def clean_email(self):
         email_in_form = self.cleaned_data.get("email")
         email_in_user_db = get_user_model().objects.filter(email__iexact=email_in_form)
-        email_in_token_db = CreateManagerToken.objects.filter(
+        email_in_token_db = RegistrationToken.objects.filter(
             customer_email__iexact=email_in_form
         )
         if email_in_user_db.exists():
