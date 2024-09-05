@@ -8,7 +8,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content rounded-4 shadow">
       <div class="modal-header p-5 pb-4 border-bottom-0">
-        <h1 class="fw-bold mb-0 fs-2">Hello, {{ customer }}!</h1>
+        <h1 class="fw-bold mb-0 fs-2">Hello, {{ token_obj.customer_first_name }}!</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="window.location.href = '{% url "prelogin:home" %}'"></button>
       </div>
       <div class="modal-body p-5 pt-0">
@@ -16,20 +16,20 @@
         <form name="register_form" autocomplete="on" action="{% url "condo_people:register_create" %}" method="POST">
           {% csrf_token %}
           <div class="form-floating mb-3">
-            <input type="text" name="first_name" class="form-control rounded-3" id="floatingFirstName" placeholder="first name" value="{{ customer.first_name }}">
+            <input type="text" name="first_name" class="form-control rounded-3" id="floatingFirstName" placeholder="first name" value="{{ token_obj.customer_first_name }}">
             <label for="floatingFirstName">First Name</label>
-            {% if form.first_name.errors %}
+            {% if form.customer_first_name.errors %}
             <div class="text-danger">
-              <small >{{ form.first_name.errors }}</small>
+              <small >{{ form.customer_first_name.errors }}</small>
             </div>
             {% endif %}
           </div>
           <div class="form-floating mb-3">
-            <input type="text" name="last_name" class="form-control rounded-3" id="floatingLastName" placeholder="last name" value="{{ customer.last_name }}">
+            <input type="text" name="last_name" class="form-control rounded-3" id="floatingLastName" placeholder="last name" value="{{ token_obj.customer_last_name }}">
             <label for="floatingLastName">Last Name</label>
-            {% if form.last_name.errors %}
+            {% if form.customer_last_name.errors %}
             <div class="text-danger">
-              <small >{{ form.last_name.errors }}</small>
+              <small >{{ form.customer_last_name.errors }}</small>
             </div>
             {% endif %}
           </div>
@@ -43,7 +43,7 @@
             {% endif %}
           </div>
           <div class="form-floating mb-3">
-            <input type="text" name="email" class="form-control rounded-3" id="floatingEmail" placeholder="Email address" value="{{ customer.email }}">
+            <input type="text" name="email" class="form-control rounded-3" id="floatingEmail" placeholder="Email address" value="{{ token_obj.customer_email }}">
             <label for="floatingEmail">Email address</label>
             {% if form.email.errors %}
             <div class="text-danger">
@@ -70,7 +70,7 @@
                 <small >{{ form.password2.errors }}</small>
               </div>
             {% endif %}
-            <input type="hidden" name="customer-token" value={{ customer.token }}>
+            <input type="hidden" name="customer-token" value={{ token_obj.token }}>
           </div>
           <small class="text-body-secondary">By clicking Sign up, you agree to the terms of use.</small>
           <button name="signup" class="w-100 mb-2 btn btn-lg rounded-3 btn-warning" type="submit">Sign up</button>

@@ -19,13 +19,13 @@ def register_view(request, token):
     if "register_form_data" in request.session:
         del request.session["register_form_data"]
     # Check for user details through token.
-    customer = CreateManagerToken.objects.get(token=token)
+    token_obj = CreateManagerToken.objects.get(token=token)
     return render(
         request,
         "condo_people/registration/register.html",
         context={
             "form": form,
-            "customer": customer,
+            "token_obj": token_obj,
         },
     )
 

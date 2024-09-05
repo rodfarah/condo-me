@@ -10,22 +10,22 @@ class PurchaseForm(forms.ModelForm):
     class Meta:
         model = CreateManagerToken
 
-        fields = ["first_name", "last_name", "email"]
+        fields = ["customer_first_name", "customer_last_name", "customer_email"]
 
         labels = {
-            "first_name": "First Name",
-            "last_name": "Last Name",
-            "email": "E-mail",
+            "customer_first_name": "First Name",
+            "customer_last_name": "Last Name",
+            "customer_email": "E-mail",
         }
 
         error_messages = {
-            "first_name": {"required": "Please, insert a valid first name."},
-            "last_name": {"required": "Please, insert a valid last name."},
-            "email": {"required": "Please, insert a valid e-mail address."},
+            "customer_first_name": {"required": "Please, insert a valid first name."},
+            "customer_last_name": {"required": "Please, insert a valid last name."},
+            "customer_email": {"required": "Please, insert a valid e-mail address."},
         }
 
         widgets = {
-            "first_name": forms.TextInput(
+            "customer_first_name": forms.TextInput(
                 attrs={
                     "class": "form-control",
                     "autofocus": True,
@@ -34,7 +34,7 @@ class PurchaseForm(forms.ModelForm):
                     "required": True,
                 }
             ),
-            "last_name": forms.TextInput(
+            "customer_last_name": forms.TextInput(
                 attrs={
                     "class": "form-control",
                     "autocomplete": True,
@@ -42,7 +42,7 @@ class PurchaseForm(forms.ModelForm):
                     "required": True,
                 }
             ),
-            "email": forms.EmailInput(
+            "customer_email": forms.EmailInput(
                 attrs={
                     "class": "form-control",
                     "autocomplete": True,
@@ -56,7 +56,7 @@ class PurchaseForm(forms.ModelForm):
         email_in_form = self.cleaned_data.get("email")
         email_in_user_db = get_user_model().objects.filter(email__iexact=email_in_form)
         email_in_token_db = CreateManagerToken.objects.filter(
-            email__iexact=email_in_form
+            customer_email__iexact=email_in_form
         )
         if email_in_user_db.exists():
             raise ValidationError(

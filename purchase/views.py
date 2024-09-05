@@ -24,19 +24,19 @@ def purchase_create(request):
     form = PurchaseForm(data=request.POST)
 
     if form.is_valid():
-        customer_email = form.cleaned_data["email"]
-        customer_first_name = form.cleaned_data["first_name"]
-        customer_last_name = form.cleaned_data["last_name"]
+        customer_email = form.cleaned_data["customer_email"]
+        customer_first_name = form.cleaned_data["customer_first_name"]
+        customer_last_name = form.cleaned_data["customer_last_name"]
         customer_group = Group.objects.get(name__iexact="manager")
         # Set up a new token.
         crypted_token = get_random_string(length=32)
         expires_at = timezone.now() + timedelta(days=7)
         # Create a token object in db.
         CreateManagerToken.objects.create(
-            first_name=customer_first_name,
-            last_name=customer_last_name,
-            email=customer_email,
-            group=customer_group,
+            customer_first_name=customer_first_name,
+            customer_last_name=customer_last_name,
+            customer_email=customer_email,
+            customer_group=customer_group,
             token=crypted_token,
             expires_at=expires_at,
         )
