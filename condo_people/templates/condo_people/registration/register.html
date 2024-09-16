@@ -12,7 +12,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="window.location.href = '{% url "prelogin:home" %}'"></button>
       </div>
       <div class="modal-body p-5 pt-0">
-        <p>Please, insert or edit your personal information in order to register:</p>
+        <p>Please, insert your personal information in order to register:</p>
         <form name="register_form" autocomplete="on" action="{% url "condo_people:register_create" %}" method="POST">
           {% csrf_token %}
           <div class="form-floating mb-3">
