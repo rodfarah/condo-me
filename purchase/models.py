@@ -14,8 +14,8 @@ class RegistrationToken(models.Model):
     not_used_yet = models.BooleanField(default=True)
 
     def is_valid(self):
-        expiration_validation = self.expires_at > timezone.now()
-        return self.not_used_yet and expiration_validation
+        expiration_validation_is_ok = self.expires_at > timezone.now()
+        return self.not_used_yet and expiration_validation_is_ok
 
     def __str__(self):
         return f"Token created for {self.register_group} {self.register_email}"

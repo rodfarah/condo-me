@@ -29,7 +29,6 @@
         <div class="modal-body p-5 pt-0">
         <form name="login_form" autocomplete="off" action="{% url "condo_people:login_create" %}" method="POST" autocomplete="on">
           {% csrf_token %}
-          <input type="hidden" value="csrfmiddlewaretoken">
           <div class="form-floating mb-3">
             <input type="text" name="username" class="form-control rounded-3" id="floatingUsername" placeholder="username">
             <label for="floatingUsername">Username</label>

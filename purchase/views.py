@@ -18,6 +18,9 @@ def purchase_view(request):
 
 
 def purchase_create(request):
+    # Set days to expire
+    DAYS_TO_EXPIRE = 30
+
     if request.method != "POST":
         raise Http404()
 
@@ -30,7 +33,7 @@ def purchase_create(request):
         register_group = Group.objects.get(name__iexact="manager")
         # Set up a new token.
         crypted_token = get_random_string(length=32)
-        expires_at = timezone.now() + timedelta(days=7)
+        expires_at = timezone.now() + timedelta(days=DAYS_TO_EXPIRE)
         # Create a token object in db.
         RegistrationToken.objects.create(
             register_first_name=register_first_name,

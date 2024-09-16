@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
@@ -11,24 +11,39 @@ from .forms import LoginForm, RegisterForm
 
 
 def register_view(request, token):
-    # If there is no session, variable equals None ...
-    register_form_data = request.session.get("register_form_data", None)
-    # ...and form will be empty
-    form = RegisterForm(register_form_data)
-    # Clear session
-    if "register_form_data" in request.session:
-        del request.session["register_form_data"]
-    # Check for user details through token.
-    token_obj = RegistrationToken.objects.get(token__exact=token)
-    if token_obj.is_valid():
-        return render(
-            request,
-            "condo_people/registration/register.html",
-            context={
-                "form": form,
-                "token_obj": token_obj,
-            },
-        )
+    # Check if Token exists
+    try:
+        token_obj = RegistrationToken.objects.get(token=token)
+    except RegistrationToken.DoesNotExist:
+        # Remove sessions from cookies if token does not exist.
+        request.session.pop("register_form_data", None)
+        request.session.pop("token", None)
+        # Redirect user to invalid token template
+        return redirect(reverse("condo_people:invalid_token"))
+    else:
+        if token_obj.is_valid():
+            # If there is no session, variable equals None ...
+            register_form_data = request.session.get("register_form_data", None)
+            # ...and form will be empty
+            form = RegisterForm(register_form_data)
+            # Clear form data session
+            request.session.pop("register_form_data", None)
+            # Store token in session for later use.
+            request.session["token"] = token
+            return render(
+                request,
+                "condo_people/registration/register.html",
+                context={
+                    "form": form,
+                },
+            )
+        else:
+            # Remove sessions from cookies if token is not valid.
+            request.session.pop("register_form_data", None)
+            request.session.pop("token", None)
+
+            # Redirect user to invalid token template
+            return HttpResponse("Token does exist but is invalid")
 
 
 def register_create(request):
@@ -42,20 +57,35 @@ def register_create(request):
         new_user = form.save(commit=False)
         new_user.set_password(form.cleaned_data["password1"])
         new_user.save()
+
+        # Assign token as 'used'.
+        email = form.cleaned_data["email"]
+        token = RegistrationToken.objects.get(register_email__iexact=email)
+        token.not_used_yet = False
+        token.save()
+
+        # set user to corresponding group (manager, caretaker or resident)
+        new_user_group = token.register_group
+        new_user.groups.add(new_user_group)
+
+        request.session.flush()
+        # Redirect user to login page.
         messages.success(request, "You are now registered, please log in.")
-        request.session.pop("register_form_data", None)
         return redirect("condo_people:login")
     else:
         request.session["register_form_data"] = request.POST
         return redirect(
-            reverse("condo_people:register", args=[request.POST["customer-token"]])
+            reverse(
+                "condo_people:register", kwargs={"token": request.session.get("token")}
+            )
         )
 
 
+def invalid_token(request):
+    return render(request, "condo_people/registration/invalid_token.html")
+
+
 def login_view(request):
-    # if user is already authenticated
-    # if request.user.is_authenticated:
-    #     return redirect(reverse("condo:home"))
     form = LoginForm()
     return render(
         request, "condo_people/registration/login.html", context={"form": form}
