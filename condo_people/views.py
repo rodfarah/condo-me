@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
 from django.http import Http404, HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -14,36 +15,30 @@ def register_view(request, token):
     # Check if Token exists
     try:
         token_obj = RegistrationToken.objects.get(token=token)
-    except RegistrationToken.DoesNotExist:
-        # Remove sessions from cookies if token does not exist.
+        if not token_obj.is_valid():
+            raise ValidationError("Invalid Token.")
+    except (RegistrationToken.DoesNotExist, ValidationError):
+        # Remove sessions from cookies if token does not exist or invalid.
         request.session.pop("register_form_data", None)
         request.session.pop("token", None)
         # Redirect user to invalid token template
         return redirect(reverse("condo_people:invalid_token"))
     else:
-        if token_obj.is_valid():
-            # If there is no session, variable equals None ...
-            register_form_data = request.session.get("register_form_data", None)
-            # ...and form will be empty
-            form = RegisterForm(register_form_data)
-            # Clear form data session
-            request.session.pop("register_form_data", None)
-            # Store token in session for later use.
-            request.session["token"] = token
-            return render(
-                request,
-                "condo_people/registration/register.html",
-                context={
-                    "form": form,
-                },
-            )
-        else:
-            # Remove sessions from cookies if token is not valid.
-            request.session.pop("register_form_data", None)
-            request.session.pop("token", None)
-
-            # Redirect user to invalid token template
-            return HttpResponse("Token does exist but is invalid")
+        # If there is no session, variable equals None ...
+        register_form_data = request.session.get("register_form_data", None)
+        # ...and form will be empty
+        form = RegisterForm(register_form_data)
+        # Clear form data session
+        request.session.pop("register_form_data", None)
+        # Store token in session for later use.
+        request.session["token"] = token
+        return render(
+            request,
+            "condo_people/registration/register.html",
+            context={
+                "form": form,
+            },
+        )
 
 
 def register_create(request):
