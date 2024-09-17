@@ -4,12 +4,17 @@ from django.shortcuts import render
 
 @login_required(redirect_field_name="redirect_to", login_url="/condo_people/login")
 def home(request):
-    return render(request=request, template_name="condo/pages/home.html")
+    return render(request, template_name="condo/pages/home.html")
+
+
+@login_required(redirect_field_name="redirect_to", login_url="/condo_people/login")
+def condominium_setup(request):
+    return render(request, template_name="condo/pages/condominium_setup.html")
 
 
 @login_required(redirect_field_name="redirect_to", login_url="/condo_people/login")
 def condominium(request):
-    return render(request=request, template_name="condo/pages/condominium.html")
+    return render(request, template_name="condo/pages/condominium.html")
 
 
 @login_required(redirect_field_name="redirect_to", login_url="/condo_people/login")
