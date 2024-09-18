@@ -22,53 +22,64 @@
         <path d="M4 2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zM4 5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM7.5 5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM4.5 8a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z"/>
         <path d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1zm11 0H3v14h3v-2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5V15h3z"/>
     </symbol>
+    <symbol id="dice" viewBox="0 0 16 16">
+        <path d="M13 1a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2zM3 0a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V3a3 3 0 0 0-3-3z"/>
+        <path d="M5.5 4a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m8 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0 8a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-8 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m4-4a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+    </symbol>
   </svg>
 <div class="d-flex flex-nowrap">
     <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 280px;">
-        <div class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+        <a href="{% url "condo:setup_area" %}" class="nav-link">
         <svg class="bi pe-none me-2" width="40" height="32"><use xlink:href="#buildings"></use></svg>
-        <span class="fs-4">Condominium Setup</span>
-        </div>
+        <span class="fs-4">Setup Area</span>
+        </a>
         <hr>
         <ul class="nav nav-pills flex-column mb-auto">
             <li>
                 <a href="#" class="nav-link">
             <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#buildings"></use></svg>
             Condominium
-        </a>
-    </li>
-    <li>
-        <a href="#" class="nav-link">
-            <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#blocks"></use></svg>
-            Blocks
-        </a>
-    </li>
-        <li>
-            <a href="#" class="nav-link">
-                <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#apartments"></use></svg>
-                Apartments
-            </a>
-        </li>
-        <li>
-            <a href="#" class="nav-link">
-                <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"></use></svg>
-                Residents
-            </a>
-        </li>
-        <hr>
-        <li class="nav-item">
-            <a href="#" class="nav-link" aria-current="page">
-            <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
-            Reports
-            </a>
-        </li>
-        <hr>
-        <li class="nav-item">
-            <a href="{% url "condo:home" %}" class="nav-link" aria-current="page">
-            <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
-            Exit Setup
-            </a>
-        </li>
+                  </a>
+             </li>
+            <li>
+                <a href="#" class="nav-link">
+                    <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#blocks"></use></svg>
+                    Blocks
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link">
+                    <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#apartments"></use></svg>
+                    Apartments
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link">
+                    <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#dice"></use></svg>
+                    Common Areas
+                </a>
+            </li>
+            <hr>
+            <li>
+                <a href="#" class="nav-link">
+                    <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"></use></svg>
+                    Residents
+                </a>
+            </li>
+            <hr>
+            <li class="nav-item">
+                <a href="#" class="nav-link" aria-current="page">
+                <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
+                Reports
+                </a>
+            </li>
+            <hr>
+            <li class="nav-item">
+                <a href="{% url "condo:home" %}" class="nav-link" aria-current="page">
+                <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
+                Exit Setup
+                </a>
+            </li>
         </ul>
         <hr>
         <div class="dropdown">
@@ -81,7 +92,14 @@
             <li><a class="dropdown-item" href="#">Settings</a></li>
             <li><a class="dropdown-item" href="#">Profile</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Sign out</a></li>
+            <li>
+                <form action="{% url "condo_people:logout" %}" method="POST" class="dropdown-item" name="logout">
+                    {% csrf_token %}
+                    <input type="hidden" name="username" value={{ request.user.username }}>
+                    <input type="hidden" name="csrfmiddlewaretoken" value={{ csrf_token }}>
+                    <button type="submit" class="dropdown-item logout-button">Logout</button>
+                  </form>
+            </li>
         </ul>
     </div>
 </div>
