@@ -6,7 +6,7 @@ app_name = "condo"
 
 urlpatterns = [
     path("", views.home, name="home"),
-    # path("setup-area/condominium", views.setup_condominium, name="setup_condominium"),
+    path("setup-area/condominium", views.setup_condominium, name="setup_condominium"),
     # path("setup-area/blocks", views.setup_blocks, name="setup_blocks"),
     # path("setup-area/apartments", views.setup_apartments, name="setup_apartments"),
     # path(

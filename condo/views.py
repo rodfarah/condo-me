@@ -23,6 +23,14 @@ def setup_area(request):
 
 
 @login_required(redirect_field_name="redirect_to", login_url="/condo_people/login")
+@manager_group_required
+def setup_condominium(request):
+    return render(
+        request, template_name="condo/pages/setup_pages/setup_condominium.html"
+    )
+
+
+@login_required(redirect_field_name="redirect_to", login_url="/condo_people/login")
 def home(request):
     return render(request, template_name="condo/pages/home.html")
 
