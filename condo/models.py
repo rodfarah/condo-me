@@ -15,11 +15,11 @@ class Condominium(models.Model):
             )
         ],
         unique=True,
+        blank=False,
+        null=True,
     )
-    street = models.CharField(max_length=150)
-    number = models.CharField(max_length=10)
-    complement = models.CharField(max_length=100, blank=True, null=True)
-    neighborwood = models.CharField(max_length=100)
+    address1 = models.CharField(max_length=150)
+    address2 = models.CharField(max_length=150, default="")
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=30)
     country = CountryField()
@@ -27,7 +27,7 @@ class Condominium(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     description = models.TextField(help_text="Write details about your condominium.")
-    image = models.ImageField(upload_to="condo_me/condominiums/%Y/%m/%d/", blank=True)
+    cover = models.ImageField(upload_to="condo_me/condominiums/%Y/%m/%d/", blank=True)
 
     def __str__(self) -> str:
         return self.name
@@ -136,7 +136,7 @@ class CommonArea(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    image = models.ImageField(
+    cover = models.ImageField(
         upload_to="condo_me/common_areas/%Y/%m/%d/", blank=True, null=True
     )
 

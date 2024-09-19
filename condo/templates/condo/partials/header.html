@@ -95,7 +95,6 @@
                   <form action="{% url "condo_people:logout" %}" method="POST" class="dropdown-item" name="logout">
                     {% csrf_token %}
                     <input type="hidden" name="username" value={{ request.user.username }}>
-                    <input type="hidden" name="csrfmiddlewaretoken" value={{ csrf_token }}>
                     <button type="submit" class="logout-button">Logout</button>
                   </form>
                 </li>

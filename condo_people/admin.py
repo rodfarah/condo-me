@@ -25,7 +25,7 @@ class UserAdmin(admin.ModelAdmin):
         "date_joined",
         "is_active",
         "last_login",
-        "image",
+        "cover",
     ]
 
     # customized method in order to show groups on list display

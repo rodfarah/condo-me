@@ -24,7 +24,7 @@ class User(AbstractUser):
         blank=True,
         related_name="residents",
     )
-    image = models.ImageField(upload_to="condo_me/condominiums/%Y/%m/%d/", blank=True)
+    cover = models.ImageField(upload_to="condo_me/condominiums/%Y/%m/%d/", blank=True)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"

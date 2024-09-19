@@ -2,6 +2,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import Http404
 from django.shortcuts import render
 
+from .forms import CondoSetupForm
+
 
 def manager_group_required(view_func):
     """
@@ -25,8 +27,11 @@ def setup_area(request):
 @login_required(redirect_field_name="redirect_to", login_url="/condo_people/login")
 @manager_group_required
 def setup_condominium(request):
+    form = CondoSetupForm()
     return render(
-        request, template_name="condo/pages/setup_pages/setup_condominium.html"
+        request,
+        template_name="condo/pages/setup_pages/setup_condominium.html",
+        context={"form": form},
     )
 
 
