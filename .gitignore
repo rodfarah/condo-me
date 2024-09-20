@@ -9,7 +9,6 @@ pyproject.toml
 *.pyc
 __pycache__
 db.sqlite3
-media
 /bin/
 # Backup files #
 *.bak
