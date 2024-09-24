@@ -2,7 +2,11 @@
     <h2 class="pb-2 border-bottom">Welcome {{ user.first_name }}!</h2>
     <div class="row row-cols-1 row-cols-lg-3 align-items-stretch g-4 py-5">
       <div class="col">
-        <div class="card card-cover squared-card h-100 overflow-hidden text-bg-secondary rounded-4 shadow-lg" style="background-image: url('/media/condo_me/condominiums/2024/07/22/pamplona.jpg');">
+        {% if condo_cover %}
+          <div class="card card-cover squared-card h-100 overflow-hidden text-bg-secondary rounded-4 shadow-lg" style="background-image: url('/media/{{ condo_cover }}');">
+        {% else %}
+          <div class="card card-cover squared-card h-100 overflow-hidden text-bg-secondary rounded-4 shadow-lg" style="background-image: url('/media/condo_me/covers/condo_friends_hp.jpg');">
+        {% endif %}
           <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
             {% if is_manager %}
               <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold text-shadow-1">Set up your condominium</h3>
