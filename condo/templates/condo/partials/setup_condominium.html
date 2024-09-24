@@ -16,7 +16,7 @@
         <div class="row g-3">
           
           <div class="col-12">
-            <label for="{{ form.name.id_for_label }}" >{{form.name.label}}<span class="text-body-danger">(Required)</span></label>
+            <label for="{{ form.name.id_for_label }}" >{{form.name.label}}<span class="text-danger"> (Required)</span></label>
             <div class="input-group">
               {{ form.name }}
               {% if form.name.errors %}
@@ -40,7 +40,7 @@
           </div>
 
           <div class="col-12">
-            <label for="{{ form.cnpj.id_for_label }}">{{form.cnpj.label}}<span class="text-body-danger">(Required)</span></label>
+            <label for="{{ form.cnpj.id_for_label }}">{{form.cnpj.label}}<span class="text-danger"> (Required)</span></label>
             <div class="input-group">
               {{ form.cnpj }}
               {% if form.cnpj.errors %}
@@ -93,12 +93,8 @@
           
           <div class="col-md-5">
             <label for="{{ form.country.id_for_label }}">{{ form.country.label }}</label>
+            <br>
             {{ form.country }}
-            {% comment %} <select class="form-select" id="country" name="{{ form.country.name }}">
-              <option value="">Choose...</option>
-              <option value="BR">Brazil</option>
-              <option value="US">United States</option>
-            </select> {% endcomment %}
             {% if form.country.errors %}
               <div class="text-danger">
                 <small>{{ form.country.errors }}</small>
