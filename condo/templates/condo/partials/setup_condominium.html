@@ -93,10 +93,10 @@
           
           <div class="col-md-5">
             <label for="{{ form.country.id_for_label }}">{{ form.country.label }}<span class="text-body-secondary">(Optional)</span></label>
-            <select class="form-select" id="country" >
+            <select class="form-select" id="country" name="{{ form.country.name }}">
               <option value="">Choose...</option>
-              <option>Brazil</option>
-              <option>United States</option>
+              <option value="BR">Brazil</option>
+              <option value="US">United States</option>
             </select>
             {% if form.country.errors %}
               <div class="text-danger">
