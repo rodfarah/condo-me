@@ -1,15 +1,20 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django_countries import countries
 
 from .models import Condominium
 
 
 class CondoSetupForm(forms.ModelForm):
+
+    country = forms.ChoiceField(choices=countries)
+
     class Meta:
         model = Condominium
 
         fields = [
             "name",
+            "description",
             "cnpj",
             "address1",
             "address2",
@@ -17,7 +22,6 @@ class CondoSetupForm(forms.ModelForm):
             "state",
             "country",
             "postal_code",
-            "description",
             "cover",
         ]
 
@@ -57,6 +61,7 @@ class CondoSetupForm(forms.ModelForm):
             ),
             "cnpj": forms.TextInput(
                 attrs={
+                    "placeholder": "XX.XXX.XXX/XXXX-XX",
                     "class": "form-control",
                     "autocomplete": "on",
                     "id": "cnpj",
@@ -90,7 +95,7 @@ class CondoSetupForm(forms.ModelForm):
                     "id": "state",
                 }
             ),
-            "country": forms.TextInput(
+            "country": forms.Select(
                 attrs={
                     "class": "form-control",
                     "autocomplete": "on",

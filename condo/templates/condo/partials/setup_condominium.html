@@ -16,7 +16,7 @@
         <div class="row g-3">
           
           <div class="col-12">
-            <label for="{{ form.name.id_for_label }}" >{{form.name.label}}</label>
+            <label for="{{ form.name.id_for_label }}" >{{form.name.label}}<span class="text-body-danger">(Required)</span></label>
             <div class="input-group">
               {{ form.name }}
               {% if form.name.errors %}
@@ -28,7 +28,7 @@
           </div>
 
           <div class="col-12">
-            <label for="{{ form.description.id_for_label }}">{{form.description.label}}<span class="text-body-secondary">(Optional)</span></label>
+            <label for="{{ form.description.id_for_label }}">{{form.description.label}}</label>
             <div class="input-group">
               {{ form.description }}
               {% if form.description.errors %}
@@ -40,7 +40,7 @@
           </div>
 
           <div class="col-12">
-            <label for="{{ form.cnpj.id_for_label }}">{{form.cnpj.label}}</label>
+            <label for="{{ form.cnpj.id_for_label }}">{{form.cnpj.label}}<span class="text-body-danger">(Required)</span></label>
             <div class="input-group">
               {{ form.cnpj }}
               {% if form.cnpj.errors %}
@@ -52,7 +52,7 @@
           </div>
 
           <div class="col-12">
-            <label for="{{ form.address1.id_for_label }}">{{form.address1.label}}<span class="text-body-secondary">(Optional)</span></label>
+            <label for="{{ form.address1.id_for_label }}">{{form.address1.label}}</label>
             {{ form.address1 }}
             {% if form.address1.errors %}
               <div class="text-danger">
@@ -62,7 +62,7 @@
           </div>
 
           <div class="col-12">
-            <label for="{{ form.address2.id_for_label }}">{{ form.address2.label }}<span class="text-body-secondary">(Optional)</span></label>
+            <label for="{{ form.address2.id_for_label }}">{{ form.address2.label }}</label>
             {{ form.address2 }}
             {% if form.address2.errors %}
               <div class="text-danger">
@@ -72,7 +72,7 @@
           </div>
 
           <div class="col-12">
-            <label for="{{ form.city.id_for_label }}">{{ form.city.label }}<span class="text-body-secondary">(Optional)</span></label>
+            <label for="{{ form.city.id_for_label }}">{{ form.city.label }}</label>
             {{ form.city }}
             {% if form.city.errors %}
               <div class="text-danger">
@@ -82,7 +82,7 @@
           </div>
 
           <div class="col-12">
-            <label for="{{ form.state.id_for_label }}">{{ form.state.label }}<span class="text-body-secondary">(Optional)</span></label>
+            <label for="{{ form.state.id_for_label }}">{{ form.state.label }}</label>
             {{ form.state }}
             {% if form.state.errors %}
               <div class="text-danger">
@@ -92,12 +92,13 @@
           </div>
           
           <div class="col-md-5">
-            <label for="{{ form.country.id_for_label }}">{{ form.country.label }}<span class="text-body-secondary">(Optional)</span></label>
-            <select class="form-select" id="country" name="{{ form.country.name }}">
+            <label for="{{ form.country.id_for_label }}">{{ form.country.label }}</label>
+            {{ form.country }}
+            {% comment %} <select class="form-select" id="country" name="{{ form.country.name }}">
               <option value="">Choose...</option>
               <option value="BR">Brazil</option>
               <option value="US">United States</option>
-            </select>
+            </select> {% endcomment %}
             {% if form.country.errors %}
               <div class="text-danger">
                 <small>{{ form.country.errors }}</small>
@@ -106,7 +107,7 @@
           </div>
 
           <div class="col-12">
-            <label for="{{ form.postal_code.id_for_label }}">{{ form.postal_code.label }}<span class="text-body-secondary">(Optional)</span></label>
+            <label for="{{ form.postal_code.id_for_label }}">{{ form.postal_code.label }}</label>
             {{ form.postal_code }}
             {% if form.postal_code.errors %}
               <div class="text-danger">
@@ -116,7 +117,7 @@
           </div>
 
           <div class="col-6">
-            <label for="{{ form.cover.id_for_label }}">{{ form.cover.label }}<span class="text-body-secondary">(Optional)</span></label>
+            <label for="{{ form.cover.id_for_label }}">{{ form.cover.label }}</label>
             {{ form.cover }}
             {% if form.cover.errors %}
               <div class="text-danger">

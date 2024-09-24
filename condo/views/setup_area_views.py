@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import Http404, HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views import View
 
@@ -49,7 +49,11 @@ class SetupCondominiumView(SetupViewsWithDecors):
     template_name = "condo/pages/setup_pages/setup_condominium.html"
 
     def get(self, request):
-        form = CondoSetupForm()
+        # Send condominium data to form if condominium already exists
+        if request.user.condominium:
+            form = CondoSetupForm(instance=request.user.condominium)
+        else:
+            form = CondoSetupForm()
         return render(request, self.template_name, context={"form": form})
 
     def post(self, request):
