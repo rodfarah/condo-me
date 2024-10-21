@@ -91,7 +91,7 @@ class PurchaseForm(forms.ModelForm):
     def clean_register_email(self):
         register_email_in_form = self.cleaned_data.get("register_email")
 
-        # Check if form registration e-mail is already in User main database.
+        # Check if form registration e-mail is used by other User
         if (
             get_user_model()
             .objects.filter(email__iexact=register_email_in_form)
@@ -100,16 +100,6 @@ class PurchaseForm(forms.ModelForm):
             raise ValidationError(
                 "This e-mail address has been already used by other user. Please, choose "
                 "a different one.",
-                code="invalid",
-            )
-
-        # Check if form registration e-mail was already used before to ask for a token.
-        if RegistrationToken.objects.filter(
-            register_email__exact=register_email_in_form
-        ).exists():
-            raise ValidationError(
-                "You have already sent a registration link to your email "
-                "address. Please, contact us for further information.",
                 code="invalid",
             )
         return register_email_in_form
