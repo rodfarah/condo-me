@@ -15,9 +15,9 @@ from django.core.exceptions import ValidationError
 class RegisterForm(UserCreationForm):
     first_name = forms.CharField(max_length=150, required=True)
     last_name = forms.CharField(max_length=150, required=True)
-    email = forms.EmailField(required=True)
-
-    # Meta sends metadata from my model to Django
+    email = forms.EmailField(
+        required=True,
+    )
 
     class Meta:
         model = get_user_model()
@@ -33,8 +33,7 @@ class RegisterForm(UserCreationForm):
 
     def clean_email(self):
         email_in_form = self.cleaned_data.get("email")
-        email_in_db = get_user_model().objects.filter(email__exact=email_in_form)
-        if email_in_db.exists():
+        if get_user_model().objects.filter(email=email_in_form).exists():
             raise ValidationError(
                 "This e-mail address has been already used. Please, choose "
                 "a different one."
