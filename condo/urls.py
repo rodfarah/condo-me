@@ -7,14 +7,14 @@ app_name = "condo"
 urlpatterns = [
     path("", condo_base_views.home, name="home"),
     path(
-        "setup-area/condominium",
+        "setup-area/condominium/",
         setup_area_views.SetupCondominiumView.as_view(),
         name="setup_condominium",
     ),
-    # path("setup-area/blocks", views.setup_blocks, name="setup_blocks"),
-    # path("setup-area/apartments", views.setup_apartments, name="setup_apartments"),
+    # path("setup-area/blocks/", views.setup_blocks, name="setup_blocks"),
+    # path("setup-area/apartments/", views.setup_apartments, name="setup_apartments"),
     # path(
-    #     "setup-area/common-areas", views.setup_common_areas, name="setup_common_areas"
+    #     "setup-area/common-areas/", views.setup_common_areas, name="setup_common_areas"
     # ),
     path("setup-area/", setup_area_views.SetupAreaView.as_view(), name="setup_area"),
     path(
