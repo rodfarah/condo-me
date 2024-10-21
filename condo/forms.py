@@ -40,14 +40,13 @@ class CondoSetupForm(forms.ModelForm):
 
         error_messages = {
             "name": {"required": "Please, insert the condominium name."},
-            "cnpj": {"required": "Please, insert a valid CNPJ number."},
         }
 
         widgets = {
             "name": forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "autofocus": True,
+                    "autofocus": False,
                     "autocomplete": "on",
                     "id": "firstName",
                 }
@@ -116,19 +115,25 @@ class CondoSetupForm(forms.ModelForm):
 
     def clean_name(self):
         condo_name_in_form = self.cleaned_data.get("name")
-        # Check if condo name already exists in db
-        if Condominium.objects.filter(name=condo_name_in_form).exists():
+        instance = self.instance  # Current instance beeing edited
+
+        # Check if condo name already exists in db, excluding instance
+        if (
+            Condominium.objects.filter(name=condo_name_in_form)
+            .exclude(pk=instance.pk)
+            .exists()
+        ):
             raise ValidationError(
                 "Condominium name already exists. Please, choose a different one."
             )
         return condo_name_in_form
 
-    def clean_cnpj(self):
-        condo_cnpj_in_form = self.cleaned_data.get("cnpj")
+    # def clean_cnpj(self):
+    #     condo_cnpj_in_form = self.cleaned_data.get("cnpj")
 
-        # Check if CNPJ already exists in db
-        if Condominium.objects.filter(cnpj=condo_cnpj_in_form).exists():
-            raise ValidationError(
-                "This CNPJ already exists. Please, choose a different one."
-            )
-        return condo_cnpj_in_form
+    #     # Check if CNPJ already exists in db
+    #     if Condominium.objects.filter(cnpj=condo_cnpj_in_form).exists():
+    #         raise ValidationError(
+    #             "This CNPJ already exists. Please, choose a different one."
+    #         )
+    #     return condo_cnpj_in_form
