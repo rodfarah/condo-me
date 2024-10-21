@@ -1,6 +1,7 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.http import Http404, HttpResponse
-from django.shortcuts import render
+from django.core.exceptions import PermissionDenied
+from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views import View
 
@@ -10,22 +11,28 @@ from condo.forms import CondoSetupForm
 # Create a 'manager group required' decorator
 def manager_group_required(view_func):
     """
-    This decorator checks if user belongs to 'manager' group
+    This decorator checks if user belongs to 'manager' group.
+    Redirects to the login page if the user does not belong to this group
     """
 
     def check_group(user):
         if user.groups.filter(name="manager").exists():
             return True
-        raise Http404("You don't have manager permissions to access this page.")
+        raise PermissionDenied("You do not have the required permissions")
 
-    return user_passes_test(check_group)(view_func)
+    return user_passes_test(
+        test_func=check_group,
+        login_url="/condo_people/login",
+        redirect_field_name="redirect_to",
+    )(view_func)
 
 
-# Create a class that applies login_required and manager_group_required decoators
+# Create a class that applies login_required and manager_group_required decorators
 class SetupViewsWithDecors(View):
     """
-    This class is created in order to apply login_required and manager_group_required
-    to all setup areas CBVs avoiding DRY.
+    This class applies both login_required and manager_group_required
+    decorators to all setup area CBVs (following DRY principle).
+    Ensures that only logged-in users who belong to the 'manager' group can access these views.
     """
 
     @method_decorator(
@@ -34,8 +41,8 @@ class SetupViewsWithDecors(View):
         )
     )
     @method_decorator(manager_group_required)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
 
 class SetupAreaView(SetupViewsWithDecors):
@@ -49,21 +56,52 @@ class SetupCondominiumView(SetupViewsWithDecors):
     template_name = "condo/pages/setup_pages/setup_condominium.html"
 
     def get(self, request):
-        # Send condominium data to form if condominium already exists
-        if request.user.condominium:
-            form = CondoSetupForm(instance=request.user.condominium)
+        # Check if user is associated to a specific condominium
+        condominium = getattr(request.user, "condominium", None)
+        if condominium is None:
+            condo_exists = False
+            form = CondoSetupForm()  # empty form to be filled in by user
         else:
-            form = CondoSetupForm()
-        return render(request, self.template_name, context={"form": form})
+            # Send condominium data to form if condominium already exists
+            form = CondoSetupForm(instance=condominium)
+            condo_exists = True
+            # transform form as read only
+            for field in form.fields.values():
+                field.widget.attrs["readonly"] = True
+
+        return render(
+            request,
+            self.template_name,
+            context={"form": form, "condo_exists": condo_exists},
+        )
 
     def post(self, request):
-        form = CondoSetupForm(data=request.POST, files=request.FILES or None)
-        if form.is_valid():
-            condominium = form.save()
-            user = request.user
-            user.condominium = condominium
-            user.save()
-            return HttpResponse(
-                "Novo condomínio criado, verificar se foi atribuido ao user."
+        # check if user is alredy associated to a condominium
+        user_condominium = getattr(request.user, "condominium", None)
+
+        if user_condominium is None:
+            # then, user is posting a condominium for the first time
+            form = CondoSetupForm(data=request.POST, files=request.FILES or None)
+
+        else:
+            # user is editing some condominium fields
+            form = CondoSetupForm(
+                data=request.POST,
+                files=request.FILES or None,
+                instance=user_condominium,  # in order to keep unaltered fields
             )
-        return render(request, self.template_name, context={"form": form})
+        if form.is_valid():
+            new_condominium = form.save()
+            # Associates condominium to this specific user
+            request.user.condominium = new_condominium
+            request.user.save()
+            messages.success(
+                request,
+                "Condominium has been successfully created or edited.",
+            )
+            return redirect("condo:setup_condominium")
+        return render(
+            request,
+            self.template_name,
+            context={"form": form, "condo_exists": True},
+        )
