@@ -1,5 +1,5 @@
+from brutils import cnpj as cnpj_lib
 from django.core.exceptions import ValidationError
-from django.core.validators import RegexValidator
 from django.db import models
 from django_countries.fields import CountryField
 
@@ -8,12 +8,6 @@ class Condominium(models.Model):
     name = models.CharField(max_length=120, blank=False, null=False, unique=True)
     cnpj = models.CharField(
         max_length=18,
-        validators=[
-            RegexValidator(
-                regex=r"^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$",
-                message="CNPJ number mask must be XX.XXX.XXX/XXXX-XX",
-            )
-        ],
         unique=True,
         blank=False,
         null=True,
@@ -40,6 +34,25 @@ class Condominium(models.Model):
         for block in self.blocks.all():
             apartments_qty += block.num_of_apartments()
         return apartments_qty
+
+    # TODO:  CNPJ inválido não está sendo acusado.
+
+    def clean_cnpj(self):
+        # Remove symbols from cnpj data
+        cnpj_no_symbols = cnpj_lib.remove_symbols_cnpj(self.cnpj)
+
+        # validate ('None" if invalid) and format cnpj
+        formatted_cnpj = cnpj_lib.format_cnpj(cnpj_no_symbols)
+
+        if not formatted_cnpj:
+            raise ValidationError(
+                "Please, insert a 14 digits valid CNPJ, with or without symbols."
+            )
+        elif self.cnpj in self.objects.get(cnpj=self.cnpj):
+            raise ValidationError(
+                "This CNPJ is already used. Please, consider choosing a different one."
+            )
+        self.cnpj = formatted_cnpj
 
 
 class Block(models.Model):
