@@ -17,5 +17,21 @@
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
       crossorigin="anonymous"
     ></script>
+    <script>
+      function enableField(fieldId) {
+        var field = document.getElementById(fieldId);
+        field.removeAttribute("readonly");
+        field.removeAttribute("disabled");
+        field.focus();  // Foca no campo editável
+    }
+    
+    document.getElementById("editButton").onclick = function() {
+        enableField("nameField");
+        enableField("otherField");
+    };
+    
+        </script>
+    
+
   </body>
 </html>
