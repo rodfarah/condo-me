@@ -53,9 +53,9 @@ def register_create(request):
         new_user.set_password(form.cleaned_data["password1"])
         new_user.save()
 
-        # Assign token as 'used'.
-        email = form.cleaned_data["email"]
-        token = RegistrationToken.objects.get(register_email__iexact=email)
+        # Assign token as 'used'
+        token = request.session["token"]
+        token = RegistrationToken.objects.get(token__iexact=token)
         token.not_used_yet = False
         token.save()
 
