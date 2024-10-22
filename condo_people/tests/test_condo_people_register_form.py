@@ -1,9 +1,31 @@
-from django.test import TestCase
+from django.urls import reverse
 
-from condo_people.forms import RegisterForm
+from .base_test_condo_people import CondoPeopleTestBase, TokenTestBase
 
 
-class AuthorRegisterFormUnitTest(TestCase):
-    def test_first_name_placeholder_is_correct(self):
-        """Tests if a placeholder is correctly rendered in the template"""
-        pass
+class UserRegisterFormUnitTest(CondoPeopleTestBase, TokenTestBase):
+    def test_email_already_used_raises_validation_error(self):
+        # create test user (elliot@smith.com)
+        self.create_test_user()
+        form_data = {
+            "first_name": "Johanna",
+            "last_name": "Warren",
+            # e-mail already in use by other user
+            "email": "elliot@smith.com",
+            "username": "johannawarren",
+            "password1": "wefell",
+            "password2": "wefell",
+            "is_active": True,
+        }
+        register_token = self.create_test_token()
+        session = self.client.session
+        session["token"] = register_token.token
+        session.save()
+
+        response = self.client.post(
+            path=reverse("condo_people:register_create"), data=form_data
+        )
+        self.assertIn(
+            response.content.decode("utf-8"),
+            "This e-mail address has been already used. Please, choose a different one.",
+        )
