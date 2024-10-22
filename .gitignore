@@ -124,3 +124,8 @@ static/
 fast_tries.py
 .ruff_cache
 base_texts.txt
+media/condo_me/common_areas
+media/condo_me/condominiums
+media/condo_me/users
+
+
