@@ -49,7 +49,12 @@ class SetupAreaView(SetupViewsWithDecors):
     template_name = "condo/pages/setup_pages/setup_area.html"
 
     def get(self, request):
-        return render(request, self.template_name)
+        print(request.user.condominium.cover.name)
+        return render(
+            request,
+            self.template_name,
+            context={"condo_cover": request.user.condominium.cover.name},
+        )
 
 
 class SetupCondominiumView(SetupViewsWithDecors):

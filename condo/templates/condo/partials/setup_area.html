@@ -11,7 +11,11 @@
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 g-3">
       <div class="col">
         <div class="card shadow-sm">
-          <img src="/media/condo_me/covers/setup_condominium.jpg" class="bd-placeholder-img card-img-top" width="100%" height="225" style="object-fit: cover;"></img>
+          {% if condo_cover %}
+            <img src="/media/{{ condo_cover }}" class="bd-placeholder-img card-img-top" width="100%" height="225" style="object-fit: cover;"></img>
+          {% else %}
+            <img src="/media/condo_me/covers/setup_condominium.jpg" class="bd-placeholder-img card-img-top" width="100%" height="225" style="object-fit: cover;"></img>
+          {% endif %}
           <div class="card-body">
             <p class="card-text text-center"><strong>Condominium</strong></p>
             <div class="d-flex justify-content-center align-items-center">
