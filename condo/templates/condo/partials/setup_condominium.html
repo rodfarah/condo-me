@@ -37,129 +37,147 @@
             <label for="{{ form.name.id_for_label }}" >{{form.name.label}}</label>
             <div class="input-group">
               {{ form.name }}
+            </div>
               {% if form.name.errors %}
               <div class="text-danger">
                 <small>{{ form.name.errors }}</small>
               </div>
               {% elif condo_exists %}
-              <a class="btn btn-warning" href="#" role="button" onclick="enableField('firstName')">Edit</a>
-            {% endif %}
-            </div>
+                <div class="mt-1">
+                  <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('firstName')">Edit</a>
+                </div>
+              {% endif %}
           </div>
 
           <div class="col-12">
             <label for="{{ form.description.id_for_label }}">{{form.description.label}}</label>
             <div class="input-group">
               {{ form.description }}
+            </div>
               {% if form.description.errors %}
               <div class="text-danger">
                 <small>{{ form.description.errors }}</small>
               </div>
               {% elif condo_exists %}
-              <a class="btn btn-warning" href="#" role="button" onclick="enableField('description')">Edit</a>
-            {% endif %}
-            </div>
+                <div class="mt-1">
+                  <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('description')">Edit</a>
+                </div>
+              {% endif %}
           </div>
 
           <div class="col-12">
             <label for="{{ form.cnpj.id_for_label }}">{{form.cnpj.label}}</label>
             <div class="input-group">
               {{ form.cnpj }}
+            </div>
               {% if form.cnpj.errors %}
               <div class="text-danger">
                 <small>{{ form.cnpj.errors }}</small>
               </div>
               {% elif condo_exists %}
-              <a class="btn btn-warning" href="#" role="button" onclick="enableField('cnpj')">Edit</a>
-            {% endif %}
-            </div>
+                <div class="mt-1">
+                  <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('cnpj')">Edit</a>
+                </div>
+              {% endif %}
           </div>
 
           <div class="col-12">
             <label for="{{ form.address1.id_for_label }}">{{form.address1.label}}</label>
             <div class="input-group">
             {{ form.address1 }}
+            </div>
             {% if form.address1.errors %}
               <div class="text-danger">
                 <small>{{ form.address1.errors }}</small>
               </div>
             {% elif condo_exists %}
-              <a class="btn btn-warning" href="#" role="button" onclick="enableField('address1')">Edit</a>
-            {% endif %}
+              <div class="mt-1">
+                  <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('address1')">Edit</a>
+              </div>
+              {% endif %}
           </div>
-        </div>
 
 
           <div class="col-12">
             <label for="{{ form.address2.id_for_label }}">{{ form.address2.label }}</label>
             <div class="input-group">
             {{ form.address2 }}
+            </div>
             {% if form.address2.errors %}
               <div class="text-danger">
                 <small>{{ form.address2.errors }}</small>
               </div>
             {% elif condo_exists %}
-              <a class="btn btn-warning" href="#" role="button" onclick="enableField('address2')">Edit</a>
-            {% endif %}
+              <div class="mt-1">
+                  <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('address2')">Edit</a>
+              </div>
+              {% endif %}
           </div>
-        </div>
 
           <div class="col-12">
             <label for="{{ form.city.id_for_label }}">{{ form.city.label }}</label>
             <div class="input-group">
             {{ form.city }}
+            </div>
             {% if form.city.errors %}
               <div class="text-danger">
                 <small>{{ form.city.errors }}</small>
               </div>
             {% elif condo_exists %}
-              <a class="btn btn-warning" href="#" role="button" onclick="enableField('city')">Edit</a>
-            {% endif %}
+              <div class="mt-1">
+                  <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('city')">Edit</a>
+              </div>
+              {% endif %}
           </div>
-        </div>
 
           <div class="col-12">
             <label for="{{ form.state.id_for_label }}">{{ form.state.label }}</label>
             <div class="input-group">
             {{ form.state }}
+            </div>
             {% if form.state.errors %}
               <div class="text-danger">
                 <small>{{ form.state.errors }}</small>
               </div>
             {% elif condo_exists %}
-              <a class="btn btn-warning" href="#" role="button" onclick="enableField('state')">Edit</a>
-            {% endif %}
+              <div class="mt-1">
+                  <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('state')">Edit</a>
+              </div>
+              {% endif %}
           </div>
-        </div>
           
           <div class="col-md-5">
             <label for="{{ form.country.id_for_label }}">{{ form.country.label }}</label>
             <div class="input-group">
             <br>
             {{ form.country }}
+            </div>
             {% if form.country.errors %}
               <div class="text-danger">
                 <small>{{ form.country.errors }}</small>
               </div>
             {% elif condo_exists %}
-              <a class="btn btn-warning" href="#" role="button" onclick="enableField('country')">Edit</a>
-            {% endif %}
+              <div class="mt-1">
+                  <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('country')">Edit</a>
+              </div>
+              {% endif %}
           </div>
-        </div>
 
           <div class="col-12">
             <label for="{{ form.postal_code.id_for_label }}">{{ form.postal_code.label }}</label>
             <div class="input-group">
             {{ form.postal_code }}
+            </div>
             {% if form.postal_code.errors %}
               <div class="text-danger">
                 <small>{{ form.postal_code.errors }}</small>
               </div>
             {% elif condo_exists %}
-              <a class="btn btn-warning" href="#" role="button" onclick="enableField('postal_code')">Edit</a>
-            {% endif %}
+              <div class="mt-1">
+                  <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('postal_code')">Edit</a>
+              </div>
+              {% endif %}
           </div>
-        </div>
 
           <div class="col-6">
             <label for="{{ form.cover.id_for_label }}">{{ form.cover.label }}</label>
@@ -170,12 +188,14 @@
                 <small>{{ form.cover.errors }}</small>
               </div>
             {% elif condo_exists %}
-              <a class="btn btn-warning" href="#" role="button" onclick="enableField('cover')">Edit</a>
+              <div class="mt-1">
+                  <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('cover')">Edit</a>
+              </div>
             </div>
 
             {% endif %}
           </div>
-        <button class="w-100 btn btn-warning btn-lg" id="editBotton" type="submit">Save</button>
+        <button class="w-100 btn btn-warning btn-sm btn-lg" id="editBotton" type="submit">Save</button>
       </form>
     </div>
   </div>
