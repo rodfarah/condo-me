@@ -1,11 +1,15 @@
-from django.test import TestCase
 from django.urls import reverse
 
+from .base_test_condo_people import TokenTestBase
 
-class CondoPeopleURLsTest(TestCase):
+
+class CondoPeopleURLsTest(TokenTestBase):
     def test_condo_people_register_url_is_correct(self):
-        url = reverse("condo_people:register")
-        self.assertEqual(url, "/condo_people/register/")
+        registration_token = self.create_test_token()
+        url = reverse(
+            "condo_people:register", kwargs={"token": registration_token.token}
+        )
+        self.assertEqual(url, f"/condo_people/register/{registration_token.token}")
 
     def test_condo_people_register_create_url_is_correct(self):
         url = reverse("condo_people:register_create")

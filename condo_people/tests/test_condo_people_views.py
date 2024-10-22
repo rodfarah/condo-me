@@ -4,17 +4,23 @@ from django.urls import resolve, reverse
 
 from condo_people import views
 
-from .base_test_condo_people import CondoPeopleTestBase
+from .base_test_condo_people import CondoPeopleTestBase, TokenTestBase
 
 
-class CondoPeopleViewsTest(CondoPeopleTestBase):
+class CondoPeopleViewsTest(TokenTestBase, CondoPeopleTestBase):
     # REGISTER VIEW TESTS
     def test_condo_people_register_view_function_is_correct(self):
-        view = resolve(reverse("condo_people:register"))
+        register_token = self.create_test_token()
+        view = resolve(
+            reverse("condo_people:register", kwargs={"token": register_token.token})
+        )
         self.assertIs(view.func, views.register_view)
 
     def test_condo_people_register_view_renders_correct_template(self):
-        response = self.client.get(reverse("condo_people:register"))
+        register_token = self.create_test_token()
+        response = self.client.get(
+            reverse("condo_people:register", kwargs={"token": register_token.token})
+        )
         self.assertTemplateUsed(response, "condo_people/registration/register.html")
 
     # REGISTER CREATE TESTS
@@ -37,6 +43,11 @@ class CondoPeopleViewsTest(CondoPeopleTestBase):
             "password1": "BetweenTheBars",
             "password2": "BetweenTheBars",
         }
+        register_token = self.create_test_token()
+        session = self.client.session
+        session["token"] = register_token.token
+        session.save()
+
         response = self.client.post(
             path=reverse("condo_people:register_create"), data=form_data
         )
@@ -59,11 +70,18 @@ class CondoPeopleViewsTest(CondoPeopleTestBase):
             # invalid data
             "password2": "",
         }
+        register_token = self.create_test_token()
+        session = self.client.session
+        session["token"] = register_token.token
+        session.save()
+
         response = self.client.post(
             path=reverse("condo_people:register_create"), data=form_data
         )
         self.assertRedirects(
-            response, reverse("condo_people:register"), status_code=302
+            response,
+            reverse("condo_people:register", kwargs={"token": session.get("token")}),
+            status_code=302,
         )
 
     # LOGIN VIEW TESTS
@@ -197,9 +215,7 @@ class CondoPeopleViewsTest(CondoPeopleTestBase):
         self.assertTemplateUsed(response, "condo_people/registration/login.html")
 
     def test_condo_people_logout_view_only_redirects_if_get_method(self):
-        # Create user in db
         self.create_test_user()
-        # login user
         self.login_test_user()
         # user tries to logout via GET method (instead of POST)
         # follow=True deals with multiple redirections
