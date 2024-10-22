@@ -40,11 +40,4 @@ class RegisterForm(UserCreationForm):
             )
         return email_in_form
 
-    def clean(self):
-        """Check if both passwords are equal in register form"""
-        cleaned_data = super().clean()
-        password1 = cleaned_data.get("password1")
-        password2 = cleaned_data.get("password2")
-        if password1 and password2 and (password1 != password2):
-            self.add_error(field="password2", error="The two passwords must match.")
-        return cleaned_data
+    # UserCreationForm already check if both passwords match!
