@@ -81,6 +81,8 @@ def invalid_token(request):
 
 
 def login_view(request):
+    if request.user.is_authenticated:
+        return redirect(reverse("condo:home"))
     form = LoginForm()
     return render(
         request, "condo_people/registration/login.html", context={"form": form}
