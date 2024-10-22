@@ -47,7 +47,7 @@
                   <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('firstName')">Edit</a>
                 </div>
               {% endif %}
-          </div>
+            </div>
 
           <div class="col-12">
             <label for="{{ form.description.id_for_label }}">{{form.description.label}}</label>
@@ -63,7 +63,7 @@
                   <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('description')">Edit</a>
                 </div>
               {% endif %}
-          </div>
+            </div>
 
           <div class="col-12">
             <label for="{{ form.cnpj.id_for_label }}">{{form.cnpj.label}}</label>
@@ -181,20 +181,18 @@
 
           <div class="col-6">
             <label for="{{ form.cover.id_for_label }}">{{ form.cover.label }}</label>
-            <div class="input-group">
+            <div>
             {{ form.cover }}
             {% if form.cover.errors %}
               <div class="text-danger">
                 <small>{{ form.cover.errors }}</small>
               </div>
-            {% elif condo_exists %}
-              <div class="mt-1">
-                  <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('cover')">Edit</a>
-              </div>
+            
             </div>
 
             {% endif %}
           </div>
+        </div>
         <button class="w-100 btn btn-warning btn-sm btn-lg" id="editBotton" type="submit">Save</button>
       </form>
     </div>
