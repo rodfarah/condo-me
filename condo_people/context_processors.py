@@ -1,9 +1,6 @@
-from django.contrib.auth.models import Group
-
-
 def user_groups(request):
     """
-    Using booleans, this function checks which group a user belongs;
+    Using booleans, this function checks which group a user belongs to
     """
     if request.user.is_authenticated:
         is_manager = request.user.groups.filter(name="manager").exists()
