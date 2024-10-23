@@ -1,7 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ValidationError
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -16,8 +15,8 @@ def register_view(request, token):
     try:
         token_obj = RegistrationToken.objects.get(token=token)
         if not token_obj.is_valid():
-            raise ValidationError("Invalid Token.")
-    except (RegistrationToken.DoesNotExist, ValidationError):
+            return redirect(reverse("condo_people:invalid_token"))
+    except RegistrationToken.DoesNotExist:
         # Remove sessions from cookies if token does not exist or invalid.
         request.session.pop("register_form_data", None)
         request.session.pop("token", None)
@@ -125,7 +124,7 @@ def login_create(request):
     return render(request, "condo_people/registration/login.html", {"form": form})
 
 
-# login_url: where django will send user in case he/she is not logged in
+# login_url: to send user in case user is not logged in
 # redirect_field_name: /login/?redirect_to=/logout_view/ means that after log in,
 # django will send user to "logout_view".
 # @login_required(login_url="condo_people:login", redirect_field_name="redirect_to")
