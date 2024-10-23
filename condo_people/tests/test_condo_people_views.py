@@ -1,8 +1,12 @@
+from datetime import timedelta
+
 from django.contrib.auth import get_user_model
 from django.contrib.messages import get_messages
 from django.urls import resolve, reverse
+from django.utils import timezone
 
 from condo_people import views
+from purchase.models import RegistrationToken
 
 from .base_test_condo_people import CondoPeopleTestBase, TokenTestBase
 
@@ -22,6 +26,58 @@ class CondoPeopleViewsTest(TokenTestBase, CondoPeopleTestBase):
             reverse("condo_people:register", kwargs={"token": register_token.token})
         )
         self.assertTemplateUsed(response, "condo_people/registration/register.html")
+
+    def test_invalid_token_redirects_to_invalid_token_view(self):
+        # create a test token
+        register_token = self.create_test_token()
+        # get it from db
+        expired_token = RegistrationToken.objects.get(token=register_token.token)
+        # turn it to an "expired" token
+        expired_token.expires_at = timezone.now() - timedelta(2)
+        expired_token.save()
+        response = self.client.post(
+            path=reverse("condo_people:register", kwargs={"token": expired_token.token})
+        )
+        self.assertRedirects(
+            response=response, expected_url=reverse("condo_people:invalid_token")
+        )
+
+    def test_token_doesnt_exist_removes_session_itens_redirects_invalid_token_view(
+        self,
+    ):
+        form_data = {
+            "first_name": "Elliot",
+            "last_name": "Smith",
+            "email": "elliot@smith.com",
+            "username": "elliotsmith",
+            "password1": "BetweenTheBars",
+            "password2": "BetweenTheBars",
+        }
+
+        session = self.client.session
+        session["register_form_data"] = form_data
+        session["token"] = "testingAnything"
+        session.save()
+
+        # send an invalid token (does not exist) as kwarg
+        response = self.client.post(
+            reverse(
+                "condo_people:register",
+                kwargs={
+                    "token": session.get("token"),
+                },
+            )
+        )
+        self.assertRedirects(
+            response=response, expected_url=reverse("condo_people:invalid_token")
+        ),
+
+        # must reload session
+        session = self.client.session
+
+        # check if session data was removed
+        self.assertNotIn("register_form_data", session)
+        self.assertNotIn("token", session)
 
     # REGISTER CREATE TESTS
     def test_condo_people_register_create_view_function_is_correct(self):
