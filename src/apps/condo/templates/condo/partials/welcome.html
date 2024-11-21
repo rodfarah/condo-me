@@ -1,0 +1,72 @@
+{% load static %}
+
+<div class="container px-4 py-5" id="custom-cards">
+    <h2 class="pb-2 border-bottom">Welcome {{ user.first_name }}!</h2>
+    <div class="row row-cols-1 row-cols-lg-3 align-items-stretch g-4 py-5">
+      <div class="col">
+        {% if condo_cover %}
+          <div class="card card-cover squared-card h-100 overflow-hidden text-bg-secondary rounded-4 shadow-lg" style="background-image: url('/media/{{ condo_cover }}');">
+        {% else %}
+          <div class="card card-cover squared-card h-100 overflow-hidden text-bg-secondary rounded-4 shadow-lg" style="background-image: url({% static 'prelogin/media/covers/condo_friends_hp.jpg'%});">
+        {% endif %}
+          <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
+            {% if is_manager %}
+              <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold text-shadow-1">Set up your condominium</h3>
+            {% else %}
+              <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold text-shadow-1">Nice living at {{ user.condominium }}</h3>
+            {% endif %}
+            <ul class="d-flex list-unstyled mt-auto">
+              <li class="me-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-buildings" viewBox="0 0 16 16">
+                  <path d="M14.763.075A.5.5 0 0 1 15 .5v15a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5V14h-1v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V10a.5.5 0 0 1 .342-.474L6 7.64V4.5a.5.5 0 0 1 .276-.447l8-4a.5.5 0 0 1 .487.022M6 8.694 1 10.36V15h5zM7 15h2v-1.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5V15h2V1.309l-7 3.5z"/>
+                  <path d="M2 11h1v1H2zm2 0h1v1H4zm-2 2h1v1H2zm2 0h1v1H4zm4-4h1v1H8zm2 0h1v1h-1zm-2 2h1v1H8zm2 0h1v1h-1zm2-2h1v1h-1zm0 2h1v1h-1zM8 7h1v1H8zm2 0h1v1h-1zm2 0h1v1h-1zM8 5h1v1H8zm2 0h1v1h-1zm2 0h1v1h-1zm0-2h1v1h-1z"/>
+                </svg>
+              </li>
+              <li class="d-flex align-items-center me-3">
+                {% if is_manager %}
+                  <small><a class= "text-white"  href="{% url "apps.condo:setup_area" %}">Click here</a></small>
+                {% else %}
+                  <small><a class= "text-white"  href="{% url "apps.condo:condominium" %}">Click here</a></small>
+                {% endif %}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    <div class="col">
+      <div class="card card-cover squared-card h-100 overflow-hidden text-bg-secondary rounded-4 shadow-lg" style="background-image: url({% static '/condo/media/covers/swimming_pool_2.jpg' %});">
+        <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
+          <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold">Make a Reservation</h3>
+          <ul class="d-flex list-unstyled mt-auto">
+            <li class="me-auto">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-buildings" viewBox="0 0 16 16">
+                  <path d="M14.763.075A.5.5 0 0 1 15 .5v15a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5V14h-1v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V10a.5.5 0 0 1 .342-.474L6 7.64V4.5a.5.5 0 0 1 .276-.447l8-4a.5.5 0 0 1 .487.022M6 8.694 1 10.36V15h5zM7 15h2v-1.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5V15h2V1.309l-7 3.5z"/>
+                  <path d="M2 11h1v1H2zm2 0h1v1H4zm-2 2h1v1H2zm2 0h1v1H4zm4-4h1v1H8zm2 0h1v1h-1zm-2 2h1v1H8zm2 0h1v1h-1zm2-2h1v1h-1zm0 2h1v1h-1zM8 7h1v1H8zm2 0h1v1h-1zm2 0h1v1h-1zM8 5h1v1H8zm2 0h1v1h-1zm2 0h1v1h-1zm0-2h1v1h-1z"/>
+                </svg>                  </li>
+            <li class="d-flex align-items-center me-3">
+              <small><a class= "text-white"  href="#">Click here</a></small>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card card-cover squared-card h-100 overflow-hidden text-bg-secondary rounded-4 shadow-lg" style="background-image: url({% static '/condo/media/covers/scheddule.jpg' %});">
+        <div class="d-flex flex-column h-100 p-5 pb-3 text-shadow-1">
+          <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold">Manage your Reservations</h3>
+          <ul class="d-flex list-unstyled mt-auto">
+            <li class="me-auto">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-buildings" viewBox="0 0 16 16">
+                  <path d="M14.763.075A.5.5 0 0 1 15 .5v15a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5V14h-1v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V10a.5.5 0 0 1 .342-.474L6 7.64V4.5a.5.5 0 0 1 .276-.447l8-4a.5.5 0 0 1 .487.022M6 8.694 1 10.36V15h5zM7 15h2v-1.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5V15h2V1.309l-7 3.5z"/>
+                  <path d="M2 11h1v1H2zm2 0h1v1H4zm-2 2h1v1H2zm2 0h1v1H4zm4-4h1v1H8zm2 0h1v1h-1zm-2 2h1v1H8zm2 0h1v1h-1zm2-2h1v1h-1zm0 2h1v1h-1zM8 7h1v1H8zm2 0h1v1h-1zm2 0h1v1h-1zM8 5h1v1H8zm2 0h1v1h-1zm2 0h1v1h-1zm0-2h1v1h-1z"/>
+                </svg>
+            </li>
+            <li class="d-flex align-items-center me-3">
+              <small><a class= "text-white"  href="#">Click here</a></small>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

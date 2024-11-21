@@ -1,0 +1,31 @@
+services:
+  djangoapp:
+    container_name: djangoapp
+    build:
+      context: .
+      args: 
+        UID: 1000
+        GID: 1000
+    ports:
+      - 8000:8000
+    volumes: 
+      - ./src:/app/src
+      - ./data/web/static:/app/data/web/static/
+      - ./data/web/media:/app/data/web/media/
+    user: "django_user"
+    environment:
+      - DJANGO_SETTINGS_MODULE=project.settings
+      - PYTHONPATH=/app/src
+    env_file:
+      - ./.env
+    depends_on:
+      - psql
+    working_dir: /app/src
+    
+  psql:
+    container_name: psql
+    image: postgres:13-alpine
+    volumes:
+      - ./data/postgres/data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env

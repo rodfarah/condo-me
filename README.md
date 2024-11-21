@@ -1,7 +1,21 @@
 # condo-me
- "CondoMe" app facilitates organized, respectful use of common areas in condominiums. Admin-defined rules allow residents to schedule, reschedule, and cancel slots, ensuring transparency and fostering collective well-being.
+ "CondoMe" app facilitates organized, respectful use of common areas in condominiums. 
+ Admin-defined rules allow residents to schedule, reschedule, and cancel slots, ensuring 
+ transparency and fostering collective well-being.
 
-MIT License
+## Running the app
+- Create a ```.env``` filled with ```.env-example``` contents
+- Build docker image running ```make build```, or ```docker build -t condo_me_backend .```
+- Run ```make up``` to bring the stack up (or ```docker-compose up```)
+
+## Creating the super user
+- Run ```docker exec -it condo_me_backend python3 /app/src/manage.py createsuperuser```
+- Follow instructions on terminal
+
+## Stopping the service
+- Run ```make down``` or ```docker-compose down```
+
+## MIT License
 
 Copyright (c) 2024 Rodrigo Lagrotta Silva Farah
 

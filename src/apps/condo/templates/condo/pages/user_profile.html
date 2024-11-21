@@ -1,0 +1,98 @@
+{% extends "global/post_login_base.html" %}
+
+{% block title %}Profile |{% endblock title %}
+
+{% block content %}
+
+<div class="col-lg-8 mx-auto p-4 py-md-5">
+    <div class="container">
+      <h1 class="text-body-emphasis">Your Profile Details</h1>
+      <p class="fs-5 col-md-8">Quickly and easily view or edit your personal data</p>
+  
+      <hr class="col-3 col-md-2 mb-5">
+  
+      <div class="row g-5">
+        <div class="col-md-6">
+          <h2 class="text-body-emphasis">First Name</h2>
+          <p>[FIRST_NAME]</p>
+          {% comment %} <ul class="list-unstyled ps-0">
+          <li>
+              <a class="icon-link mb-1" href="https://github.com/twbs/examples/tree/main/icons-font" rel="noopener" target="_blank">
+                <svg class="bi" width="16" height="16"><use xlink:href="#arrow-right-circle"></use></svg>
+                Bootstrap npm starter
+              </a>
+            </li>
+          </ul> {% endcomment %}
+        </div>
+  
+        <div class="col-md-6">
+          <h2 class="text-body-emphasis">Last Name</h2>
+          <p>[LAST_NAME]</p>
+          {% comment %} <ul class="list-unstyled ps-0">
+            <li>
+              <a class="icon-link mb-1" href="/docs/5.3/getting-started/introduction/">
+                <svg class="bi" width="16" height="16"><use xlink:href="#arrow-right-circle"></use></svg>
+                Bootstrap quick start guide
+              </a>
+          </ul> {% endcomment %}
+        </div>
+      </div>
+
+      <hr class="col-3 col-md-2 mb-5">
+
+      <div class="row g-5">
+        <div class="col-md-6">
+          <h2 class="text-body-emphasis">Username</h2>
+          <p>[USERNAME]</p>
+          {% comment %} <ul class="list-unstyled ps-0">
+          <li>
+              <a class="icon-link mb-1" href="https://github.com/twbs/examples/tree/main/icons-font" rel="noopener" target="_blank">
+                <svg class="bi" width="16" height="16"><use xlink:href="#arrow-right-circle"></use></svg>
+                Bootstrap npm starter
+              </a>
+            </li>
+          </ul> {% endcomment %}
+        </div>
+  
+        <div class="col-md-6">
+          <h2 class="text-body-emphasis">E-mail address</h2>
+          <p>[EMAIL]</p>
+          {% comment %} <ul class="list-unstyled ps-0">
+            <li>
+              <a class="icon-link mb-1" href="/docs/5.3/getting-started/introduction/">
+                <svg class="bi" width="16" height="16"><use xlink:href="#arrow-right-circle"></use></svg>
+                Bootstrap quick start guide
+              </a>
+          </ul> {% endcomment %}
+        </div>
+      </div>
+      <hr class="col-3 col-md-2 mb-5">
+
+      <div class="row g-5">
+        <div class="col-md-6">
+          <h2 class="text-body-emphasis">Password</h2>
+          <ul class="list-unstyled ps-0">
+          <li>
+              <a class="icon-link mb-1" href="{% url "apps.condo_people:password_change" %}" rel="noopener" target="_blank">
+                Change
+              </a>
+            </li>
+          </ul>
+        </div>
+  
+        <div class="col-md-6">
+          <h2 class="text-body-emphasis">Profile Picture</h2>
+          <p>[PICTURE]</p>
+          <ul class="list-unstyled ps-0">
+            <li>
+                <a class="icon-link mb-1" href="#" rel="noopener" target="_blank">
+                  Change
+                </a>
+              </li>
+            </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock content %}

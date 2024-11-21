@@ -1,0 +1,59 @@
+{% load static %}
+
+<div class="container">
+    <hr class="featurette-divider">
+    <div class="row featurette">
+        <div class="col-md-7">
+          <h2 class="featurette-heading fw-normal lh-1">You picked it out carefully. <br><span class="text-body-secondary">You deserve to enjoy it.</span></br></h2>
+          <p class="lead">Enjoying the place you live to the fullest is what truly brings pleasure.</p>
+        </div>
+        <div class="col-md-5">
+            <img
+            src="{% static 'prelogin/media/covers/keys.jpg' %}"
+            class="d-block mx-lg-auto img-fluid"
+            alt="Keys on left hand, door on back"
+            width="500"
+            height="500"
+            loading="lazy"
+          />
+        </div>
+    </div>
+    <hr class="featurette-divider">
+    <div class="row featurette">
+        <div class="col-md-7 order-md-2">
+          <h2 class="featurette-heading fw-normal lh-1">The pleasure to share space. <br><span class="text-body-secondary">Not so easy to organize.</span></br></h2>
+          <p class="lead">Living in a community makes you feel like you belong. Your rights and duties are the same as everyone else's.</p>
+        </div>
+        <div class="col-md-5 order-md-1">
+            <img
+            src="{%static 'prelogin/media/covers/swimming_pool.jpg'%}"
+            class="d-block mx-lg-auto img-fluid"
+            alt="swimming pool with lines"
+            width="500"
+            height="500"
+            loading="lazy"
+          />
+        </div>
+      </div>
+    <hr class="featurette-divider">
+      <div class="row featurette">
+        <div class="col-md-7">
+          <h2 class="featurette-heading fw-normal lh-1">That is why CondoMe is here. <br><span class="text-body-secondary">You can count on it!</span></br></h2>
+          <p class="lead">CondoMe helps you enjoy your propertie in an organized, respectful, and pleasant way.</p>
+        </div>
+        <div class="col-md-5">
+            <img
+            src="{% static 'prelogin/media/covers/condo_friends_hp.jpg'%}"
+            class="d-block mx-lg-auto img-fluid"
+            alt="Friends front, buildings back"
+            width="700"
+            height="500"
+            loading="lazy"
+          />
+        </div>
+    </div>
+    <hr class="featurette-divider">
+    <div class="container row align-items-center">
+        <a href="{% url "apps.prelogin:pricing" %}" class="btn btn-warning btn-lg">Check Prices</a>
+      </div>
+</div>

@@ -3,7 +3,9 @@ name = "condo_me"
 version = "0.1.0"
 description = "CondoMe app facilitates organized, respectful use of common areas in condominiums. Admin-defined rules allow residents to schedule, reschedule, and cancel slots, ensuring transparency and fostering collective well-being."
 authors = ["Rodrigo Farah <digofarah@gmail.com>"]
-readme = "README.md"
+packages = [
+    { include = "src", from = "."}
+]
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -11,13 +13,11 @@ django = "^5.0.4"
 setuptools = "^69.5.1"
 wheel = "^0.43.0"
 pillow = "^10.3.0"
-python-dotenv = "^1.0.1"
 django-countries = "^7.6.1"
 django-stubs = "^5.0.2"
 debugpy = "^1.8.2"
 coverage = "^7.6.0"
 selenium = "^4.23.1"
-python-decouple = "^3.8"
 psycopg2-binary = "^2.9.9"
 brutils = "^2.2.0"
 
@@ -51,5 +51,5 @@ strict = true
 django_settings_module = "project.settings"
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=1.8"]
 build-backend = "poetry.core.masonry.api"
