@@ -11,6 +11,8 @@ services:
     ports:
       - 8000:8000
     volumes: 
+      - ./pyproject.toml:/app/pyproject.toml
+      - ./poetry.lock:/app/poetry.lock
       - ./src:/app/src
       - ./data/web/static:/app/data/web/static/
       - ./data/web/media:/app/data/web/media/
