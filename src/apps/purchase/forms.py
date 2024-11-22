@@ -10,7 +10,7 @@ class PurchaseForm(forms.ModelForm):
     register_email2 = forms.EmailField(
         max_length=200,
         required=True,
-        label="Confirm your email",
+        label="Confirm your e-mail",
         error_messages={"required": "Please, insert a valid e-mail address."},
         widget=forms.EmailInput(
             attrs={
