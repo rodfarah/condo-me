@@ -10,7 +10,7 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.10"
 django = "^5.0.4"
-setuptools = "^69.5.1"
+setuptools = "^70.0"
 wheel = "^0.43.0"
 pillow = "^10.3.0"
 django-countries = "^7.6.1"
