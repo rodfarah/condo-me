@@ -1,11 +1,13 @@
 services:
-  djangoapp:
-    container_name: djangoapp
+  condo_me_web:
+    container_name: condo_me_web_container
     build:
-      context: .
+      context: . # where Dockerfile is located
+      dockerfile: Dockerfile
       args: 
         UID: 1000
         GID: 1000
+    image: condo_me_web:latest
     ports:
       - 8000:8000
     volumes: 
@@ -15,7 +17,7 @@ services:
     user: "django_user"
     environment:
       - DJANGO_SETTINGS_MODULE=project.settings
-      - PYTHONPATH=/app/src
+      - PYTHONPATH=/app/src:/app
     env_file:
       - ./.env
     depends_on:
@@ -23,7 +25,7 @@ services:
     working_dir: /app/src
     
   psql:
-    container_name: psql
+    container_name: psql_container
     image: postgres:13-alpine
     volumes:
       - ./data/postgres/data:/var/lib/postgresql/data/
