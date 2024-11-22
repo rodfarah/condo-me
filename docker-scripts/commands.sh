@@ -32,7 +32,7 @@ poetry run python $APP_HOME/src/manage.py migrate --noinput
 log "✅ Database migrations completed."
 
 # Copy static files from temporary folder into final destiny
-log "Copying static files to final directory..."
+log "Copying temp_static files to final directory..."
 cp -r $TEMP_STATIC/* $APP_HOME/data/web/static/
 log "✅ Static files copied to '$APP_HOME/data/web/static'."
 
