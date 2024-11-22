@@ -25,6 +25,9 @@ RUN apt-get update && apt-get install -y \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
     && rm -rf /var/lib/apt/lists/*
 
+# Upgrade pip setuptools from security reasons
+RUN python3 -m pip install --upgrade pip setuptools
+
 # Install poetry via curl (may take a while...)
 RUN echo "Installing Poetry via curl, this may take a while..." \
     && sleep 2 \
@@ -49,8 +52,6 @@ RUN poetry config virtualenvs.create true \
 
 # Update PATH to use the project's virtual environment
 ENV PATH="$APP_HOME/.venv/bin:$PATH"
-
-RUN ls -la /app/.venv || echo "No virtual environment found"
 
 # Installing dependencies with Poetry, without creating a virtual environment
 RUN poetry install  --no-interaction --no-ansi
