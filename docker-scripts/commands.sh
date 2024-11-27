@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # shell will finish script execution if a command fails
 set -e
@@ -16,9 +16,9 @@ while ! nc -z $POSTGRES_HOST $POSTGRES_PORT; do
 done
 log "✅ PostgreSQL is available at $POSTGRES_HOST:$POSTGRES_PORT"
 
-# Create temporary directory for static files
-log "Creating temporary directory for static files..."
-mkdir -p $TEMP_STATIC
+# Activate virtual environment
+export VIRTUAL_ENV="/app/.venv"
+export PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Colect static files
 log "Running 'collectstatic' to gather static files..."
@@ -30,17 +30,6 @@ log "Applying database migrations..."
 poetry run python $APP_HOME/src/manage.py makemigrations --noinput
 poetry run python $APP_HOME/src/manage.py migrate --noinput
 log "✅ Database migrations completed."
-
-# Copy static files from temporary folder into final destiny
-log "Copying temp_static files to final directory..."
-cp -r $TEMP_STATIC/* $APP_HOME/data/web/static/
-log "✅ Static files copied to '$APP_HOME/data/web/static'."
-
-# # # Remove temporary static directory
-# log "Adjusting permissions and removing temporary directory..."
-# chmod -R 777 $TEMP_STATIC
-# rm -rf $TEMP_STATIC || echo "Failed to remove temp static directory"
-# log "✅ Temporary directory removed."
 
 # Inicia o servidor Django
 log "Starting Django development server..."

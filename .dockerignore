@@ -6,7 +6,6 @@
 *.egg-info
 *.sql.gz
 .cache
-.project
 .idea
 .pydevproject
 .idea/workspace.xml
@@ -17,8 +16,14 @@
 __pycache__
 dist
 docs
-env
 logs
 stats
 Dockerfile
 __localcode/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.venv/
+.gitignore
+base_texts.txt
+start.sh

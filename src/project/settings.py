@@ -134,7 +134,7 @@ USE_TZ = True
 STATIC_URL = "/static/"  # MUST BE STRING
 
 # Path where Django sends collectstatic files
-STATIC_ROOT = BASE_DIR / "temp_static"
+STATIC_ROOT = BASE_DIR / "data" / "web" / "static"
 
 # used to specify additional directories for static files that are outside of apps
 STATICFILES_DIRS = [
