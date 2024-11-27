@@ -26,4 +26,5 @@ __localcode/
 .venv/
 .gitignore
 base_texts.txt
+fast_tries.py
 start.sh
