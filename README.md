@@ -21,6 +21,31 @@ Make sure you have the following software installed:
 
 ---
 
+## Development Environment
+
+This project is still in development. To streamline the development process, I recommend using the **Dev Containers** extension in **VS Code**. This allows you to develop directly within the container, keeping the environment consistent.
+
+1. **VS Code Dev Containers**  
+   The configuration file for this extension is available in the `.devcontainer` folder. Once you open the project in VS Code, use the shortcut `Shift+Ctrl+P` and select **"Dev Containers: Reopen in Container"** to start developing inside the container.
+
+2. **Git Usage**  
+   It is recommended to use **Git** on the host machine instead of within the container. This ensures a more seamless version control experience.
+
+3. **VS Code Extensions**  
+   Since the project is under development, several important extensions are used both in the container and the host environment to improve the development experience. These include:
+   - **Better Jinja**
+   - **Black Formatter**
+   - **Dev Containers**
+   - **Django**
+   - **isort**
+   - **Mypy Type Checker**
+   - **Pylance**
+   - **Python**
+   - **Ruff**  
+   
+   More details about the extensions and their configuration can be found in the `pyproject.toml` file.
+
+
 ## Setting Up the Environment
 
 1. **Create the `.env` file**  

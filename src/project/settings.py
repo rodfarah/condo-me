@@ -1,4 +1,5 @@
 import os
+import sys
 from pathlib import Path
 
 from django.urls import reverse_lazy
@@ -8,6 +9,8 @@ from django.urls import reverse_lazy
 # Path(__file__).resolve().parent.parent  ==> CONDO_ME/src/
 # Path(__file__).resolve().parent.parent.parent  ==> CONDO_ME/
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+sys.path.insert(0, os.path.join(BASE_DIR, "apps"))
 
 DATA_DIR = BASE_DIR / "data"
 
