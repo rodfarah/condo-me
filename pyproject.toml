@@ -43,11 +43,14 @@ ignore = ["E203"]
 mypy = true
 
 [tool.mypy]
+plugins = [
+    "mypy_django_plugin.main"
+]
 python_version = 3.10
 ignore_missing_imports = true
 strict = true
 
-[tool.django-stubs]
+[mypy.plugins.django-stubs]
 django_settings_module = "project.settings"
 
 [build-system]
