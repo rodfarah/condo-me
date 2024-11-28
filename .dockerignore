@@ -5,6 +5,7 @@
 *.css.map
 *.egg-info
 *.sql.gz
+*.log
 .cache
 .idea
 .pydevproject
@@ -18,7 +19,6 @@ dist
 docs
 logs
 stats
-Dockerfile
 __localcode/
 .mypy_cache/
 .pytest_cache/
@@ -27,4 +27,5 @@ __localcode/
 .gitignore
 base_texts.txt
 fast_tries.py
-start.sh
+README.md
+.vscode/
