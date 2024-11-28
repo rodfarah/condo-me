@@ -1,4 +1,4 @@
-from apps.condo.forms import CondoSetupForm
+from apps.condo.forms import CondoSetupForm, BlockSetupForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
@@ -66,7 +66,7 @@ class SetupCondominiumView(SetupViewsWithDecors):
     template_name = "condo/pages/setup_pages/setup_condominium.html"
 
     def get(self, request):
-        # Check if user is associated to a specific condominium
+        # Check if condominium is associated to registered user
         condominium = getattr(request.user, "condominium", None)
         if condominium is None:
             condo_exists = False
@@ -115,3 +115,34 @@ class SetupCondominiumView(SetupViewsWithDecors):
             self.template_name,
             context={"form": form, "condo_exists": True},
         )
+
+class SetupBlocksView(SetupViewsWithDecors):
+    template_name = "condo/pages/setup_pages/setup_blocks.html"
+
+    def get(self, request):
+        # Check if there is a condominium associated with registered user
+        condominium = getattr(request.user, "condominium", None)
+        if condominium is None:
+            condo_exists = False
+        else:
+            condo_exists = True
+            # Check if there are block(s) associated to the condominium
+            blocks = condominium.blocks.all()
+            if not blocks.exists():
+                block_exists = False
+                form = BlockSetupForm() # empty form to be filled in by user
+            else:
+                # Send block(s) data to form if block(s) already exist(s)
+                block_exists = True
+                form = None
+                # transform form as read only (click on edit button)
+                # for field in form.fields.values():
+                #     field.widget.attrs["readonly"] = True
+        return render(
+            request, 
+            self.template_name,
+            context={"form": form, "condo_exists": condo_exists, "block_exists": block_exists, "blocks": blocks},
+        )
+
+    def post(self, request):
+        pass

@@ -60,7 +60,8 @@ class Condominium(models.Model):
 
 
 class Block(models.Model):
-    name = models.CharField(max_length=50, default="Main Block", unique=True)
+    name = models.CharField(max_length=120, default="Main Block", unique=True)
+    description = models.TextField(help_text="Write details about this block.", null=True, blank=True)
     condominium = models.ForeignKey(
         to=Condominium,
         on_delete=models.CASCADE,

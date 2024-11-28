@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django_countries import countries
 
-from .models import Condominium
+from .models import Condominium, Block
 
 
 class CondoSetupForm(forms.ModelForm):
@@ -137,3 +137,55 @@ class CondoSetupForm(forms.ModelForm):
     #             "This CNPJ already exists. Please, choose a different one."
     #         )
     #     return condo_cnpj_in_form
+
+class BlockSetupForm(forms.ModelForm):
+
+    class Meta:
+        model = Block
+
+        fields = [
+            "name",
+            "description",
+        ]
+
+        labels = {
+            "name": "Block Name",
+            "description": "Description",
+        }
+
+        error_messages = {
+            "name": {"required": "Please, insert the block name."},
+        }
+
+        widgets = {
+            "name": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "autofocus": False,
+                    "autocomplete": "on",
+                    "id": "firstName",
+                }
+            ),
+            "description": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "autocomplete": "on",
+                    "id": "description",
+                },
+            ),
+        }
+
+    def clean_name(self):
+        block_name_in_form = self.cleaned_data.get("name")
+        instance = self.instance  # Current instance beeing edited
+
+        # Check if condo name already exists in db, excluding instance
+        if (
+            Condominium.blocks.objects.filter(name=block_name_in_form)
+            .exclude(pk=instance.pk)
+            .exists()
+        ):
+            raise ValidationError(
+                "Block name already exists in this condominium. Please, choose a different one."
+            )
+        return block_name_in_form

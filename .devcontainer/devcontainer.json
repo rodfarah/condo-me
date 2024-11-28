@@ -1,0 +1,50 @@
+{
+    "name": "CondoMe Django Development",
+    "dockerComposeFile": "../docker-compose.yml",
+    "service": "condo_me_web",
+    "workspaceFolder": "/app/src",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "batisteo.vscode-django",
+                "charliermarsh.ruff",
+                "ms-python.black-formatter",
+                "ms-python.mypy-type-checker",
+                "wholroyd.jinja",
+                "tamasfe.even-better-toml",
+                "esbenp.prettier-vscode"
+            ],
+            "settings": {
+                "python.defaultInterpreterPath": "/app/.venv/bin/python",
+                "python.linting.enabled": true,
+                "python.linting.ruffEnabled": true,
+                "python.formatting.provider": "black",
+                "editor.formatOnSave": true,
+                "editor.codeActionsOnSave": {
+                    "source.organizeImports": "explicit",
+                    "source.fixAll": "explicit"
+                },
+                "mypy.runUsingActiveInterpreter": true,
+                "ruff.path": ["/app/.venv/bin/ruff"],
+                "black-formatter.path": ["/app/.venv/bin/black"],
+                "mypy.dmypyPath": ["/app/.venv/bin/dmypy"],
+                "isort.path": ["/app/.venv/bin/isort"],
+                "[python]": {
+                    "editor.defaultFormatter": "ms-python.black-formatter",
+                    "editor.formatOnSave": true
+                }
+            }
+        }
+    },
+    
+    "remoteUser": "django_user",
+    
+    "remoteEnv": {
+        "PYTHONPATH": "/app/src:/app",
+        "DJANGO_SETTINGS_MODULE": "project.settings",
+        "PYTEST_ADDOPTS": "--doctest-modules --strict-markers"
+    }
+    
+}

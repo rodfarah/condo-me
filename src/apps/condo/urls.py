@@ -11,7 +11,7 @@ urlpatterns = [
         setup_area_views.SetupCondominiumView.as_view(),
         name="setup_condominium",
     ),
-    # path("setup-area/blocks/", views.setup_blocks, name="setup_blocks"),
+    path("setup-area/blocks/", setup_area_views.SetupBlocksView.as_view(), name="setup_blocks"),
     # path("setup-area/apartments/", views.setup_apartments, name="setup_apartments"),
     # path(
     #     "setup-area/common-areas/", views.setup_common_areas, name="setup_common_areas"
