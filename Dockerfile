@@ -12,8 +12,10 @@ ENV POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_IN_PROJECT=1 \
     POETRY_VIRTUALENVS_CREATE=1 \
     POETRY_CACHE_DIR=/tmp/poetry_cache \
-    APP_HOME=/app
-
+    APP_HOME=/app \
+    USER="django_user" \
+    GROUP="django_user"
+    
 # Define the working directory inside the container
 WORKDIR $APP_HOME
 
@@ -33,6 +35,11 @@ FROM python:3.10-slim-buster AS runtime
 RUN python -m pip install --upgrade pip \
     && apt-get update && apt-get install -y netcat
 
+# Add directory setup and permissions
+RUN mkdir -p ./data/postgresql/data \
+&& chown -R ${USER}:${GROUP} ./data/postgresql/data \
+&& chmod -R 775 ./data/postgresql/data
+
 # Install Poetry for runtime dependency management
 RUN pip install poetry==1.8.4 
 
@@ -41,7 +48,10 @@ ENV USER=django_user \
     GROUP=django_user \
     VIRTUAL_ENV=/app/.venv \
     PATH="/app/.venv/bin:$PATH" \
-    APP_HOME=/app
+    APP_HOME=/app \
+    RUN_MIGRATIONS=True \
+    COLLECT_STATIC=True
+
 
 # Set the working directory inside the container
 WORKDIR $APP_HOME
@@ -74,4 +84,5 @@ RUN chmod +x $APP_HOME/docker-scripts/commands.sh
 USER ${USER}
 
 # Set the default command to execute the commands.sh script
+ENTRYPOINT ["/bin/bash", "-c"]
 CMD ["/app/docker-scripts/commands.sh"]

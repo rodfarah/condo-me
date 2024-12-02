@@ -28,4 +28,4 @@ __localcode/
 base_texts.txt
 fast_tries.py
 README.md
-.vscode/
+# .vscode/

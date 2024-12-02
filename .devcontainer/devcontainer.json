@@ -17,7 +17,14 @@
                 "esbenp.prettier-vscode"
             ],
             "settings": {
+                "python.pythonPath": "/app/.venv/bin/python",
                 "python.defaultInterpreterPath": "/app/.venv/bin/python",
+                "python.testing.pytestEnabled": true,
+                "python.testing.pytestArgs": [
+                    "apps",
+                    "--disable-warnings",
+                    "tests"
+                ],
                 "python.linting.enabled": true,
                 "python.linting.ruffEnabled": true,
                 "python.formatting.provider": "black",
@@ -35,12 +42,16 @@
                     "editor.defaultFormatter": "ms-python.black-formatter",
                     "editor.formatOnSave": true
                 }
-            }
+            },
+            "mounts": [
+                "source=${localWorkspaceFolder}/.vscode,target=/workspaces/.vscode,type=bind,consistency=cached"
+              ]
         }
     },
     
     "remoteUser": "django_user",
-    
+    "postStartCommand": "poetry shell",
+
     "remoteEnv": {
         "PYTHONPATH": "/app/src:/app/src/apps",
         "DJANGO_SETTINGS_MODULE": "project.settings",

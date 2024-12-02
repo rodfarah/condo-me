@@ -24,7 +24,7 @@ services:
       - ./.env
     depends_on:
       - psql
-    working_dir: /app/src
+    working_dir: /app
     
   psql:
     container_name: psql_container
