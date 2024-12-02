@@ -80,9 +80,10 @@ This project is still in development. To streamline the development process, I r
 
 After the application is running, create a Django superuser to access the admin panel:
 
-1. Run the following command:
+1. Run the following command inside Dev Container terminal:
    ```bash
-   docker exec -it condo_me_web_container python3 /app/src/manage.py createsuperuser
+   poetry shell
+   poetry run python manage.py createsuperuser
    ```
 
 2. Follow the on-screen instructions to set up the email, username, and password for the superuser.
