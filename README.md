@@ -111,19 +111,31 @@ By following the steps above, you will obtain access to the system as a user bel
 This project follows a Django and Docker-based structure optimized for scalability and portability.
 
 ```
-├── src/                        # Django project source code
-│   ├── project/                # Main project configurations
-│   ├── apps/                   # Django apps
-│   ├── manage.py               # Django management script
-├── data/                       # Persistent data (volumes for static/media/db)
-│   ├── web/                    # Static and media files
-│   ├── postgres/               # PostgreSQL database data
-├── docker-scripts/                     # Docker-related scripts
-├── Dockerfile                  # Main Dockerfile
-├── docker-compose.yml          # Docker Compose configuration
-├── .env                        # Environment files
-│   ├── .env-example/           # Example environment configuration
-└── README.md                   # This file
+├── .devcontainer/              # Configuration for developing with VS Code DevContainers
+│   ├── devcontainer.json       # Main DevContainer configuration file
+├── .mypy_cache/                # MyPy cache (static type checking)
+├── .pytest_cache/              # Pytest cache for test results
+├── .ruff_cache/                # Ruff cache (code linting and formatting)
+├── .vscode/                    # VS Code-specific settings and configurations
+├── .env                        # Environment variables configuration file
+├── .gitignore                  # Git ignored files and directories
+├── Dockerfile                  # Dockerfile for building the container
+├── docker-compose.yml          # Docker Compose configuration file
+├── docker-scripts/             # Helper scripts related to Docker
+├── data/                       # Persistent data (e.g., database volumes)
+├── static/                     # Static files for the project
+│   ├── htmlcov/                # HTML reports for test coverage
+│   ├── .coverage               # Test coverage data
+│   ├── .coveragerc             # Test coverage configuration
+├── src/                        # Main Django project source code
+├── LICENSE                     # Project license
+├── poetry.lock                 # Dependency lock file managed by Poetry
+├── pyproject.toml              # Main configuration file for Poetry and Python tools
+├── pytest.ini                  # Pytest configuration file
+├── README.md                   # Project documentation
+├── start.sh                    # Startup script
+└── base_texts.txt              # Auxiliary file (specific to the project)
+
 ```
 
 ---
