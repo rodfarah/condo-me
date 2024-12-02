@@ -1,1 +1,1 @@
-default_app_config = "prelogin.apps.PreloginConfig"
+default_app_config = "apps.prelogin.apps.PreloginConfig"

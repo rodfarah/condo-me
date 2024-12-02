@@ -27,7 +27,7 @@ ALLOWED_HOSTS = [
 
 
 # Application definition
-# related to PYTHONPATH, in this case: /app/src/
+# related to PYTHONPATH
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",

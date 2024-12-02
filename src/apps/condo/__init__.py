@@ -1,1 +1,1 @@
-default_app_config = "condo.apps.CondoConfig"
+default_app_config = "apps.condo.apps.CondoConfig"

@@ -1,1 +1,1 @@
-default_app_config = "reservation.apps.ReservationConfig"
+default_app_config = "apps.reservation.apps.ReservationConfig"
