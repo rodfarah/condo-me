@@ -2,7 +2,7 @@
     "name": "CondoMe Django Development",
     "dockerComposeFile": "../docker-compose.yml",
     "service": "condo_me_web",
-    "workspaceFolder": "/app/src",
+    "workspaceFolder": "/app",
     "customizations": {
         "vscode": {
             "extensions": [
@@ -11,13 +11,12 @@
                 "batisteo.vscode-django",
                 "charliermarsh.ruff",
                 "ms-python.black-formatter",
+                "ms-python.isort",
                 "ms-python.mypy-type-checker",
                 "wholroyd.jinja",
-                "tamasfe.even-better-toml",
                 "esbenp.prettier-vscode"
             ],
             "settings": {
-                "python.pythonPath": "/app/.venv/bin/python",
                 "python.defaultInterpreterPath": "/app/.venv/bin/python",
                 "python.testing.pytestEnabled": true,
                 "python.testing.pytestArgs": [
@@ -41,7 +40,17 @@
                 "[python]": {
                     "editor.defaultFormatter": "ms-python.black-formatter",
                     "editor.formatOnSave": true
-                }
+                },
+                "terminal.integrated.profiles.linux": {
+        "Poetry": {
+            "path": "usr/bin/bash",
+            "args": [
+                "-c",
+                "export PATH=$(poetry env info --path)/bin:$PATH && exec bash"
+            ]
+        }
+    },
+                "terminal.integrated.defaultProfile.linux": "bash"
             },
             "mounts": [
                 "source=${localWorkspaceFolder}/.vscode,target=/workspaces/.vscode,type=bind,consistency=cached"
@@ -50,12 +59,11 @@
     },
     
     "remoteUser": "django_user",
-    "postStartCommand": "poetry shell",
 
     "remoteEnv": {
-        "PYTHONPATH": "/app/src:/app/src/apps",
+        "PATH": "/app/.venv/bin:${PATH}",
+        "PYTHONPATH": "/app/src",
         "DJANGO_SETTINGS_MODULE": "project.settings",
         "PYTEST_ADDOPTS": "--doctest-modules --strict-markers"
     }
-    
 }

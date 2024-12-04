@@ -49,8 +49,7 @@ ENV USER=django_user \
     VIRTUAL_ENV=/app/.venv \
     PATH="/app/.venv/bin:$PATH" \
     APP_HOME=/app \
-    RUN_MIGRATIONS=True \
-    COLLECT_STATIC=True
+    PYTHONPATH=/app/src
 
 
 # Set the working directory inside the container

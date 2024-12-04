@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     "apps.prelogin",
     "apps.condo",
     # custom setup for condo_people in order to create groups and permissions
-    "apps.condo_people.apps.CondoPeopleConfig",
+    "apps.condo_people",
     "apps.reservation",
     "apps.purchase",
 ]

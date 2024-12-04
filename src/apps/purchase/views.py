@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 
 from .forms import PurchaseForm
-from .models import RegistrationToken
+from apps.purchase.models import RegistrationToken
 
 
 def purchase_view(request):

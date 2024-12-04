@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Apartment, Block, CommonArea, Condominium
+from apps.condo.models import Apartment, Block, CommonArea, Condominium
 
 # change Django Administrator (title)
 admin.site.site_header = "Condo-me - Admin Panel"
@@ -10,13 +10,11 @@ admin.site.site_header = "Condo-me - Admin Panel"
 
 
 @admin.register(Condominium)
-class CondominiumAdmin(admin.ModelAdmin):
-    ...
+class CondominiumAdmin(admin.ModelAdmin): ...
 
 
 @admin.register(Block)
-class BlockAdmin(admin.ModelAdmin):
-    ...
+class BlockAdmin(admin.ModelAdmin): ...
 
 
 @admin.register(CommonArea)
@@ -41,4 +39,4 @@ class ApartmentAdmin(admin.ModelAdmin):
     def display_residents(self, obj):
         return obj.get_residents()
 
-    display_residents.short_description = 'Residents'
+    display_residents.short_description = "Residents"

@@ -18,7 +18,7 @@ services:
       - ./data/web/media:/app/data/web/media/
     user: "django_user"
     environment:
-      - PYTHONPATH=/app/src:/app
+      - PYTHONPATH=/app/src
       - DJANGO_SETTINGS_MODULE=project.settings
     env_file:
       - ./.env

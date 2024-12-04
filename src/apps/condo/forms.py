@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django_countries import countries
 
-from .models import Condominium, Block
+from apps.condo.models import Block, Condominium
 
 
 class CondoSetupForm(forms.ModelForm):
@@ -137,6 +137,7 @@ class CondoSetupForm(forms.ModelForm):
     #             "This CNPJ already exists. Please, choose a different one."
     #         )
     #     return condo_cnpj_in_form
+
 
 class BlockSetupForm(forms.ModelForm):
 
