@@ -1,7 +1,8 @@
-from apps.condo.models import Condominium
-from apps.condo_people.tests.base_test_condo_people import CondoPeopleTestBase
 from django.contrib.auth.models import Group
 from django.urls import reverse
+
+from apps.condo.models import Condominium
+from apps.condo_people.tests.base_test_condo_people import CondoPeopleTestBase
 
 
 class CondoFormsTest(CondoPeopleTestBase):
@@ -35,7 +36,7 @@ class CondoFormsTest(CondoPeopleTestBase):
         condo2_data = {
             "name": "MyCondo",  # same name as condo1 from fixture
             "description": "Bad Condo",
-            "cnpj": "15206944000169",
+            "cnpj": "15306944000169",
             "address1": "Your Street, 20",
             "address2": "NightmareLand",
             "city": "Ugly City",
@@ -56,7 +57,7 @@ class CondoFormsTest(CondoPeopleTestBase):
         condo2_data = {
             "name": "YourCondo",  # different name compared to condo1 in fixture
             "description": "Bad Condo",
-            "cnpj": "15206944000169",
+            "cnpj": "15306944000169",
             "address1": "Your Street, 20",
             "address2": "NightmareLand",
             "city": "Ugly City",
@@ -66,8 +67,10 @@ class CondoFormsTest(CondoPeopleTestBase):
         }
 
         response = self.client.post(
-            path=reverse("apps.condo:setup_condominium"), data=condo2_data
+            path=reverse("apps.condo:setup_condominium"),
+            data=condo2_data,
         )
+
         condo_exists = Condominium.objects.filter(name__iexact="YourCondo").exists()
 
         self.assertTrue(condo_exists)
