@@ -16,6 +16,7 @@ services:
       - ./src:/app/src
       - ./data/web/static:/app/data/web/static/
       - ./data/web/media:/app/data/web/media/
+      - ./htmlcov:/app/htmlcov/
     user: "django_user"
     environment:
       - PYTHONPATH=/app/src

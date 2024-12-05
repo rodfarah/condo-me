@@ -71,7 +71,11 @@ COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 COPY . . 
 
 # Ensure correct ownership of the virtual environment for the application user
-RUN chown -R django_user:django_user ${VIRTUAL_ENV}
+RUN chown -R ${USER}:${GROUP} ${VIRTUAL_ENV}
+
+# Ensure correct ownership of coverage folders and files for the application user
+RUN chown -R ${USER}:${GROUP} ${VIRTUAL_ENV} \
+   && chown -R ${USER}:${GROUP} htmlcov .coverage .coveragerc
 
 # Expose the application port for the service
 EXPOSE 8000
