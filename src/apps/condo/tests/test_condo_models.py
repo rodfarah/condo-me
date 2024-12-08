@@ -1,7 +1,9 @@
-from apps.condo.models import Apartment, Block, Condominium
-from apps.condo_people.tests.base_test_condo_people import CondoPeopleTestBase
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
+
+from apps.condo.forms import CondoSetupForm
+from apps.condo.models import Apartment, Block, Condominium
+from apps.condo_people.tests.base_test_condo_people import CondoPeopleTestBase
 
 
 class CondoModelsTest(CondoPeopleTestBase):
@@ -55,10 +57,8 @@ class CondoModelsTest(CondoPeopleTestBase):
         # Gets the only Condominium Object in db
         condominium = Condominium.objects.first()
         # Edit CNPJ value to an invalid value
-        condominium.cnpj = (
-            "12345678901234"  # 14 chars, but cnpj value not allowed in Brazil
-        )
-        condominium.save()
+        # 14 chars, but cnpj value not allowed in Brazil
+        condominium.cnpj = "12345678901234"
 
         # I expect that after validations (full_clean()) the code block raises as exception
         # that I will assing as "context"
@@ -70,9 +70,26 @@ class CondoModelsTest(CondoPeopleTestBase):
         # context.exception.message_dict accesses the message_dict attribute
         # of the ValidationError instance.
         # context.exception.message_dict == {"cnpj": ['Please, insert a 14 digits valid CNPJ, with or without symbols.']}
-        self.assertIn("__all__", context.exception.message_dict)
-
         self.assertIn(
             "Please, insert a 14 digits valid CNPJ, with or without symbols.",
             context.exception.message_dict["__all__"],
+        )
+
+    def test_condominium_identical_cnpj_raises_validation_error(self):
+        second_cond_data = {
+            "name": "YourCondo",
+            "description": "Bad Condo",
+            "cnpj": "15.306.944/0001-69",  # identical to first_condominium from fixture
+            "address1": "My Street, 10",
+            "address2": "Wonderland",
+            "city": "Soma City",
+            "state": "Wellness State",
+            "country": "BR",
+            "postal_code": "88456123",
+        }
+        form = CondoSetupForm(data=second_cond_data)
+        self.assertFalse(form.is_valid())
+        self.assertIn(
+            "This CNPJ is already used. Please, consider choosing a different one.",
+            form.errors.get("cnpj"),
         )

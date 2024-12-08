@@ -55,9 +55,9 @@ class CondoFormsTest(CondoPeopleTestBase):
 
     def test_unique_condo_name_gets_status_code_200_form(self):
         condo2_data = {
-            "name": "YourCondo",  # different name compared to condo1 in fixture
+            "name": "YourCondo",  # different name from condo1 in fixture
             "description": "Bad Condo",
-            "cnpj": "15306944000169",
+            "cnpj": "39053118000113",  # Valid CNPJ, different from condo1 in fixture
             "address1": "Your Street, 20",
             "address2": "NightmareLand",
             "city": "Ugly City",

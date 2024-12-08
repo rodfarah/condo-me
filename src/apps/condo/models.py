@@ -10,7 +10,7 @@ class Condominium(models.Model):
         max_length=18,
         unique=True,
         blank=False,
-        null=True,
+        null=False,
     )
     address1 = models.CharField(max_length=150)
     address2 = models.CharField(max_length=150, default="")
@@ -35,33 +35,30 @@ class Condominium(models.Model):
             apartments_qty += block.num_of_apartments()
         return apartments_qty
 
-    # clean makes several validations in one time.
     def clean(self):
-        # call super().clean() in order to keep and respect all validations hierarchy, from father classes
         super().clean()
-        self.cnpj = self.clean_cnpj()
-
-    def clean_cnpj(self):
         # Remove symbols from cnpj data
         cnpj_no_symbols = remove_symbols_cnpj(self.cnpj)
 
         # validate ('None" if invalid) and format cnpj
         formatted_cnpj = format_cnpj(cnpj_no_symbols)
-
         if formatted_cnpj is None:
             raise ValidationError(
                 "Please, insert a 14 digits valid CNPJ, with or without symbols."
             )
-        if Condominium.objects.filter(cnpj=formatted_cnpj).exclude(id=self.id).exists():
-            raise ValidationError(
-                "This CNPJ is already used. Please, consider choosing a different one."
-            )
-        return formatted_cnpj
+        self.cnpj = formatted_cnpj
+
+    def save(self, *args, **kwargs):
+        # Force validation before saving
+        self.full_clean()
+        super().save(*args, **kwargs)
 
 
 class Block(models.Model):
     name = models.CharField(max_length=120, default="Main Block", unique=True)
-    description = models.TextField(help_text="Write details about this block.", null=True, blank=True)
+    description = models.TextField(
+        help_text="Write details about this block.", null=True, blank=True
+    )
     condominium = models.ForeignKey(
         to=Condominium,
         on_delete=models.CASCADE,

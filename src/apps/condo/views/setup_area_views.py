@@ -1,10 +1,11 @@
-from apps.condo.forms import CondoSetupForm, BlockSetupForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views import View
+
+from apps.condo.forms import BlockSetupForm, CondoSetupForm
 
 
 # Create a 'manager group required' decorator
@@ -116,6 +117,7 @@ class SetupCondominiumView(SetupViewsWithDecors):
             context={"form": form, "condo_exists": True},
         )
 
+
 class SetupBlocksView(SetupViewsWithDecors):
     template_name = "condo/pages/setup_pages/setup_blocks.html"
 
@@ -130,7 +132,7 @@ class SetupBlocksView(SetupViewsWithDecors):
             blocks = condominium.blocks.all()
             if not blocks.exists():
                 block_exists = False
-                form = BlockSetupForm() # empty form to be filled in by user
+                form = BlockSetupForm()  # empty form to be filled in by user
             else:
                 # Send block(s) data to form if block(s) already exist(s)
                 block_exists = True
@@ -139,9 +141,14 @@ class SetupBlocksView(SetupViewsWithDecors):
                 # for field in form.fields.values():
                 #     field.widget.attrs["readonly"] = True
         return render(
-            request, 
+            request,
             self.template_name,
-            context={"form": form, "condo_exists": condo_exists, "block_exists": block_exists, "blocks": blocks},
+            context={
+                "form": form,
+                "condo_exists": condo_exists,
+                "block_exists": block_exists,
+                "blocks": blocks,
+            },
         )
 
     def post(self, request):

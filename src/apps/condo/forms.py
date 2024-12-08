@@ -128,15 +128,14 @@ class CondoSetupForm(forms.ModelForm):
             )
         return condo_name_in_form
 
-    # def clean_cnpj(self):
-    #     condo_cnpj_in_form = self.cleaned_data.get("cnpj")
-
-    #     # Check if CNPJ already exists in db
-    #     if Condominium.objects.filter(cnpj=condo_cnpj_in_form).exists():
-    #         raise ValidationError(
-    #             "This CNPJ already exists. Please, choose a different one."
-    #         )
-    #     return condo_cnpj_in_form
+    def clean_cnpj(self):
+        cnpj = self.cleaned_data.get("cnpj")
+        # Check if CNPJ already exists in db
+        if Condominium.objects.filter(cnpj=cnpj).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError(
+                "This CNPJ is already used. Please, consider choosing a different one."
+            )
+        return cnpj
 
 
 class BlockSetupForm(forms.ModelForm):

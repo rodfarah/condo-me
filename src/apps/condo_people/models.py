@@ -1,6 +1,7 @@
-from apps.condo.models import Apartment, Condominium
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+
+from apps.condo.models import Apartment, Condominium
 
 
 class User(AbstractUser):
@@ -11,14 +12,14 @@ class User(AbstractUser):
     email = models.EmailField(unique=True, blank=False, null=False)
     apartment = models.ForeignKey(
         Apartment,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name="residents",
     )
     condominium = models.ForeignKey(
         Condominium,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name="residents",
