@@ -1,7 +1,8 @@
-from apps.condo import views
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import resolve, reverse
+
+from apps.condo import views
 
 
 class CondoViewsTest(TestCase):
@@ -20,7 +21,7 @@ class CondoViewsTest(TestCase):
         return super().setUp()
 
     # Basic authentication test
-    def test_test_user_is_authenticated_after_test_set_up_login(self):
+    def test_user_is_authenticated_after_test_set_up_login(self):
         response = self.client.get(reverse("apps.condo:home"))
         self.assertTrue(response.wsgi_request.user.is_authenticated)
 

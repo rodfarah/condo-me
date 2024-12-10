@@ -53,7 +53,7 @@ class CondoFormsTest(CondoPeopleTestBase):
             response.content.decode("utf-8"),
         )
 
-    def test_unique_condo_name_gets_status_code_200_form(self):
+    def test_unique_condo_name_and_cnpj_gets_status_code_302_form(self):
         condo2_data = {
             "name": "YourCondo",  # different name from condo1 in fixture
             "description": "Bad Condo",
