@@ -141,6 +141,15 @@ This project follows a Django and Docker-based structure optimized for scalabili
 
 ---
 
+## What's been done so far (DEC/2024)
+
+- **prelogin** Basicaly static templates, basic info about the product, faq, prices, etc.
+- **Registration and authentication** Although payment features are not implemented yet, a user may "buy" the product, register and login. This user will belong to the "manager" group. There are also two more groups (already programmed), "caretaker" and "resident", but they are not in use yet.
+- **Condominium Setup** "manager" user may create the condominium object.
+- **Blocks, Apartments, Common Areas and Reservations** are yet to be programmed.
+
+---
+
 ## Technologies Used
 
 This project was built using:
@@ -148,7 +157,7 @@ This project was built using:
 - **Python 3.10** with **Django 5.1**
 - **PostgreSQL** as the database
 - **Docker & Docker Compose** for containerization and orchestration
-- **Poetry** for dependency and virtual environment management
+- **Poetry 1.8.4** for dependency and virtual environment management
 
 ---
 
