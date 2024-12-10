@@ -32,13 +32,11 @@
   </div>
 </div>
 
-
-
 <div class="py-2 container-fluid">
   <div class="row g-5 justify-content-center">
     <div class="col-lg-8 col-md-10">
-      <h4 class="mb-3">Condominium Information (all fields are <span class="small text-danger">required</span>)</h4>
-      <form name="condominium_data" autocomplete="on" action="{% url "apps.condo:setup_condominium" %}" method="POST" class="needs-validation" novalidate="" enctype="multipart/form-data">
+      <h4 class="mb-3">Condominium Information (all fields are <span class="small text-danger">required</span> except Image)</h4>
+      <form id="condominiumForm" name="condominium_data" autocomplete="on" action="{% url "apps.condo:setup_condominium" %}" method="POST" class="needs-validation" novalidate="" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="row g-3">
           
@@ -51,7 +49,8 @@
               <div class="text-danger">
                 <small>{{ form.name.errors }}</small>
               </div>
-              {% elif condo_exists %}
+              {% endif %}
+              {% if condo_exists %}
                 <div class="mt-1">
                   <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('firstName')">Edit</a>
                 </div>
@@ -67,10 +66,11 @@
               <div class="text-danger">
                 <small>{{ form.description.errors }}</small>
               </div>
-              {% elif condo_exists %}
-                <div class="mt-1">
-                  <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('description')">Edit</a>
-                </div>
+              {% endif %}
+              {% if condo_exists %}
+              <div class="mt-1">
+                <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('description')">Edit</a>
+              </div>
               {% endif %}
             </div>
 
@@ -83,29 +83,30 @@
               <div class="text-danger">
                 <small>{{ form.cnpj.errors }}</small>
               </div>
-              {% elif condo_exists %}
+              {% endif %}
+              {% if condo_exists %}
                 <div class="mt-1">
                   <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('cnpj')">Edit</a>
                 </div>
               {% endif %}
-          </div>
-
-          <div class="col-12">
-            <label for="{{ form.address1.id_for_label }}">{{form.address1.label}}</label>
-            <div class="input-group">
-            {{ form.address1 }}
             </div>
-            {% if form.address1.errors %}
-              <div class="text-danger">
-                <small>{{ form.address1.errors }}</small>
-              </div>
-            {% elif condo_exists %}
-              <div class="mt-1">
-                  <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('address1')">Edit</a>
-              </div>
-              {% endif %}
-          </div>
 
+            <div class="col-12">
+              <label for="{{ form.address1.id_for_label }}">{{form.address1.label}}</label>
+              <div class="input-group">
+              {{ form.address1 }}
+              </div>
+              {% if form.address1.errors %}
+                <div class="text-danger">
+                  <small>{{ form.address1.errors }}</small>
+                </div>
+              {% endif %}
+              {% if condo_exists %}
+                <div class="mt-1">
+                  <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('address1')">Edit</a>
+                </div>
+              {% endif %}
+            </div>
 
           <div class="col-12">
             <label for="{{ form.address2.id_for_label }}">{{ form.address2.label }}</label>
@@ -116,11 +117,12 @@
               <div class="text-danger">
                 <small>{{ form.address2.errors }}</small>
               </div>
-            {% elif condo_exists %}
+            {% endif %}
+            {% if if condo_exists %}
               <div class="mt-1">
                   <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('address2')">Edit</a>
               </div>
-              {% endif %}
+            {% endif %}
           </div>
 
           <div class="col-12">
@@ -132,7 +134,8 @@
               <div class="text-danger">
                 <small>{{ form.city.errors }}</small>
               </div>
-            {% elif condo_exists %}
+            {% endif %}
+              {% if condo_exists %}
               <div class="mt-1">
                   <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('city')">Edit</a>
               </div>
@@ -148,7 +151,8 @@
               <div class="text-danger">
                 <small>{{ form.state.errors }}</small>
               </div>
-            {% elif condo_exists %}
+            {% endif %}
+              {% if condo_exists %}
               <div class="mt-1">
                   <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('state')">Edit</a>
               </div>
@@ -165,7 +169,8 @@
               <div class="text-danger">
                 <small>{{ form.country.errors }}</small>
               </div>
-            {% elif condo_exists %}
+            {% endif %}
+            {% if  condo_exists %}
               <div class="mt-1">
                   <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('country')">Edit</a>
               </div>
@@ -181,11 +186,12 @@
               <div class="text-danger">
                 <small>{{ form.postal_code.errors }}</small>
               </div>
-            {% elif condo_exists %}
+            {% endif %}
+            {% if  condo_exists %}
               <div class="mt-1">
                   <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('postal_code')">Edit</a>
               </div>
-              {% endif %}
+            {% endif %}
           </div>
 
           <div class="col-6">

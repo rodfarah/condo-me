@@ -2,10 +2,13 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect, render
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.generic import UpdateView
 
 from apps.condo.forms import BlockSetupForm, CondoSetupForm
+from apps.condo.models import Condominium
 
 
 # Create a 'manager group required' decorator
@@ -63,59 +66,51 @@ class SetupAreaView(SetupViewsWithDecors):
         return render(request, self.template_name)
 
 
-class SetupCondominiumView(SetupViewsWithDecors):
+class SetupCondominiumView(SetupViewsWithDecors, UpdateView):
+    model = Condominium
     template_name = "condo/pages/setup_pages/setup_condominium.html"
+    form_class = CondoSetupForm
+    success_url = reverse_lazy("apps.condo:setup_condominium")
 
-    def get(self, request):
-        # Check if condominium is associated to registered user
-        condominium = getattr(request.user, "condominium", None)
-        if condominium is None:
-            condo_exists = False
-            form = CondoSetupForm()  # empty form to be filled in by user
-        else:
-            # Send condominium data to form if condominium already exists
-            form = CondoSetupForm(instance=condominium)
-            condo_exists = True
-            # transform form as read only
+    def get_object(self, queryset=None):
+        return self.request.user.condominium
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        if self.object:  #  self.object calls get_object()
             for field in form.fields.values():
                 field.widget.attrs["readonly"] = True
+        return form
 
-        return render(
-            request,
-            self.template_name,
-            context={"form": form, "condo_exists": condo_exists},
-        )
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["condo_exists"] = bool(self.object)
+        return context
 
-    def post(self, request):
-        # check if user is alredy associated to a condominium
-        user_condominium = getattr(request.user, "condominium", None)
+    def patch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
 
-        if user_condominium is None:
-            # then, user is posting a condominium for the first time
-            form = CondoSetupForm(data=request.POST, files=request.FILES or None)
-
-        else:
-            # user is editing some condominium fields
-            form = CondoSetupForm(
-                data=request.POST,
-                files=request.FILES or None,
-                instance=user_condominium,  # in order to keep unaltered fields
-            )
         if form.is_valid():
-            new_condominium = form.save()
-            # Associates condominium to this specific user
-            request.user.condominium = new_condominium
-            request.user.save()
-            messages.success(
-                request,
-                "Condominium has been successfully created or edited.",
-            )
-            return redirect("apps.condo:setup_condominium")
+            self.object = form.save()
+
+            messages.success(request, "Condominium successfully updated.")
+            return redirect(self.get_success_url())
+        return self.form_invalid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Error updating condominium")
         return render(
-            request,
-            self.template_name,
-            context={"form": form, "condo_exists": True},
+            self.request, self.template_name, {"form": form, "condo_exists": True}
         )
+
+    def form_valid(self, form):
+        self.object = form.save()
+        # user has just created his own condominium, so ...
+        self.request.user.condominium = self.object
+        self.request.user.save()
+        messages.success(self.request, "Condominium successfully created or updated!")
+        return super().form_valid(form)
 
 
 class SetupBlocksView(SetupViewsWithDecors):
@@ -152,4 +147,5 @@ class SetupBlocksView(SetupViewsWithDecors):
         )
 
     def post(self, request):
+        pass
         pass

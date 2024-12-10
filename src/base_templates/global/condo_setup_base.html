@@ -19,19 +19,10 @@
     ></script>
     <script>
       function enableField(fieldId) {
-        var field = document.getElementById(fieldId);
-        field.removeAttribute("readonly");
-        field.removeAttribute("disabled");
-        field.focus();  // Foca no campo editável
-    }
-    
-    document.getElementById("editButton").onclick = function() {
-        enableField("nameField");
-        enableField("otherField");
-    };
-    
-        </script>
-    
-
+         var field = document.getElementById(fieldId);
+         field.removeAttribute('readonly');
+         field.focus();
+      }
+      </script>
   </body>
 </html>
