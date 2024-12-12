@@ -53,7 +53,7 @@ class SetupViewsWithDecors(View):
 
 
 class SetupAreaView(SetupViewsWithDecors):
-    template_name = "condo/pages/setup_pages/setup_area.html"
+    template_name = "condo/pages/setup_pages/condo_setup_home.html"
 
     def get(self, request):
         user_has_condo = getattr(request.user, "condominium", None)
@@ -68,9 +68,9 @@ class SetupAreaView(SetupViewsWithDecors):
 
 class SetupCondominiumView(SetupViewsWithDecors, UpdateView):
     model = Condominium
-    template_name = "condo/pages/setup_pages/setup_condominium.html"
+    template_name = "condo/pages/setup_pages/condo_setup_condominium.html"
     form_class = CondoSetupForm
-    success_url = reverse_lazy("apps.condo:setup_condominium")
+    success_url = reverse_lazy("apps.condo:condo_setup_condominium")
 
     def get_object(self, queryset=None):
         return self.request.user.condominium
@@ -114,7 +114,7 @@ class SetupCondominiumView(SetupViewsWithDecors, UpdateView):
 
 
 class SetupBlocksView(SetupViewsWithDecors):
-    template_name = "condo/pages/setup_pages/setup_blocks.html"
+    template_name = "condo/pages/setup_pages/condo_setup_blocks.html"
 
     def get(self, request):
         # Check if there is a condominium associated with registered user

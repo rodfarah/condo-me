@@ -1,8 +1,15 @@
+"""
+'test_condo_base_views' are applied to the first page user will get when logged in.
+These tests are DIFFERENT from 'test_setup_condominium_views', which are applied to the condominium
+configuration page accessible only to 'manager' users.
+"""
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import resolve, reverse
 
 from apps.condo import views
+from apps.condo.models import Condominium
 
 
 class CondoViewsTest(TestCase):
@@ -36,7 +43,7 @@ class CondoViewsTest(TestCase):
 
     def test_condo_home_view_renders_correct_template(self):
         response = self.client.get(reverse("apps.condo:home"))
-        self.assertTemplateUsed(response, "condo/pages/home.html")
+        self.assertTemplateUsed(response, "condo/pages/home_pages/welcome.html")
 
     def test_condo_home_view_redirects_login_page_if_user_not_logged_in(self):
         self.client.logout()
@@ -45,6 +52,31 @@ class CondoViewsTest(TestCase):
         self.assertEqual(
             response.url,
             "/condo_people/login?redirect_to=/condo/",
+        )
+
+    def test_condo_home_view_send_condo_cover_url_as_context_if_condo_cover_exists(
+        self,
+    ):
+        current_user = get_user_model().objects.first()
+        condo = Condominium.objects.create(
+            name="YourCondo",
+            description="Bad Condo",
+            cnpj="39053118000113",  # Valid CNPJ
+            address1="Your Street, 20",
+            address2="NightmareLand",
+            city="Ugly City",
+            state="Sick State",
+            country="BR",
+            postal_code="12345678",
+            cover="test_image.jpg",
+        )
+        current_user.condominium = condo
+        current_user.save()
+        response = self.client.get(reverse("apps.condo:home"))
+
+        self.assertEqual(
+            response.context["condo_cover"],
+            f"{condo.cover.name}",
         )
 
     # CONDOMINIUM VIEW TESTS
@@ -58,7 +90,7 @@ class CondoViewsTest(TestCase):
 
     def test_condo_condominium_view_renders_correct_template(self):
         response = self.client.get(reverse("apps.condo:condominium"))
-        self.assertTemplateUsed(response, "condo/pages/condominium.html")
+        self.assertTemplateUsed(response, "condo/pages/home_pages/condominium.html")
 
     def test_condo_condominium_view_redirects_login_page_if_user_not_logged_in(self):
         self.client.logout()
@@ -76,7 +108,7 @@ class CondoViewsTest(TestCase):
 
     def test_condo_common_areas_view_renders_correct_template(self):
         response = self.client.get(reverse("apps.condo:common_areas"))
-        self.assertTemplateUsed(response, "condo/pages/common_areas.html")
+        self.assertTemplateUsed(response, "condo/pages/home_pages/common_areas.html")
 
     def test_condo_common_areas_view_returns_status_200_ok(self):
         response = self.client.get(reverse("apps.condo:common_areas"))
@@ -89,19 +121,19 @@ class CondoViewsTest(TestCase):
         # self.assertEqual(response.status_code, 302)
         self.assertEqual(
             response.url,
-            "/condo_people/login?redirect_to=/condo/condominium/common_areas/",
+            "/condo_people/login?redirect_to=/condo/common_areas/",
         )
 
     # USER PROFILE VIEW TESTS
-    def test_condo_user_profile_view_is_correct(self):
+    def test_condo_user_profile_settings_view_is_correct(self):
         view = resolve(reverse("apps.condo:user_profile_settings"))
         self.assertIs(view.func, views.user_profile_settings)
 
-    def test_condo_user_profile_view_renders_correct_template(self):
+    def test_condo_user_profile_settings_view_renders_correct_template(self):
         response = self.client.get(reverse("apps.condo:user_profile_settings"))
-        self.assertTemplateUsed(response, "condo/pages/user_profile.html")
+        self.assertTemplateUsed(response, "condo/pages/home_pages/user_profile.html")
 
-    def test_condo_user_profile_view_returns_status_code_200_ok(self):
+    def test_condo_user_profile_settings_view_returns_status_code_200_ok(self):
         response = self.client.get(reverse("apps.condo:user_profile_settings"))
         self.assertIs(response.status_code, 200)
 

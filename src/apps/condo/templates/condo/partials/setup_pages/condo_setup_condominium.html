@@ -11,7 +11,7 @@
   <div class="row g-5 justify-content-center">
     <div class="col-lg-8 col-md-10">
 
-    <a href="{% url "apps.condo:setup_area" %}">Back to Setup Area</a>
+    <a href="{% url "apps.condo:condo_setup_home" %}">Back to Setup Area</a>
     </div>
   </div>
 </div>
@@ -36,7 +36,7 @@
   <div class="row g-5 justify-content-center">
     <div class="col-lg-8 col-md-10">
       <h4 class="mb-3">Condominium Information (all fields are <span class="small text-danger">required</span> except Image)</h4>
-      <form id="condominiumForm" name="condominium_data" autocomplete="on" action="{% url "apps.condo:setup_condominium" %}" method="POST" class="needs-validation" novalidate="" enctype="multipart/form-data">
+      <form id="condominiumForm" name="condominium_data" autocomplete="on" action="{% url "apps.condo:condo_setup_condominium" %}" method="POST" class="needs-validation" novalidate="" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="row g-3">
           
@@ -118,7 +118,7 @@
                 <small>{{ form.address2.errors }}</small>
               </div>
             {% endif %}
-            {% if if condo_exists %}
+            {% if condo_exists %}
               <div class="mt-1">
                   <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('address2')">Edit</a>
               </div>
@@ -135,11 +135,11 @@
                 <small>{{ form.city.errors }}</small>
               </div>
             {% endif %}
-              {% if condo_exists %}
-              <div class="mt-1">
-                  <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('city')">Edit</a>
-              </div>
-              {% endif %}
+            {% if condo_exists %}
+            <div class="mt-1">
+                <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('city')">Edit</a>
+            </div>
+            {% endif %}
           </div>
 
           <div class="col-12">
@@ -152,11 +152,11 @@
                 <small>{{ form.state.errors }}</small>
               </div>
             {% endif %}
-              {% if condo_exists %}
-              <div class="mt-1">
-                  <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('state')">Edit</a>
-              </div>
-              {% endif %}
+            {% if condo_exists %}
+            <div class="mt-1">
+                <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('state')">Edit</a>
+            </div>
+            {% endif %}
           </div>
           
           <div class="col-md-5">
@@ -174,7 +174,7 @@
               <div class="mt-1">
                   <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('country')">Edit</a>
               </div>
-              {% endif %}
+            {% endif %}
           </div>
 
           <div class="col-12">

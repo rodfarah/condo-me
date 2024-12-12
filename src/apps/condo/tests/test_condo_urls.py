@@ -13,7 +13,7 @@ class CondoURLsTest(TestCase):
 
     def test_common_areas_url_is_correct(self):
         common_areas_url = reverse("apps.condo:common_areas")
-        self.assertEqual(common_areas_url, "/condo/condominium/common_areas/")
+        self.assertEqual(common_areas_url, "/condo/common_areas/")
 
     def test_user_profile_settings_url_is_correct(self):
         user_prof_set_url = reverse("apps.condo:user_profile_settings")

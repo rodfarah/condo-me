@@ -1,8 +1,14 @@
+"""
+'test_setup_condominium_views' are applied to the condominium configuration page,
+accessible only to 'manager' users.
+These tests are DIFFERENT from 'test_condo_views' which are applied to the first page user will get when logged in.
+"""
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
 
-class CondoViewsTest(TestCase):
+class CondoSetupViewsTest(TestCase):
     """Condo Views Tests. Please, consider condo views are login_required"""
 
     # setup for starting each test
