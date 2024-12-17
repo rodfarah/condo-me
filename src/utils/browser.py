@@ -5,7 +5,7 @@ from time import sleep
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 
-ROOT_PATH = Path(__file__).parent.parent
+ROOT_PATH = Path(__file__).parent.parent.parent
 
 CHROMEDRIVER_NAME = os.getenv("CHROMEDRIVER_NAME")
 

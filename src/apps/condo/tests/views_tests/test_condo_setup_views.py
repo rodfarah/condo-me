@@ -4,16 +4,19 @@ accessible only to 'manager' users.
 These tests are DIFFERENT from 'test_condo_views' which are applied to the first page user will get when logged in.
 """
 
+import time
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.test import TestCase
+from django.test import LiveServerTestCase, TestCase
 from django.urls import reverse
 
 from apps.condo.models import Condominium
+from src.utils.browser import make_chrome_browser
 
 
 class CondoSetupViewsTest(TestCase):
-    """Condo Views Tests. Please, consider condo views are login_required"""
+    """Condo SetUp Views Tests. Please, consider condo views are login_required"""
 
     # setup for starting each test
     def setUp(self) -> None:
@@ -50,6 +53,10 @@ class CondoSetupViewsTest(TestCase):
         # login user
         self.client.login(username="johndoe", password="P@ssw0rd")
 
+    ######################################
+    ###### Testing SETUP AREA VIEWS ######
+    ######################################
+
     def test_manager_group_required_permission_denied(self):
         # get user in db
         current_user = get_user_model().objects.first()
@@ -70,3 +77,28 @@ class CondoSetupViewsTest(TestCase):
         self.assertTemplateUsed(
             response, "condo/pages/setup_pages/condo_setup_home.html"
         )
+
+    def test_user_doesnt_have_condo_gets_rendered_template_without_context(self):
+        # remove condominium from user
+        self.current_user.condominium = None
+        self.current_user.save()
+        # create a request
+        response = self.client.get(reverse("apps.condo:condo_setup_home"))
+        self.assertNotIn("condo_page", response.context)
+
+
+#############################################
+###### Testing SETUP CONDOMINIUM VIEWS ######
+#############################################
+
+
+# FUNCTIONAL TEST:
+class SetupCondominiumViewsTest(LiveServerTestCase):
+    def sleep(self, seconds=5):
+        time.sleep(seconds)
+
+    def test_form_is_valid_patch_method(self):
+        browser = make_chrome_browser()
+        browser.get(self.live_server_url)
+        self.sleep()
+        browser.quit()

@@ -73,27 +73,32 @@ class SetupCondominiumView(SetupViewsWithDecors, UpdateView):
     success_url = reverse_lazy("apps.condo:condo_setup_condominium")
 
     def get_object(self, queryset=None):
+        """
+        This function subscribes get_object method and gets the
+        "user condominium" object
+        """
         return self.request.user.condominium
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        if self.object:  #  self.object calls get_object()
+        #  "self.object" is the instance of "get_object()", the user condominium itself
+        if self.object:
             for field in form.fields.values():
                 field.widget.attrs["readonly"] = True
         return form
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["condo_exists"] = bool(self.object)
+        context["condo_exists"] = bool(self.object)  # True or False
         return context
 
     def patch(self, request, *args, **kwargs):
-        self.object = self.get_object()
+        self.object = self.get_object()  # get user's "condominium"
         form = self.get_form()
 
         if form.is_valid():
-            self.object = form.save()
-
+            #  "self.object" is the instance of "get_object()", the user.condominium itself
+            self.object = form.save()  # form.save() returns updated user.condominium
             messages.success(request, "Condominium successfully updated.")
             return redirect(self.get_success_url())
         return self.form_invalid(form)

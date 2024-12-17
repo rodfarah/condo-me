@@ -11,6 +11,11 @@ echo "🔧 Setting correct permissions for PostgreSQL data directory..."
 sudo chown -R 1000:1000 ./data/postgres/data
 sudo chmod -R 775 ./data/postgres/data
 
+# Adjusting permissions for bin folder (in order to run selenium)
+echo "🔧 Setting correct permissions for Chromedriver directory..."
+sudo chown -R 1000:1000 ./bin/chromedriver-linux64
+sudo chmod -R 775 ./bin/chromedriver-linux64
+
 # Adjusting permissions for Coverage folder and files
 if [ ! -d "./htmlcov" ]; then
  echo "📁 Coverage report directory not found. Creating..."

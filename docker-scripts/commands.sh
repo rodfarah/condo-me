@@ -16,10 +16,6 @@ while ! nc -z $POSTGRES_HOST $POSTGRES_PORT; do
 done
 log "✅ PostgreSQL is available at $POSTGRES_HOST:$POSTGRES_PORT"
 
-# Activate virtual environment
-export VIRTUAL_ENV="/app/.venv"
-export PATH="$VIRTUAL_ENV/bin:$PATH"
-
 # Colect static files
 log "Running 'collectstatic' to gather static files..."
 poetry run python /app/src/manage.py collectstatic --noinput -i admin --clear --settings=$DJANGO_SETTINGS_MODULE -v 2

@@ -61,7 +61,6 @@
     "remoteUser": "django_user",
 
     "remoteEnv": {
-        "PATH": "/app/.venv/bin:${PATH}",
         "PYTHONPATH": "/app/src",
         "DJANGO_SETTINGS_MODULE": "project.settings",
         "PYTEST_ADDOPTS": "--doctest-modules --strict-markers"

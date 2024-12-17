@@ -25,15 +25,24 @@ COPY pyproject.toml poetry.lock ./
 # Install dependencies using Poetry with caching enabled for faster builds
 RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --no-root
 
-
 # ======================
 #  STAGE 2: Runtime
 # ======================
 FROM python:3.10-slim-buster AS runtime
 
 # Upgrade pip and install required system utilities
-RUN python -m pip install --upgrade pip \
-    && apt-get update && apt-get install -y netcat
+# RUN python -m pip install --upgrade pip \
+#     && apt-get update && apt-get install -y netcat libglib2.0-0 libnss3 libnssutil3 libnspr4 libxcb1
+
+# Create and activate virtual environment and update pip
+RUN python -m venv .venv \
+    && . .venv/bin/activate \
+    && pip install --upgrade pip
+
+# Install system dependencies and clear apt cache
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y netcat libglib2.0-0 libnss3 libnspr4 libxcb1 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Add directory setup and permissions
 RUN mkdir -p ./data/postgresql/data \
@@ -47,10 +56,9 @@ RUN pip install poetry==1.8.4
 ENV USER=django_user \
     GROUP=django_user \
     VIRTUAL_ENV=/app/.venv \
-    PATH="/app/.venv/bin:$PATH" \
+    PATH="/app/.venv/bin:/app/bin/chromedriver-linux64:$PATH" \
     APP_HOME=/app \
     PYTHONPATH=/app/src
-
 
 # Set the working directory inside the container
 WORKDIR $APP_HOME
@@ -73,10 +81,12 @@ COPY . .
 # Ensure correct ownership of the virtual environment for the application user
 RUN chown -R ${USER}:${GROUP} ${VIRTUAL_ENV}
 
-# Ensure correct ownership of coverage folders and files for the application user
-RUN chown -R ${USER}:${GROUP} ${VIRTUAL_ENV} \
-   && chown -R ${USER}:${GROUP} htmlcov .coverage .coveragerc
-
+# Ensure ownership of coverage and chromedriver folders and files for 
+# the application user
+RUN chown -R ${USER}:${GROUP} htmlcov .coverage .coveragerc \
+    && chown -R ${USER}:${GROUP} /app/bin/chromedriver-linux64 \
+    && chown ${USER}:${GROUP} /app/bin/chromedriver-linux64/chromedriver
+    
 # Expose the application port for the service
 EXPOSE 8000
 
