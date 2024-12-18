@@ -1,16 +1,18 @@
 import os
 import sys
 from pathlib import Path
-
 from django.urls import reverse_lazy
+from dotenv import load_dotenv
 
 # Path(__file__) represents the full path to settings.py (CONDO_ME/src/project/settings.py.)
 # Path(__file__).resolve().parent  ==> CONDO_ME/src/project/
 # Path(__file__).resolve().parent.parent  ==> CONDO_ME/src/
 # Path(__file__).resolve().parent.parent.parent  ==> CONDO_ME/
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+load_dotenv(BASE_DIR / ".env")
 
-sys.path.insert(0, os.path.join(BASE_DIR, "apps"))
+sys.path.insert(0, os.path.join(BASE_DIR, "src"))
+sys.path.insert(0, os.path.join(BASE_DIR, "src", "apps"))
 
 DATA_DIR = BASE_DIR / "data"
 
@@ -18,16 +20,12 @@ DATA_DIR = BASE_DIR / "data"
 SECRET_KEY = os.getenv("SECRET_KEY", "change-me")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-
-DEBUG = True if os.environ.get("DEBUG") == "1" else False
+DEBUG = os.environ.get("DEBUG") == "1"
 
 ALLOWED_HOSTS = [
     h.strip() for h in os.getenv("ALLOWED_HOSTS", "").split(",") if h.strip()
 ]
-
-
-# Application definition
-# related to PYTHONPATH
+# related to PYTHONPATH:
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -37,12 +35,12 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.postgres",
     "django_countries",
-    "apps.prelogin",
-    "apps.condo",
+    "prelogin",
+    "condo",
     # custom setup for condo_people in order to create groups and permissions
-    "apps.condo_people",
-    "apps.reservation",
-    "apps.purchase",
+    "condo_people",
+    "reservation",
+    "purchase",
 ]
 
 MIDDLEWARE = [
@@ -72,7 +70,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "apps.condo_people.context_processors.user_groups",
+                "condo_people.context_processors.user_groups",
             ],
         },
     },
