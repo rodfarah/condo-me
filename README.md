@@ -18,7 +18,9 @@ Make sure you have the following software installed:
 
 - [Docker](https://www.docker.com/get-started)
 - [Docker Compose](https://docs.docker.com/compose/install/)
-- [Poetry](pip install poetry)
+- **Poetry** 
+  - please, run: 
+    - curl -sSL https://install.python-poetry.org | python3 -
 ---
 
 ## Technologies Used
