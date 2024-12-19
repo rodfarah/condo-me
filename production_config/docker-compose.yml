@@ -1,0 +1,36 @@
+services:
+  condo_me_web:
+    container_name: condo_me_web_container
+    build:
+      context: . # where Dockerfile is located
+      dockerfile: Dockerfile
+      args: 
+        UID: 1000
+        GID: 1000
+    image: condo_me_web:latest
+    ports:
+      - 8000:8000
+    volumes: 
+      - ./pyproject.toml:/app/pyproject.toml
+      - ./poetry.lock:/app/poetry.lock
+      - ./src:/app/src
+      - ./data/web/static:/app/data/web/static/
+      - ./data/web/media:/app/data/web/media/
+      - ./htmlcov:/app/htmlcov/
+    user: "django_user"
+    environment:
+      - PYTHONPATH=/app/src
+      - DJANGO_SETTINGS_MODULE=project.settings
+    env_file:
+      - ./.env
+    depends_on:
+      - psql
+    working_dir: /app
+    
+  psql:
+    container_name: psql_container
+    image: postgres:17-alpine
+    volumes:
+      - ./data/postgres/data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env

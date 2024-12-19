@@ -1,36 +1,17 @@
 services:
-  condo_me_web:
-    container_name: condo_me_web_container
-    build:
-      context: . # where Dockerfile is located
-      dockerfile: Dockerfile
-      args: 
-        UID: 1000
-        GID: 1000
-    image: condo_me_web:latest
-    ports:
-      - 8000:8000
-    volumes: 
-      - ./pyproject.toml:/app/pyproject.toml
-      - ./poetry.lock:/app/poetry.lock
-      - ./src:/app/src
-      - ./data/web/static:/app/data/web/static/
-      - ./data/web/media:/app/data/web/media/
-      - ./htmlcov:/app/htmlcov/
-    user: "django_user"
-    environment:
-      - PYTHONPATH=/app/src
-      - DJANGO_SETTINGS_MODULE=project.settings
-    env_file:
-      - ./.env
-    depends_on:
-      - psql
-    working_dir: /app
-    
-  psql:
-    container_name: psql_container
+  psql: 
     image: postgres:17-alpine
+    container_name: postgres_container
+    networks:
+      - django_network
     volumes:
       - ./data/postgres/data:/var/lib/postgresql/data/
-    env_file:
-      - ./.env
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+networks:
+  django_network:
+    driver: bridge

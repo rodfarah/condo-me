@@ -18,30 +18,24 @@ Make sure you have the following software installed:
 
 - [Docker](https://www.docker.com/get-started)
 - [Docker Compose](https://docs.docker.com/compose/install/)
-- [Poetry](pip install poetry)
----
-
-## Technologies Used
-
-This project was built using:
-
-- **Python 3.10** with **Django 5.1**
-- **PostgreSQL** as the database
-- **Docker & Docker Compose** for containerization and orchestration
-- **Poetry 1.8.4** for dependency and virtual environment management
 
 ---
+
 ## Development Environment
 
-This project is still in development. 
+This project is still in development. To streamline the development process, I recommend using the **Dev Containers** extension in **VS Code**. This allows you to develop directly within the container, keeping the environment consistent.
 
-1. **Git Usage**  
+1. **VS Code Dev Containers**  
+   The configuration file for this extension is available in the `.devcontainer` folder. Once you open the project in VS Code, use the shortcut `Shift+Ctrl+P` and select **"Dev Containers: Reopen in Container"** to start developing inside the container.
+
+2. **Git Usage**  
    It is recommended to use **Git** on the host machine instead of within the container. This ensures a more seamless version control experience.
 
-2. **VS Code Extensions**  
+3. **VS Code Extensions**  
    Since the project is under development, several important extensions are used both in the container and the host environment to improve the development experience. These include:
    - **Better Jinja**
    - **Black Formatter**
+   - **Dev Containers**
    - **Django**
    - **isort**
    - **Mypy Type Checker**
@@ -67,17 +61,17 @@ This project is still in development.
 
 ## Running the Application
 
-1. **Build and Start the Postgres Container**  
+1. **Build and Start the Containers**  
    Run the following commands to build the Docker image and bring up the containers:
    ```bash
    bash
-   docker compose up
+   ./start.sh
    ```
 
 2. **Stop the Containers**  
    To stop all running containers and services:
    ```bash
-   docker-compose stop
+   docker-compose down
    ```
 
 ---
@@ -86,7 +80,7 @@ This project is still in development.
 
 After the application is running, create a Django superuser to access the admin panel:
 
-1. Run the following command on terminal:
+1. Run the following command inside Dev Container terminal:
    ```bash
    poetry shell
    poetry run python manage.py createsuperuser
@@ -118,21 +112,31 @@ By following the steps above, you will obtain access to the system as a user bel
 This project follows a Django and Docker-based structure optimized for scalability and portability.
 
 ```
+├── .devcontainer/              # Configuration for developing with VS Code DevContainers
+│   ├── devcontainer.json       # Main DevContainer configuration file
+├── .mypy_cache/                # MyPy cache (static type checking)
+├── .pytest_cache/              # Pytest cache for test results
+├── .ruff_cache/                # Ruff cache (code linting and formatting)
+├── .vscode/                    # VS Code-specific settings and configurations
 ├── .env                        # Environment variables configuration file
 ├── .gitignore                  # Git ignored files and directories
+├── Dockerfile                  # Dockerfile for building the container
 ├── docker-compose.yml          # Docker Compose configuration file
-├── production_config/          # To be used later on. New docker schema that will keep production environment more consistent
+├── docker-scripts/             # Helper scripts related to Docker
 ├── data/                       # Persistent data (e.g., database volumes)
 ├── static/                     # Static files for the project
 │   ├── htmlcov/                # HTML reports for test coverage
 │   ├── .coverage               # Test coverage data
 │   ├── .coveragerc             # Test coverage configuration
-├── src/                        # Main Django project source code. Django apps are inside here.
+├── src/                        # Main Django project source code
 ├── LICENSE                     # Project license
 ├── poetry.lock                 # Dependency lock file managed by Poetry
 ├── pyproject.toml              # Main configuration file for Poetry and Python tools
 ├── pytest.ini                  # Pytest configuration file
 ├── README.md                   # Project documentation
+├── start.sh                    # Startup script
+└── base_texts.txt              # Auxiliary file (specific to the project)
+
 ```
 
 ---
@@ -143,6 +147,18 @@ This project follows a Django and Docker-based structure optimized for scalabili
 - **Registration and authentication** Although payment features are not implemented yet, a user may "buy" the product, register and login. This user will belong to the "manager" group. There are also two more groups (already programmed), "caretaker" and "resident", but they are not in use yet.
 - **Condominium Setup** "manager" user may create the condominium object.
 - **Blocks, Apartments, Common Areas and Reservations** are yet to be programmed.
+
+---
+
+## Technologies Used
+
+This project was built using:
+
+- **Python 3.10** with **Django 5.1**
+- **PostgreSQL** as the database
+- **Docker & Docker Compose** for containerization and orchestration
+- **Poetry 1.8.4** for dependency and virtual environment management
+
 ---
 
 ## License

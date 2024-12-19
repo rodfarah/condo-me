@@ -1,0 +1,6 @@
+If you want to go back to using docker:
+
+1- Delete current dockerfile and docker-compose.yml files.
+2- With the exception of "commands.sh", move all files and folders back to root folder.
+3- Reinstall and enable "dev container" VS Code extension (if you wold like to use it).
+4- From terminal, excecute "./start.sh"
