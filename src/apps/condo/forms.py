@@ -130,6 +130,14 @@ class CondoSetupForm(forms.ModelForm):
 
     def clean_cnpj(self):
         cnpj = self.cleaned_data.get("cnpj")
+
+        try:
+            # First, lets use the model validation
+            self.instance.cnpj = cnpj
+            self.instance.clean_cnpj()
+        except ValidationError as e:
+            raise forms.ValidationError(e.message)
+
         # Check if CNPJ already exists in db
         if Condominium.objects.filter(cnpj=cnpj).exclude(pk=self.instance.pk).exists():
             raise forms.ValidationError(

@@ -35,8 +35,7 @@ class Condominium(models.Model):
             apartments_qty += block.num_of_apartments()
         return apartments_qty
 
-    def clean(self):
-        super().clean()
+    def clean_cnpj(self):
         # Remove symbols from cnpj data
         cnpj_no_symbols = remove_symbols_cnpj(self.cnpj)
 
@@ -46,7 +45,7 @@ class Condominium(models.Model):
             raise ValidationError(
                 "Please, insert a 14 digits valid CNPJ, with or without symbols."
             )
-        self.cnpj = formatted_cnpj
+        return formatted_cnpj
 
     def save(self, *args, **kwargs):
         # Force validation before saving
