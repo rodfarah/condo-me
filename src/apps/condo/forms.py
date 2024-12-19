@@ -131,9 +131,9 @@ class CondoSetupForm(forms.ModelForm):
     def clean_cnpj(self):
         cnpj = self.cleaned_data.get("cnpj")
 
+        self.instance.cnpj = cnpj
         try:
             # First, lets use the model validation
-            self.instance.cnpj = cnpj
             self.instance.clean_cnpj()
         except ValidationError as e:
             raise forms.ValidationError(e.message)
@@ -143,7 +143,7 @@ class CondoSetupForm(forms.ModelForm):
             raise forms.ValidationError(
                 "This CNPJ is already used. Please, consider choosing a different one."
             )
-        return cnpj
+        return self.instance.cnpj
 
 
 class BlockSetupForm(forms.ModelForm):

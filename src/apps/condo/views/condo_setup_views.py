@@ -103,15 +103,6 @@ class SetupCondominiumView(SetupViewsWithDecors, UpdateView):
             return redirect(self.get_success_url())
         return self.form_invalid(form)
 
-    # def form_invalid(self, form):
-    #     for field, errors in form.errors.items():
-    #         for error in errors:
-    #             if field == "__all__":
-    #                 messages.error(self.request, error)
-    #             else:
-    #                 messages.error(self.request, f"{field}: {error}")
-    #     return super().form_invalid(form)
-
 
     def form_valid(self, form):
         self.object = form.save()

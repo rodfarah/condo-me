@@ -45,7 +45,8 @@ class Condominium(models.Model):
             raise ValidationError(
                 "Please, insert a 14 digits valid CNPJ, with or without symbols."
             )
-        return formatted_cnpj
+        self.cnpj = formatted_cnpj
+        # return formatted_cnpj
 
     def save(self, *args, **kwargs):
         # Force validation before saving
