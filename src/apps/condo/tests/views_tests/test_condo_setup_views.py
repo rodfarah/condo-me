@@ -6,12 +6,12 @@ These tests are DIFFERENT from 'test_condo_views' which are applied to the first
 
 import time
 
+from apps.condo.models import Condominium
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.test import LiveServerTestCase, TestCase
 from django.urls import reverse
 
-from apps.condo.models import Condominium
 from src.utils.browser import make_chrome_browser
 
 
@@ -68,11 +68,11 @@ class CondoSetupViewsTest(TestCase):
         current_user.groups.remove(manager_group.pk)
         current_user.save()
         # user tries to access setup pages
-        response = self.client.get(reverse("apps.condo:condo_setup_home"))
+        response = self.client.get(reverse("condo:condo_setup_home"))
         self.assertEqual(response.status_code, 403)
 
     def test_manager_user_with_condo_gets_setup_basic_page_rendered_successfully(self):
-        response = self.client.get(reverse("apps.condo:condo_setup_home"))
+        response = self.client.get(reverse("condo:condo_setup_home"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(
             response, "condo/pages/setup_pages/condo_setup_home.html"
@@ -83,7 +83,7 @@ class CondoSetupViewsTest(TestCase):
         self.current_user.condominium = None
         self.current_user.save()
         # create a request
-        response = self.client.get(reverse("apps.condo:condo_setup_home"))
+        response = self.client.get(reverse("condo:condo_setup_home"))
         self.assertNotIn("condo_page", response.context)
 
 

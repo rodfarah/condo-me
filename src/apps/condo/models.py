@@ -53,6 +53,9 @@ class Condominium(models.Model):
         self.full_clean()
         super().save(*args, **kwargs)
 
+    class Meta:
+        app_label = "condo"
+
 
 class Block(models.Model):
     name = models.CharField(max_length=120, default="Main Block", unique=True)
@@ -75,6 +78,9 @@ class Block(models.Model):
     def num_of_apartments(self):
         return self.apartments.count()
 
+    class Meta:
+        app_label = "condo"
+
 
 class Apartment(models.Model):
     number_or_name = models.CharField(max_length=20, verbose_name="Number (or name)")
@@ -89,6 +95,7 @@ class Apartment(models.Model):
 
     class Meta:
         ordering = ["number_or_name", "block"]
+        app_label = "condo"
 
     def __str__(self) -> str:
         return f"{self.number_or_name}{self.block}"
@@ -188,3 +195,6 @@ class CommonArea(models.Model):
                     use and/or maximum using fraction should not be \
                         specified."
             )
+
+    class Meta:
+        app_label = "condo"

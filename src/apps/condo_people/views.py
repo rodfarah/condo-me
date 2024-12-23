@@ -14,13 +14,13 @@ def register_view(request, token):
     try:
         token_obj = RegistrationToken.objects.get(token=token)
         if not token_obj.is_valid():
-            return redirect(reverse("apps.condo_people:invalid_token"))
+            return redirect(reverse("condo_people:invalid_token"))
     except RegistrationToken.DoesNotExist:
         # Remove sessions from cookies if token does not exist or invalid.
         request.session.pop("register_form_data", None)
         request.session.pop("token", None)
         # Redirect user to invalid token template
-        return redirect(reverse("apps.condo_people:invalid_token"))
+        return redirect(reverse("condo_people:invalid_token"))
     else:
         # If there is no session, variable equals None ...
         register_form_data = request.session.get("register_form_data", None)
@@ -64,12 +64,12 @@ def register_create(request):
         request.session.flush()
         # Redirect user to login page.
         messages.success(request, "You are now registered, please log in.")
-        return redirect("apps.condo_people:login")
+        return redirect("condo_people:login")
     else:
         request.session["register_form_data"] = request.POST
         return redirect(
             reverse(
-                "apps.condo_people:register",
+                "condo_people:register",
                 kwargs={"token": request.session.get("token")},
             )
         )
@@ -81,7 +81,7 @@ def invalid_token(request):
 
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect(reverse("apps.condo:home"))
+        return redirect(reverse("condo:home"))
     form = LoginForm()
     return render(
         request, "condo_people/registration/login.html", context={"form": form}
@@ -109,19 +109,17 @@ def login_create(request):
             # If user is not active
             if not user.is_active:
                 messages.error(request, "Disabled Account")
-                return redirect(reverse("apps.condo_people:login"))
+                return redirect(reverse("condo_people:login"))
             # may return an authenticated user object (if username and pwd are correct)
             authenticated_user = authenticate(
                 request, username=username, password=password
             )
             if authenticated_user is not None:
                 login(request, authenticated_user)
-                return redirect(
-                    reverse("apps.condo:home"), {"user": authenticated_user}
-                )
+                return redirect(reverse("condo:home"), {"user": authenticated_user})
         # user is None
         messages.error(request, "Invalid username and/or password. Please, try again.")
-        return redirect(reverse("apps.condo_people:login"))
+        return redirect(reverse("condo_people:login"))
     # if form is not valid
     return render(request, "condo_people/registration/login.html", {"form": form})
 
@@ -129,10 +127,10 @@ def login_create(request):
 # login_url: to send user in case user is not logged in
 # redirect_field_name: /login/?redirect_to=/logout_view/ means that after log in,
 # django will send user to "logout_view".
-# @login_required(login_url="apps.condo_people:login", redirect_field_name="redirect_to")
-@login_required(login_url="apps.condo_people:login", redirect_field_name="redirect_to")
+# @login_required(login_url="condo_people:login", redirect_field_name="redirect_to")
+@login_required(login_url="condo_people:login", redirect_field_name="redirect_to")
 def logout_view(request):
     # Ensure the logout is only done via POST
     if request.method == "POST":
         logout(request)
-    return redirect(reverse("apps.condo_people:login"))
+    return redirect(reverse("condo_people:login"))

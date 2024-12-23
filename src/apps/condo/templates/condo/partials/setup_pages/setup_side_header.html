@@ -29,14 +29,14 @@
   </svg>
 <div class="d-flex flex-nowrap">
     <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 280px;">
-        <a href="{% url "apps.condo:condo_setup_home" %}" class="nav-link">
+        <a href="{% url "condo:condo_setup_home" %}" class="nav-link">
         <svg class="bi pe-none me-2" width="40" height="32"><use xlink:href="#buildings"></use></svg>
         <span class="fs-4">Setup Area</span>
         </a>
         <hr>
         <ul class="nav nav-pills flex-column mb-auto">
             <li>
-                <a href="{% url "apps.condo:condo_setup_condominium" %}" class="nav-link">
+                <a href="{% url "condo:condo_setup_condominium" %}" class="nav-link">
             <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#buildings"></use></svg>
             Condominium
                   </a>
@@ -75,7 +75,7 @@
             </li>
             <hr>
             <li class="nav-item">
-                <a href="{% url "apps.condo:home" %}" class="nav-link" aria-current="page">
+                <a href="{% url "condo:home" %}" class="nav-link" aria-current="page">
                 <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
                 Exit Setup
                 </a>
@@ -93,7 +93,7 @@
             <li><a class="dropdown-item" href="#">Profile</a></li>
             <li><hr class="dropdown-divider"></li>
             <li>
-                <form action="{% url "apps.condo_people:logout" %}" method="POST" class="dropdown-item" name="logout">
+                <form action="{% url "condo_people:logout" %}" method="POST" class="dropdown-item" name="logout">
                     {% csrf_token %}
                     <input type="hidden" name="username" value={{ request.user.username }}>
                     <input type="hidden" name="csrfmiddlewaretoken" value={{ csrf_token }}>

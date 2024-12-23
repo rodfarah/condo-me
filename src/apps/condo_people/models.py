@@ -1,7 +1,6 @@
+from apps.condo.models import Apartment, Condominium
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-
-from apps.condo.models import Apartment, Condominium
 
 
 class User(AbstractUser):
@@ -28,3 +27,6 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+
+    class Meta:
+        app_label = "condo_people"

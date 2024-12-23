@@ -2,7 +2,7 @@ from django.urls import path
 
 from .views import condo_base_views, condo_setup_views
 
-app_name = "apps.condo"
+app_name = "condo"
 
 urlpatterns = [
     # CONDO BASE (first page user gets as soon as logs in)

@@ -34,27 +34,27 @@
   <nav class="px-3 py-2 text-bg-dark border-bottom">
     <div class="container">
       <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-        <a href="{% url "apps.condo:home" %}" class="d-flex align-items-center my-2 my-lg-0 me-lg-auto text-white text-decoration-none buildings">
+        <a href="{% url "condo:home" %}" class="d-flex align-items-center my-2 my-lg-0 me-lg-auto text-white text-decoration-none buildings">
           <svg class="bi me-2 buildings" fill="white" width="40" height="32" role="img" aria-label="Custom Icon"><use xlink:href="#buildings"></use></svg>
           Condo-Me
         </a>
         <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
           <li>
-            <a href="{% url "apps.condo:home" %}" class="nav-link">
+            <a href="{% url "condo:home" %}" class="nav-link">
               <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#home"></use></svg>
               Home
             </a>
           </li>
           {% if is_manager %}
             <li>
-              <a href="{% url "apps.condo:condo_setup_home" %}" class="nav-link">
+              <a href="{% url "condo:condo_setup_home" %}" class="nav-link">
                 <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#kanban"></use></svg>
                 Condominium Setup
               </a>
             </li>
           {% endif %}
           <li>
-            <a href="{% url "apps.condo:condominium" %}" class="nav-link">
+            <a href="{% url "condo:condominium" %}" class="nav-link">
               <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#building"></use></svg>
               {% if user.condominium %}
               {{ user.condominium }}
@@ -64,13 +64,13 @@
             </a>
           </li>
           <li>
-            <a href="{% url "apps.condo:common_areas" %}" class="nav-link">
+            <a href="{% url "condo:common_areas" %}" class="nav-link">
               <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#common-a"></use></svg>
               Common Areas
             </a>
           </li>
           <li>
-            <a href="{% url "apps.reservation:reserve" %}" class="nav-link">
+            <a href="{% url "reservation:reserve" %}" class="nav-link">
               <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#all-events"></use></svg>
               Reserve Here
             </a>
@@ -89,10 +89,10 @@
               </a>
               <ul class="dropdown-menu text-small" style="">
                 <li><a class="dropdown-item" href="#">Statistics</a></li>
-                <li><a class="dropdown-item" href="{% url "apps.condo:user_profile_settings" %}">Settings</a></li>
+                <li><a class="dropdown-item" href="{% url "condo:user_profile_settings" %}">Settings</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li>
-                  <form action="{% url "apps.condo_people:logout" %}" method="POST" class="dropdown-item" name="logout">
+                  <form action="{% url "condo_people:logout" %}" method="POST" class="dropdown-item" name="logout">
                     {% csrf_token %}
                     <input type="hidden" name="username" value={{ request.user.username }}>
                     <button type="submit" class="logout-button">Logout</button>

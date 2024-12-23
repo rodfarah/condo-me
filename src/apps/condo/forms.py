@@ -1,8 +1,7 @@
+from apps.condo.models import Block, Condominium
 from django import forms
 from django.core.exceptions import ValidationError
 from django_countries import countries
-
-from apps.condo.models import Block, Condominium
 
 
 class CondoSetupForm(forms.ModelForm):

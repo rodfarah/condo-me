@@ -1,6 +1,5 @@
-from django.contrib import admin
-
 from apps.purchase.models import RegistrationToken
+from django.contrib import admin
 
 
 @admin.register(RegistrationToken)

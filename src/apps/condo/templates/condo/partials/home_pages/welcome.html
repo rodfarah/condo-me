@@ -24,9 +24,9 @@
               </li>
               <li class="d-flex align-items-center me-3">
                 {% if is_manager %}
-                  <small><a class= "text-white"  href="{% url "apps.condo:condo_setup_home" %}">Click here</a></small>
+                  <small><a class= "text-white"  href="{% url "condo:condo_setup_home" %}">Click here</a></small>
                 {% else %}
-                  <small><a class= "text-white"  href="{% url "apps.condo:condominium" %}">Click here</a></small>
+                  <small><a class= "text-white"  href="{% url "condo:condominium" %}">Click here</a></small>
                 {% endif %}
               </li>
             </ul>

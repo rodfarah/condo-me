@@ -1,5 +1,5 @@
 from apps.condo.models import CommonArea, Condominium
-from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db import models
 
@@ -11,9 +11,7 @@ class Reservation(models.Model):
     common_area = models.ForeignKey(
         to=CommonArea, on_delete=models.CASCADE, related_name="reservations"
     )
-    user = models.ManyToManyField(
-        to=settings.AUTH_USER_MODEL, related_name="reservations"
-    )
+    user = models.ManyToManyField(to=get_user_model(), related_name="reservations")
     date = models.DateField(verbose_name="Reservation Date", blank=False, null=False)
     start_time = models.TimeField(
         verbose_name="From:",
@@ -46,3 +44,6 @@ class Reservation(models.Model):
         return ", ".join(str(user.apartment) for user in users)
 
     get_apartments.short_description = "Apartments"
+
+    class Meta:
+        app_label = "reservation"

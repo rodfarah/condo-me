@@ -1,19 +1,19 @@
 <header class="p-3 text-bg-dark">
     <div class="container">
       <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-        <a href="{% url "apps.prelogin:home" %}" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+        <a href="{% url "prelogin:home" %}" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
           <i class="bi bi-buildings"></i>
         </a>
         <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-          <li class="nav-item"><a href="{% url "apps.prelogin:home" %}" class="nav-link px-2">Home</a></li>
-          <li class="nav-item"><a href="{% url "apps.prelogin:features" %}" class="nav-link px-2">Features</a></li>
-          <li class="nav-item"><a href="{% url "apps.prelogin:pricing" %}" class="nav-link px-2">Pricing</a></li>
-          <li class="nav-item"><a href="{% url "apps.prelogin:faqs" %}" class="nav-link px-2">FAQs</a></li>
-          <li class="nav-item"><a href="{% url "apps.prelogin:about" %}" class="nav-link px-2">About</a></li>
+          <li class="nav-item"><a href="{% url "prelogin:home" %}" class="nav-link px-2">Home</a></li>
+          <li class="nav-item"><a href="{% url "prelogin:features" %}" class="nav-link px-2">Features</a></li>
+          <li class="nav-item"><a href="{% url "prelogin:pricing" %}" class="nav-link px-2">Pricing</a></li>
+          <li class="nav-item"><a href="{% url "prelogin:faqs" %}" class="nav-link px-2">FAQs</a></li>
+          <li class="nav-item"><a href="{% url "prelogin:about" %}" class="nav-link px-2">About</a></li>
         </ul>
         <div class="text-end">
-          <a type="button" href="{% url "apps.prelogin:pricing" %}"  class="btn btn-outline-light me-2">Buy Now</a>
-          <a class="btn btn-warning" href="{% url 'apps.condo_people:login' %}" role="button">Log in</a>
+          <a type="button" href="{% url "prelogin:pricing" %}"  class="btn btn-outline-light me-2">Buy Now</a>
+          <a class="btn btn-warning" href="{% url 'condo_people:login' %}" role="button">Log in</a>
         </div>
       </div>
     </div>

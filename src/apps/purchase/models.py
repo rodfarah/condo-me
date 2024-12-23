@@ -19,3 +19,6 @@ class RegistrationToken(models.Model):
 
     def __str__(self):
         return f"Token created for {self.register_group} {self.register_email}"
+
+    class Meta:
+        app_label = "purchase"

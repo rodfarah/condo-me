@@ -1,8 +1,7 @@
-from django.contrib.auth.models import Group
-from django.urls import reverse
-
 from apps.condo.models import Condominium
 from apps.condo_people.tests.base_test_condo_people import CondoPeopleTestBase
+from django.contrib.auth.models import Group
+from django.urls import reverse
 
 
 class CondoFormsTest(CondoPeopleTestBase):
@@ -46,7 +45,7 @@ class CondoFormsTest(CondoPeopleTestBase):
         }
 
         response = self.client.post(
-            path=reverse("apps.condo:condo_setup_condominium"), data=condo2_data
+            path=reverse("condo:condo_setup_condominium"), data=condo2_data
         )
         self.assertIn(
             "Condominium name already exists. Please, choose a different one.",
@@ -67,7 +66,7 @@ class CondoFormsTest(CondoPeopleTestBase):
         }
 
         response = self.client.post(
-            path=reverse("apps.condo:condo_setup_condominium"),
+            path=reverse("condo:condo_setup_condominium"),
             data=condo2_data,
         )
 
@@ -77,6 +76,6 @@ class CondoFormsTest(CondoPeopleTestBase):
 
         self.assertRedirects(
             response,
-            reverse("apps.condo:condo_setup_condominium"),
+            reverse("condo:condo_setup_condominium"),
             status_code=302,
         )

@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from apps.purchase.models import RegistrationToken
 from django.contrib.auth.models import Group
 from django.core.mail import send_mail
 from django.http import Http404
@@ -9,7 +10,6 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 
 from .forms import PurchaseForm
-from apps.purchase.models import RegistrationToken
 
 
 def purchase_view(request):
@@ -44,7 +44,7 @@ def purchase_create(request):
             expires_at=expires_at,
         )
         registration_link = request.build_absolute_uri(
-            reverse("apps.condo_people:register", args=[crypted_token])
+            reverse("condo_people:register", args=[crypted_token])
         )
         send_mail(
             subject="Your registration link",
@@ -54,7 +54,7 @@ def purchase_create(request):
             recipient_list=[register_email],
             fail_silently=False,
         )
-        return redirect(reverse("apps.purchase:email_order"))
+        return redirect(reverse("purchase:email_order"))
     return render(request, "purchase/pages/purchase.html", context={"form": form})
 
 

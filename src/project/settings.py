@@ -1,6 +1,7 @@
 import os
 import sys
 from pathlib import Path
+
 from django.urls import reverse_lazy
 from dotenv import load_dotenv
 
@@ -12,7 +13,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 load_dotenv(BASE_DIR / ".env")
 
 sys.path.insert(0, os.path.join(BASE_DIR, "src"))
-sys.path.insert(0, os.path.join(BASE_DIR, "src", "apps"))
 
 DATA_DIR = BASE_DIR / "data"
 
@@ -35,12 +35,11 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.postgres",
     "django_countries",
-    "prelogin",
-    "condo",
-    # custom setup for condo_people in order to create groups and permissions
-    "condo_people",
-    "reservation",
-    "purchase",
+    "apps.prelogin",
+    "apps.condo",
+    "apps.condo_people.apps.CondoPeopleConfig",
+    "apps.reservation",
+    "apps.purchase",
 ]
 
 MIDDLEWARE = [
@@ -70,7 +69,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "condo_people.context_processors.user_groups",
+                "apps.condo_people.context_processors.user_groups",
             ],
         },
     },
@@ -158,6 +157,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # to @login_required
-LOGIN_URL = reverse_lazy("apps.condo_people:login")
+LOGIN_URL = reverse_lazy("src.condo_people:login")
 
 SITE_URL = "http://localhost:8000"

@@ -1,3 +1,5 @@
+from apps.condo.forms import BlockSetupForm, CondoSetupForm
+from apps.condo.models import Condominium
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
@@ -6,9 +8,6 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import UpdateView
-
-from apps.condo.forms import BlockSetupForm, CondoSetupForm
-from apps.condo.models import Condominium
 
 
 # Create a 'manager group required' decorator
@@ -70,7 +69,7 @@ class SetupCondominiumView(SetupViewsWithDecors, UpdateView):
     model = Condominium
     template_name = "condo/pages/setup_pages/condo_setup_condominium.html"
     form_class = CondoSetupForm
-    success_url = reverse_lazy("apps.condo:condo_setup_condominium")
+    success_url = reverse_lazy("condo:condo_setup_condominium")
 
     def get_object(self, queryset=None):
         """
@@ -102,7 +101,6 @@ class SetupCondominiumView(SetupViewsWithDecors, UpdateView):
             messages.success(request, "Condominium successfully updated.")
             return redirect(self.get_success_url())
         return self.form_invalid(form)
-
 
     def form_valid(self, form):
         self.object = form.save()

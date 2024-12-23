@@ -1,6 +1,5 @@
-from django.contrib import admin
-
 from apps.condo.models import Apartment, Block, CommonArea, Condominium
+from django.contrib import admin
 
 # change Django Administrator (title)
 admin.site.site_header = "Condo-me - Admin Panel"

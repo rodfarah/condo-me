@@ -23,7 +23,7 @@ class UserRegisterFormUnitTest(CondoPeopleTestBase, TokenTestBase):
         session.save()
 
         response = self.client.post(
-            path=reverse("apps.condo_people:register_create"), data=form_data
+            path=reverse("condo_people:register_create"), data=form_data
         )
         self.assertIn(
             response.content.decode("utf-8"),

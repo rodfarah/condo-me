@@ -1,14 +1,14 @@
+from apps.condo_people.forms.password_change_forms import CustomPasswordChangeForm
+from apps.condo_people.forms.password_reset_forms import (
+    CustomPasswordResetConfirmForm,
+    CustomPasswordResetForm,
+)
 from django.contrib.auth import views as auth_views
 from django.urls import path, reverse_lazy
 
 from . import views
-from .forms.password_change_forms import CustomPasswordChangeForm
-from .forms.password_reset_forms import (
-    CustomPasswordResetConfirmForm,
-    CustomPasswordResetForm,
-)
 
-app_name = "apps.condo_people"
+app_name = "condo_people"
 
 urlpatterns = [
     # REGISTER
@@ -26,7 +26,8 @@ urlpatterns = [
         auth_views.PasswordChangeView.as_view(
             form_class=CustomPasswordChangeForm,
             template_name="condo_people/registration/password_change.html",
-            success_url=reverse_lazy("apps.condo:home"),
+            success_url=reverse_lazy("condo:home"),
+            # success_message="Your password has been changed successfully.",
         ),
         name="password_change",
     ),
@@ -38,7 +39,7 @@ urlpatterns = [
             template_name="condo_people/registration/password_reset.html",
             email_template_name="condo_people/registration/password_reset_email.html",
             success_url=reverse_lazy(
-                "apps.condo_people:password_reset_done",
+                "condo_people:password_reset_done",
             ),
         ),
         name="password_reset",
