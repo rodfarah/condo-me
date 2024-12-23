@@ -1,7 +1,9 @@
 from apps.purchase.models import RegistrationToken
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login, logout
+from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
+from django.contrib.messages.views import SuccessMessageMixin
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -134,3 +136,7 @@ def logout_view(request):
     if request.method == "POST":
         logout(request)
     return redirect(reverse("condo_people:login"))
+
+
+class CustomPasswordChangeView(SuccessMessageMixin, auth_views.PasswordChangeView):
+    success_message = "Your password has been changed successfully."

@@ -23,11 +23,10 @@ urlpatterns = [
     # PASSWORD CHANGE
     path(
         "password-change/",
-        auth_views.PasswordChangeView.as_view(
+        views.CustomPasswordChangeView.as_view(
             form_class=CustomPasswordChangeForm,
             template_name="condo_people/registration/password_change.html",
             success_url=reverse_lazy("condo:home"),
-            # success_message="Your password has been changed successfully.",
         ),
         name="password_change",
     ),
