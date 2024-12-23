@@ -19,7 +19,7 @@ Make sure you have the following software installed:
 - [Docker](https://www.docker.com/get-started)
 - [Docker Compose](https://docs.docker.com/compose/install/)
 - **Poetry** 
-  - please, run: 
+  - please, run the following command in order to instal poetry: 
     - curl -sSL https://install.python-poetry.org | python3 -
 ---
 
@@ -41,7 +41,7 @@ This project is still in development.
    It is recommended to use **Git** on the host machine instead of within the container. This ensures a more seamless version control experience.
 
 2. **VS Code Extensions**  
-   Since the project is under development, several important extensions are used both in the container and the host environment to improve the development experience. These include:
+   You may not want to use them, but since the project is under development, several important extensions are used to improve the development experience. These include:
    - **Better Jinja**
    - **Black Formatter**
    - **Django**
@@ -63,41 +63,57 @@ This project is still in development.
    ```
 
 2. **Fill in Environment Variables**  
-   Edit the `.env` file to provide the required values for the database and other application configurations.
+   Edit the `.env` file to provide the required values ("CHANGE_ME") for the database and other application configurations.
 
 ---
 
 ## Running the Application
 
-1. **Build and Start the Postgres Container**  
-   Run the following commands to build the Docker image and bring up the containers:
+1. **Make "setup_postgres_volume.sh" executable**  
    ```bash
-   bash
-   docker compose up
+   chmod +x setup_postgres_volume.sh
    ```
 
-2. **Stop the Containers**  
-   To stop all running containers and services:
+2. **Execute "setup_postgres_volume.sh" script**  
+   ```bash
+   ./setup_postgres_volume.sh
+   ```
+3. **Initiate docker compose**
+   ```bash
+   docker compose up
+   ```
+4. **On terminal change directory to "src" folder (where manage.py file bellongs)**
+   ```bash
+   cd src
+   ```
+5. **DB Migrations**  
+   **Inside src directory** on terminal, run both following commands to migrate DB Data:
+   ```bash
+   poetry shell
+   poetry run python manage.py makemigrations
+   poetry run python manage.py migrate 
+   ```
+6. **Create Superuser**
+   **Inside src directory**, run the following commands (and follow the instructions)**
+   ```bash
+   poetry run python manage.py createsuperuser
+   ```
+7. **Collect Static Files**  
+   **Inside src directory** on terminal, run the following commands to copy static files into specific folder:
+   ```bash
+   poetry run python manage.py collectstatic
+   ```
+8. **Run Server**  
+   **Inside src directory** on terminal, run the following commands:
+   ```bash
+   poetry run python manage.py **runserver**
+   ```
+9. **Stop the Containers**  
+   If needed, run the following command in order to stop all running containers and services:
    ```bash
    docker-compose stop
    ```
-
 ---
-
-## Creating the Superuser
-
-After the application is running, create a Django superuser to access the admin panel:
-
-1. Run the following command on terminal:
-   ```bash
-   poetry shell
-   poetry run python manage.py createsuperuser
-   ```
-
-2. Follow the on-screen instructions to set up the email, username, and password for the superuser.
-
----
-
 ## Getting Started with the App
 
 The first steps to start using the app are:
@@ -116,27 +132,25 @@ By following the steps above, you will obtain access to the system as a user bel
 --- 
 
 ## Project Structure
-
+```
 This project follows a Django and Docker-based structure optimized for scalability and portability.
-
+├── .env                                      # Environment variables configuration file
+├── .gitignore                                # Git ignored files and directories
+├── docker-compose.yml                        # Docker Compose configuration file
+├── production_config/                        # To be used later on (for production environment)
+├── data/                                     # Persistent data (e.g., database volumes)
+├── static/                                   # Static files for the project
+│   ├── htmlcov/                              # HTML reports for test coverage
+│   ├── .coverage                             # Test coverage data
+│   ├── .coveragerc                           # Test coverage configuration
+├── src/                                      # Main Django project source code. Django apps are inside here.
+├── LICENSE                                   # Project license
+├── poetry.lock                               # Dependency lock file managed by Poetry
+├── pyproject.toml                            # Main configuration file for Poetry and Python tools
+├── pytest.ini                                # Pytest configuration file
+├── README.md                                 # Project documentation
+├── setup_postgres_volume.sh                  # Shell script. Sets up postgres volume before docker compose
 ```
-├── .env                        # Environment variables configuration file
-├── .gitignore                  # Git ignored files and directories
-├── docker-compose.yml          # Docker Compose configuration file
-├── production_config/          # To be used later on. New docker schema that will keep production environment more consistent
-├── data/                       # Persistent data (e.g., database volumes)
-├── static/                     # Static files for the project
-│   ├── htmlcov/                # HTML reports for test coverage
-│   ├── .coverage               # Test coverage data
-│   ├── .coveragerc             # Test coverage configuration
-├── src/                        # Main Django project source code. Django apps are inside here.
-├── LICENSE                     # Project license
-├── poetry.lock                 # Dependency lock file managed by Poetry
-├── pyproject.toml              # Main configuration file for Poetry and Python tools
-├── pytest.ini                  # Pytest configuration file
-├── README.md                   # Project documentation
-```
-
 ---
 
 ## What's been done so far (DEC/2024)
@@ -144,6 +158,8 @@ This project follows a Django and Docker-based structure optimized for scalabili
 - **prelogin** Basicaly static templates, basic info about the product, faq, prices, etc.
 - **Registration and authentication** Although payment features are not implemented yet, a user may "buy" the product, register and login. This user will belong to the "manager" group. There are also two more groups (already programmed), "caretaker" and "resident", but they are not in use yet.
 - **Condominium Setup** "manager" user may create the condominium object.
+---
+## What's yet to be done
 - **Blocks, Apartments, Common Areas and Reservations** are yet to be programmed.
 ---
 
