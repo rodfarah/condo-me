@@ -1,8 +1,9 @@
+from django.contrib.auth.models import Group
+from django.core.exceptions import ValidationError
+
 from apps.condo.forms import CondoSetupForm
 from apps.condo.models import Apartment, Block, Condominium
 from apps.condo_people.tests.base_test_condo_people import CondoPeopleTestBase
-from django.contrib.auth.models import Group
-from django.core.exceptions import ValidationError
 
 
 class CondoModelsTest(CondoPeopleTestBase):
@@ -71,7 +72,7 @@ class CondoModelsTest(CondoPeopleTestBase):
         # context.exception.message_dict == {"cnpj": ['Please, insert a 14 digits valid CNPJ, with or without symbols.']}
         self.assertIn(
             "Please, insert a 14 digits valid CNPJ, with or without symbols.",
-            context.exception.message_dict["__all__"],
+            context.exception.message_dict["cnpj"],
         )
 
     def test_condominium_identical_cnpj_raises_validation_error(self):

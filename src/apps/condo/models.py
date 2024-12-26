@@ -36,6 +36,9 @@ class Condominium(models.Model):
         return apartments_qty
 
     def clean_cnpj(self):
+        """
+        Validates and formats the CNPJ field specifically.
+        """
         # Remove symbols from cnpj data
         cnpj_no_symbols = remove_symbols_cnpj(self.cnpj)
 
@@ -45,11 +48,23 @@ class Condominium(models.Model):
             raise ValidationError(
                 "Please, insert a 14 digits valid CNPJ, with or without symbols."
             )
-        self.cnpj = formatted_cnpj
-        # return formatted_cnpj
+        return formatted_cnpj
+
+    def clean(self):
+        """
+        This method orchestrates all validation rules and is called during full_clean().
+        """
+        super().clean()
+        try:
+            self.cnpj = self.clean_cnpj()
+        except ValidationError as e:
+            raise ValidationError({"cnpj": e.message})
 
     def save(self, *args, **kwargs):
-        # Force validation before saving
+        """
+        Ensures validation happens before saving.
+        This guarantees that no invalid data can be saved to the database.
+        """
         self.full_clean()
         super().save(*args, **kwargs)
 
