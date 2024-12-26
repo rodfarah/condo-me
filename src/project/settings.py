@@ -1,5 +1,4 @@
 import os
-import sys
 from pathlib import Path
 
 from django.urls import reverse_lazy
@@ -11,8 +10,6 @@ from dotenv import load_dotenv
 # Path(__file__).resolve().parent.parent.parent  ==> CONDO_ME/
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 load_dotenv(BASE_DIR / ".env")
-
-sys.path.insert(0, os.path.join(BASE_DIR, "src"))
 
 DATA_DIR = BASE_DIR / "data"
 
@@ -157,6 +154,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # to @login_required
-LOGIN_URL = reverse_lazy("src.condo_people:login")
+LOGIN_URL = reverse_lazy("condo_people:login")
 
 SITE_URL = "http://localhost:8000"
