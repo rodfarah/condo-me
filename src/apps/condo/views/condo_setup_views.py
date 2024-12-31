@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views import View
@@ -129,23 +129,60 @@ class SetupBlockListView(SetupViewsWithDecors, ListView):
 class SetupBlockView(SetupViewsWithDecors):
     template_name = "condo/pages/setup_pages/condo_setup_block.html"
 
+    def get_current_block(self, user_condominium, id=None):
+        if id is None:
+            return None, False
+        current_block = Block.objects.filter(
+            condominium=user_condominium, pk=id
+        ).first()
+
+        if not current_block:
+            raise PermissionDenied("Permission Denied")
+        return current_block, True
+
     def get(self, request, block_id=None):
         user_condominium = request.user.condominium
         # If template sends block_id, get method. Otherwise, user wants to create new block.
         if block_id:
             # Check if block belongs to user condominium. User is authorized to get block?
-            current_block = Block.objects.filter(
-                condominium=user_condominium,
-                id=block_id,
-            ).first()
-            if not current_block:
-                raise PermissionDenied("Permission Denied")
-            # authorized user. Send form with current block to frontend
+            current_block, block_exists = self.get_current_block(
+                user_condominium=user_condominium, id=block_id
+            )
             form = BlockSetupForm(instance=current_block)
         else:
             # no block_id means user wants to create new block
+            block_exists = False
             form = BlockSetupForm()
 
         return render(
-            request=request, template_name=self.template_name, context={"form": form}
+            request=request,
+            template_name=self.template_name,
+            context={"form": form, "block_exists": block_exists},
         )
+
+    def post(self, request, block_id=None):
+        try:
+            user_condominium = request.user.condominium
+            current_block, _ = self.get_current_block(
+                user_condominium=user_condominium, id=block_id
+            )
+            form = BlockSetupForm(
+                data=request.POST or None,
+                files=request.FILES or None,
+                instance=current_block,
+            )
+
+            if form.is_valid():
+                block = form.save(commit=False)
+                block.condominium = user_condominium
+                block.save()
+                messages.success(request, "Block has been saved successfully.")
+                return redirect("condo:condo_setup_block_list")
+            return render(
+                request=request,
+                template_name=self.template_name,
+                context={"form": form, "block_exists": bool(block_id)},
+            )
+        except Exception as e:
+            messages.error(request, f"Error while saving block {str(e)}")
+            return redirect("condo:condo_setup_block_list")

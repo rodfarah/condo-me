@@ -103,10 +103,24 @@ class Block(DateLogsBaseModel):
         blank=True,
         null=True,
     )
-    cover = models.ImageField(upload_to="condo_me/blocks/%Y/%m/%d/", blank=True)
+    cover = models.ImageField(
+        upload_to="condo_me/blocks/%Y/%m/%d/",
+        blank=True,
+        null=True,
+        verbose_name="Cover Image",
+        help_text="Upload an image for this block",
+    )
 
     def __str__(self) -> str:
         return self.name
+
+    def get_cover_url(self):
+        """Returns the URL of the cover image or a default image
+        if none exists
+        """
+        if self.cover and hasattr(self.cover, "url"):
+            return self.cover.url
+        return None
 
     def get_apartments_count(self):
         return self.apartments.count()
