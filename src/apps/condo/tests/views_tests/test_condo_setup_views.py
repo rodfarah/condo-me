@@ -4,15 +4,12 @@ accessible only to 'manager' users.
 These tests are DIFFERENT from 'test_condo_views' which are applied to the first page user will get when logged in.
 """
 
-import time
-
-from apps.condo.models import Condominium
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.test import LiveServerTestCase, TestCase
+from django.test import TestCase
 from django.urls import reverse
 
-from src.utils.browser import make_chrome_browser
+from apps.condo.models import Condominium
 
 
 class CondoSetupViewsTest(TestCase):
@@ -92,13 +89,12 @@ class CondoSetupViewsTest(TestCase):
 #############################################
 
 
-# FUNCTIONAL TEST:
-class SetupCondominiumViewsTest(LiveServerTestCase):
-    def sleep(self, seconds=5):
-        time.sleep(seconds)
+class SetupCondominiumViewsTest(CondoSetupViewsTest):
+    def test_condo_exists_is_none_if_condominium_is_none(self):
+        # remove setup condominium instance from db
+        Condominium.objects.all().delete()
+        # Create a get request
+        url = reverse("condo:condo_setup_block_list")
+        response = self.client.get(path=url)
 
-    def test_form_is_valid_patch_method(self):
-        browser = make_chrome_browser()
-        browser.get(self.live_server_url)
-        self.sleep()
-        browser.quit()
+        self.assertEqual(response.context["condo_exists"], False)

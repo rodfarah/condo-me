@@ -1,10 +1,31 @@
+import uuid
+
 from brutils import format_cnpj, remove_symbols_cnpj
 from django.core.exceptions import ValidationError
 from django.db import models
 from django_countries.fields import CountryField
 
 
-class Condominium(models.Model):
+# Base Class
+class DateLogsBaseModel(models.Model):
+    """
+    Every model must have:
+    - uuid as id
+    - created_at attribute
+    - updated_at attribute
+    So this is a base class created in order to keep DRY practices.
+    """
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        # If abstract=True, django will NOT create the table in db.
+        abstract = True
+
+
+class Condominium(DateLogsBaseModel):
     name = models.CharField(max_length=120, blank=False, null=False, unique=True)
     cnpj = models.CharField(
         max_length=18,
@@ -18,8 +39,6 @@ class Condominium(models.Model):
     state = models.CharField(max_length=30)
     country = CountryField()
     postal_code = models.CharField(max_length=20)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
     description = models.TextField(help_text="Write details about your condominium.")
     cover = models.ImageField(upload_to="condo_me/condominiums/%Y/%m/%d/", blank=True)
 
@@ -72,7 +91,7 @@ class Condominium(models.Model):
         app_label = "condo"
 
 
-class Block(models.Model):
+class Block(DateLogsBaseModel):
     name = models.CharField(max_length=120, default="Main Block", unique=True)
     description = models.TextField(
         help_text="Write details about this block.", null=True, blank=True
@@ -84,20 +103,19 @@ class Block(models.Model):
         blank=True,
         null=True,
     )
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    cover = models.ImageField(upload_to="condo_me/blocks/%Y/%m/%d/", blank=True)
 
     def __str__(self) -> str:
         return self.name
 
-    def num_of_apartments(self):
+    def get_apartments_count(self):
         return self.apartments.count()
 
     class Meta:
         app_label = "condo"
 
 
-class Apartment(models.Model):
+class Apartment(DateLogsBaseModel):
     number_or_name = models.CharField(max_length=20, verbose_name="Number (or name)")
     block = models.ForeignKey(
         to=Block, on_delete=models.CASCADE, related_name="apartments"
@@ -105,8 +123,6 @@ class Apartment(models.Model):
     condominium = models.ForeignKey(
         to=Condominium, on_delete=models.CASCADE, related_name="apartments"
     )
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ["number_or_name", "block"]
@@ -126,7 +142,7 @@ class Apartment(models.Model):
         return ", ".join(names)
 
 
-class CommonArea(models.Model):
+class CommonArea(DateLogsBaseModel):
     MINIMUM_USING_MINUTES = [(30, "30"), (60, "60")]
 
     name = models.CharField(max_length=50)
@@ -171,8 +187,6 @@ class CommonArea(models.Model):
         verbose_name="Maximum using time (minutes)",
         help_text="It will be blank in case of whole day use.",
     )
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
     cover = models.ImageField(upload_to="common_areas/%Y/%m/%d/", blank=True, null=True)
 
     def __str__(self) -> str:

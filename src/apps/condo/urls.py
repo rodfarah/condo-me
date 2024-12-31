@@ -26,9 +26,19 @@ urlpatterns = [
         name="condo_setup_condominium",
     ),
     path(
-        "condo-setup/blocks/",
-        condo_setup_views.SetupBlocksView.as_view(),
-        name="condo_setup_blocks",
+        "condo-setup/block-list/",
+        condo_setup_views.SetupBlockListView.as_view(),
+        name="condo_setup_block_list",
+    ),
+    path(
+        "condo-setup/block/create",
+        condo_setup_views.SetupBlockView.as_view(),
+        name="condo_setup_block_create",
+    ),
+    path(
+        "condo-setup/block/<int:block_id>",
+        condo_setup_views.SetupBlockView.as_view(),
+        name="condo_setup_block_unique",
     ),
     # path("condo-setup/apartments/", views.setup_apartments, name="setup_apartments"),
     # path(

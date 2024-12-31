@@ -1,7 +1,8 @@
-from apps.condo.models import Block, Condominium
 from django import forms
 from django.core.exceptions import ValidationError
 from django_countries import countries
+
+from apps.condo.models import Block, Condominium
 
 
 class CondoSetupForm(forms.ModelForm):
@@ -147,17 +148,27 @@ class CondoSetupForm(forms.ModelForm):
 
 class BlockSetupForm(forms.ModelForm):
 
+    apartments_count = forms.IntegerField(
+        required=False,
+        disabled=True,
+        widget=forms.NumberInput(
+            attrs={"class": "form-control", "id": "apartments_count"}
+        ),
+    )
+
     class Meta:
         model = Block
 
         fields = [
             "name",
             "description",
+            "cover",
         ]
 
         labels = {
             "name": "Block Name",
             "description": "Description",
+            "cover": "Image",
         }
 
         error_messages = {
@@ -180,7 +191,17 @@ class BlockSetupForm(forms.ModelForm):
                     "id": "description",
                 },
             ),
+            "cover": forms.ClearableFileInput(
+                attrs={"class": "form-control", "id": "cover"}
+            ),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance:
+            self.fields["apartments_count"].initial = (
+                self.instance.get_apartments_count()
+            )
 
     def clean_name(self):
         block_name_in_form = self.cleaned_data.get("name")
@@ -188,7 +209,7 @@ class BlockSetupForm(forms.ModelForm):
 
         # Check if condo name already exists in db, excluding instance
         if (
-            Condominium.blocks.objects.filter(name=block_name_in_form)
+            Block.objects.filter(name=block_name_in_form)
             .exclude(pk=instance.pk)
             .exists()
         ):

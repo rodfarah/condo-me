@@ -1,0 +1,137 @@
+{% load static %}
+
+<section class="py-2 text-center container-fluid">
+  <div class="row py-lg-5 justify-content-center">
+    <div class="col-lg-8 col-md-10">
+      <h1 class="fw-light">Block Setup</h1>
+      <p class="lead text-body-secondary">Here you can enter or edit information and details about the condominium Block.</p>
+    </div>
+  </div>
+</section>
+
+<div class="py-2 container-fluid">
+  <div class="row g-5 justify-content-center">
+    <div class="col-lg-8 col-md-10">
+      <a href="{% url "condo:condo_setup_home" %}">Back to Setup Area</a>
+    </div>
+  </div>
+</div>
+
+<div class="py-2 container-fluid">
+  <div class="row g-5 justify-content-center">
+    <div class="col-lg-8 col-md-10">
+      {% if messages %}
+        <div class="form-floating mb-3">
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}" role="alert">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="py-2 container-fluid">
+  <div class="row g-5 justify-content-center">
+    <div class="col-lg-8 col-md-10">
+      <h4 class="mb-3">Create or edit a Block:</h4>
+        <form id="BlockForm" name="block_data" autocomplete="on" action="{% url "condo:condo_setup_block_create" %}" method="POST" class="needs-validation" novalidate="" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="row g-3">
+            
+            <div class="col-12">
+              <label for="{{ form.name.id_for_label }}" >{{form.name.label}}</label>
+              <div class="input-group">
+                {{ form.name }}
+              </div>
+                {% if form.name.errors %}
+                <div class="text-danger">
+                  <small>{{ form.name.errors }}</small>
+                </div>
+                {% endif %}
+                {% if condo_exists %}
+                  <div class="mt-1">
+                    <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('firstName')">Edit</a>
+                  </div>
+                {% endif %}
+              </div>
+
+            <div class="col-12">
+              <label for="{{ form.description.id_for_label }}">{{form.description.label}}</label>
+              <div class="input-group">
+                {{ form.description }}
+              </div>
+                {% if form.description.errors %}
+                <div class="text-danger">
+                  <small>{{ form.description.errors }}</small>
+                </div>
+                {% endif %}
+                {% if condo_exists %}
+                <div class="mt-1">
+                  <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('description')">Edit</a>
+                </div>
+                {% endif %}
+              </div>
+
+
+              <div class="col-12">
+                <label for="{{ form.apartments_count.id_for_label }}">{{form.apartments_count.label}}</label>
+                <div class="input-group">
+                  {{ form.apartments_count }}
+                </div>
+                  {% if form.apartments_count.errors %}
+                  <div class="text-danger">
+                    <small>{{ form.apartments_count.errors }}</small>
+                  </div>
+                  {% endif %}
+                  {% if condo_exists %}
+                  <div class="mt-1">
+                    <a class="btn btn-outline-secondary btn-sm" href="#" role="button" >Edit</a>
+                  </div>
+                  {% endif %}
+                </div>
+  
+
+
+
+            <div class="col-6">
+              <label for="{{ form.cover.id_for_label }}">{{ form.cover.label }}</label>
+              <div>
+              {{ form.cover }}
+              {% if form.cover.errors %}
+                <div class="text-danger">
+                  <small>{{ form.cover.errors }}</small>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          <button class="w-100 btn btn-warning btn-sm btn-lg" id="editBotton" type="submit">Save</button>
+        </form>
+    </div>
+  </div>
+</div>
+
+  <div class="album py-5 bg-body-tertiary">
+    <div class="container">
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        {% for block in object_list %}
+          <div class="col">
+            <div class="card shadow-sm">
+              <img src="{% static 'condo/covers/setup_blocks.jpg' %}" class="bd-placeholder-img card-img-top" width="100%" height="100%" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false">
+              <div class="card-body">
+                <p class="card-text">{{ block.name }}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>

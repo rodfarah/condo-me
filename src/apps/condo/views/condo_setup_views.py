@@ -1,13 +1,14 @@
-from apps.condo.forms import BlockSetupForm, CondoSetupForm
-from apps.condo.models import Condominium
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.views.generic import UpdateView
+from django.views.generic import ListView, UpdateView
+
+from apps.condo.forms import BlockSetupForm, CondoSetupForm
+from apps.condo.models import Block, Condominium
 
 
 # Create a 'manager group required' decorator
@@ -32,9 +33,8 @@ def manager_group_required(view_func):
 # Create a class that applies login_required and manager_group_required decorators
 class SetupViewsWithDecors(View):
     """
-    This class applies both login_required and manager_group_required
-    decorators to all setup area CBVs (following DRY principle).
-    Ensures that only logged-in users who belong to the 'manager' group can access these views.
+    Ensures that only logged-in users who belong to the 'manager' group can access
+    setup views.
     """
 
     @method_decorator(
@@ -79,6 +79,10 @@ class SetupCondominiumView(SetupViewsWithDecors, UpdateView):
         return self.request.user.condominium
 
     def get_form(self, form_class=None):
+        """
+        Customizes the form by making fields readonly if a condominium already exists.
+        This prevents direct editing of fields unless through the 'Edit' buttons.
+        """
         form = super().get_form(form_class)
         #  "self.object" is the instance of "get_object()", the user condominium itself
         if self.object:
@@ -87,22 +91,20 @@ class SetupCondominiumView(SetupViewsWithDecors, UpdateView):
         return form
 
     def get_context_data(self, **kwargs):
+        """
+        Adds additional context data to the template.
+        The 'condo_exists' flag helps the template determine whether to show
+        creation or editing interfaces.
+        """
         context = super().get_context_data(**kwargs)
         context["condo_exists"] = bool(self.object)  # True or False
         return context
 
-    def patch(self, request, *args, **kwargs):
-        self.object = self.get_object()  # get user's "condominium"
-        form = self.get_form()
-
-        if form.is_valid():
-            #  "self.object" is the instance of "get_object()", the user.condominium itself
-            self.object = form.save()  # form.save() returns updated user.condominium
-            messages.success(request, "Condominium successfully updated.")
-            return redirect(self.get_success_url())
-        return self.form_invalid(form)
-
     def form_valid(self, form):
+        """
+        Called when a valid form data has been POSTED.
+        Associates the condominium with the current user and saves both.
+        """
         self.object = form.save()
         # user has just created his own condominium, so ...
         self.request.user.condominium = self.object
@@ -111,39 +113,39 @@ class SetupCondominiumView(SetupViewsWithDecors, UpdateView):
         return super().form_valid(form)
 
 
-class SetupBlocksView(SetupViewsWithDecors):
+class SetupBlockListView(SetupViewsWithDecors, ListView):
+    """
+    This class generates a list of blocks of the user condominium.
+    """
+
+    model = Block
+    http_method_names = ["get"]
     template_name = "condo/pages/setup_pages/condo_setup_blocks.html"
 
-    def get(self, request):
-        # Check if there is a condominium associated with registered user
-        condominium = getattr(request.user, "condominium", None)
-        if condominium is None:
-            condo_exists = False
-        else:
-            condo_exists = True
-            # Check if there are block(s) associated to the condominium
-            blocks = condominium.blocks.all()
-            if not blocks.exists():
-                block_exists = False
-                form = BlockSetupForm()  # empty form to be filled in by user
-            else:
-                # Send block(s) data to form if block(s) already exist(s)
-                block_exists = True
-                form = None
-                # transform form as read only (click on edit button)
-                # for field in form.fields.values():
-                #     field.widget.attrs["readonly"] = True
-        return render(
-            request,
-            self.template_name,
-            context={
-                "form": form,
-                "condo_exists": condo_exists,
-                "block_exists": block_exists,
-                "blocks": blocks,
-            },
-        )
+    def get_queryset(self):
+        return Block.objects.filter(condominium=self.request.user.condominium)
 
-    def post(self, request):
-        pass
-        pass
+
+class SetupBlockView(SetupViewsWithDecors):
+    template_name = "condo/pages/setup_pages/condo_setup_block.html"
+
+    def get(self, request, block_id=None):
+        user_condominium = request.user.condominium
+        # If template sends block_id, get method. Otherwise, user wants to create new block.
+        if block_id:
+            # Check if block belongs to user condominium. User is authorized to get block?
+            current_block = Block.objects.filter(
+                condominium=user_condominium,
+                id=block_id,
+            ).first()
+            if not current_block:
+                raise PermissionDenied("Permission Denied")
+            # authorized user. Send form with current block to frontend
+            form = BlockSetupForm(instance=current_block)
+        else:
+            # no block_id means user wants to create new block
+            form = BlockSetupForm()
+
+        return render(
+            request=request, template_name=self.template_name, context={"form": form}
+        )
