@@ -1,85 +1,86 @@
 {% load static %}
 
-<section class="py-2 text-center container-fluid">
-  <div class="row py-lg-5 justify-content-center">
-    <div class="col-lg-8 col-md-10">
+<section class="py-2 text-center container">
+  <div class="row py-lg-5">
+    <div class="col-lg-6 col-md-8 mx-auto">
       <h1 class="fw-light">Block Setup</h1>
       <p class="lead text-body-secondary">Here you can enter or edit information and details about the condominium Blocks.</p>
     </div>
   </div>
 </section>
 
-<div class="py-2 container-fluid">
-  <div class="row g-5 justify-content-center">
-    <div class="col-lg-8 col-md-10">
-      {% if messages %}
+{% if messages %}
+  <div class="py-2 container">
+    <div class="row">
+      <div class="col-12">
         <div class="form-floating mb-3">
           {% for message in messages %}
             <div class="alert alert-{{ message.tags }}" role="alert">
               {{ message }}
             </div>
-            {% endfor %}
-          </div>
-          {% endif %}
+          {% endfor %}
         </div>
       </div>
     </div>
-    
-<div class="py-2 container-fluid">
-  <div class="row g-5 justify-content-center">
-    <div class="col-lg-8 col-md-10">
-      {% if not object_list %}
-      <div class="modal modal-sheet position-static d-block bg-body p-4 py-md-5" tabindex="-1" role="dialog" id="modalChoice">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content rounded-3 shadow">
-            <div class="modal-body p-4 text-center">
-              <h5 class="mb-0">There are no registered Blocks yet.</h5>
-              <p class="mb-0">Would you like to create one?</p>
-            </div>
-            <div class="modal-footer flex-nowrap p-0">
-              <a class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0 border-end" 
-                 href="{% url 'condo:condo_setup_block_create' %}" role="button">
-                Yes, let's create one!
-              </a>
-              <a class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0 border-end" 
-                 href="{% url 'condo:condo_setup_home' %}" role="button">
-                No, thanks
-              </a>
-            </div>
-          </div>
+  </div>
+{% endif %}
+
+{% if not object_list %}
+  <div class="modal modal-sheet position-static d-block bg-body p-4 py-md-5" tabindex="-1" role="dialog" id="modalChoice">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content rounded-3 shadow">
+        <div class="modal-body p-4 text-center">
+          <h5 class="mb-0">There are no registered Blocks yet.</h5>
+          <p class="mb-0">Would you like to create one?</p>
         </div>
-      </div>
-      {% else %}
-        <div class="py-2 container-fluid">
-          <div class="row g-5 justify-content-center">
-            <div class="col-lg-8 col-md-10">
-              <a href="{% url "condo:condo_setup_home" %}">Back to Setup Area</a>
-            </div>
-          </div>
-        </div>
-        <h4 class="mb-3">Registered Blocks:</h4>
+        <div class="modal-footer flex-nowrap p-0">
+          <a class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0 border-end" 
+             href="{% url 'condo:condo_setup_block_create' %}" role="button">
+            Yes, let's create one!
+          </a>
+          <a class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0 border-end" 
+             href="{% url 'condo:condo_setup_home' %}" role="button">
+            No, thanks
+          </a>
         </div>
       </div>
     </div>
-  <div class="album py-5 bg-body-tertiary">
-    <div class="container">
-      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-        {% for block in object_list %}
-          <div class="col">
-            <div class="card shadow-sm">
-                <img src="{% if block.get_cover_url %}{{ block.get_cover_url }}{% else %}{% static 'condo/covers/setup_blocks.jpg' %} {% endif %}" class="bd-placeholder-img card-img-top" width="100%" height="100%" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false">
-              <div class="card-body">
-                <p class="card-text">{{ block.name }}</p>
-                <div class="d-flex justify-content-between align-items-center">
-                  <div class="btn-group">
-                    <a class="btn btn-sm btn-outline-secondary" href="{% url "condo:condo_setup_block_unique" block.id %}" role="button">View</a>
-                  </div>
+  </div>
+{% else %}
+  <div class="container-fluid">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 g-3">
+      <div class="col-12">
+        <a href="{% url 'condo:condo_setup_home' %}" class="text-decoration-none">
+          <i class="bi bi-arrow-left"></i> Back to Setup Area
+        </a>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-12 py-4">
+        <h4>Registered Blocks:</h4>
+      </div>
+    </div>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 bg-body-tertiary">
+      {% for block in object_list %}
+        <div class="col">
+          <div class="card shadow-sm">
+            <img src="{% if block.get_cover_url %}{{ block.get_cover_url }}{% else %}{% static 'condo/covers/setup_blocks.jpg' %}{% endif %}" 
+                 class="bd-placeholder-img card-img-top" 
+                 width="100%" 
+                 height="225" 
+                 style="object-fit: cover;">
+            <div class="card-body">
+              <p class="card-text text-center"><strong>{{ block.name }}</strong></p>
+              <div class="d-flex justify-content-center align-items-center">
+                <div class="btn-group">
+                  <a href="{% url 'condo:condo_setup_block_unique' block.id %}" 
+                     class="btn btn-sm btn-outline-warning">View or Edit</a>
                 </div>
               </div>
             </div>
           </div>
-        {% endfor %}
-      </div>
+        </div>
+      {% endfor %}
     </div>
   </div>
 {% endif %}
