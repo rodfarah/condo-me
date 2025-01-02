@@ -207,7 +207,7 @@ class BlockSetupForm(forms.ModelForm):
         block_name_in_form = self.cleaned_data.get("name")
         instance = self.instance  # Current instance beeing edited
 
-        # Check if condo name already exists in db, excluding instance
+        # Check if block name already exists in db, excluding instance
         if (
             Block.objects.filter(name=block_name_in_form)
             .exclude(pk=instance.pk)
