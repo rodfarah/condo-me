@@ -1,6 +1,7 @@
-from apps.condo.models import Apartment, Condominium
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+
+from apps.condo.models import Apartment, Condominium
 
 
 class User(AbstractUser):
@@ -14,14 +15,14 @@ class User(AbstractUser):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="residents",
+        related_name="condo_person",
     )
     condominium = models.ForeignKey(
         Condominium,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="residents",
+        related_name="condo_person",
     )
     cover = models.ImageField(upload_to="users/%Y/%m/%d/", blank=True)
 

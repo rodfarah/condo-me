@@ -241,3 +241,62 @@ class CommonArea(DateLogsBaseModel):
 
     class Meta:
         app_label = "condo"
+
+
+class SetupProgress(DateLogsBaseModel):
+    """
+    Tracks the setup progress of a condominium in the system in order to
+    give reference to a manager user.
+    Each step is represented by a boolean field indicating if that
+    configuration has been completed.
+    """
+
+    condominium = models.OneToOneField(
+        "Condominium", on_delete=models.CASCADE, related_name="setup_progress"
+    )
+
+    has_blocks = models.BooleanField(default=False)
+    has_apartments = models.BooleanField(default=False)
+    has_residents = models.BooleanField(default=False)
+    has_common_areas = models.BooleanField(default=False)
+
+    @property
+    def setup_percentage(self):
+        """Calculates the completion percentage of the condominium setup"""
+        total_steps = 4
+        completed_steps = sum(
+            [
+                self.has_blocks,
+                self.has_apartments,
+                self.has_residents,
+                self.has_common_areas,
+            ]
+        )
+        return (completed_steps / total_steps) * 100
+
+    @property
+    def next_step(self):
+        """Returns the next step that needs to be configured"""
+        if not self.has_blocks:
+            return "Create at least one block."
+        if not self.has_apartments:
+            return "Add apartments to block"
+        if not self.has_residents:
+            return "Send invitation to residents"
+        if not self.has_common_areas:
+            return "Configure common areas"
+        return "Condominium Setup Complete"
+
+    def update_status(self):
+        """
+        Updates the condominium setup status based on existing relatioships
+        """
+        self.has_blocks = self.condominium.blocks.exists()
+        self.has_apartments = any(
+            block.apartments.exists() for block in self.condominium.blocks.all()
+        )
+        self.has_residents = self.condominium.condo_person.filter(
+            groups__name="resident"
+        ).exists()
+        self.has_common_areas = self.condominium.common_areas.exists()
+        self.save()

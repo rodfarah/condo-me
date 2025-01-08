@@ -1,10 +1,11 @@
-from apps.condo.models import Apartment, Block, CommonArea, Condominium
-from apps.reservation.models import Reservation
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
+
+from apps.condo.models import Apartment, Block, CommonArea, Condominium
+from apps.reservation.models import Reservation
 
 
 @receiver(post_migrate)
@@ -72,5 +73,4 @@ def create_user_groups(sender, **kwargs):
             permission, _ = Permission.objects.get_or_create(
                 codename=codename, content_type=content_type
             )
-
             group.permissions.add(permission)
