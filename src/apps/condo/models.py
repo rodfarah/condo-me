@@ -1,6 +1,7 @@
 import uuid
 
 from brutils import format_cnpj, remove_symbols_cnpj
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db import models
 from django_countries.fields import CountryField
@@ -254,43 +255,49 @@ class SetupProgress(DateLogsBaseModel):
     condominium = models.OneToOneField(
         "Condominium", on_delete=models.CASCADE, related_name="setup_progress"
     )
-
+    has_condominium = models.BooleanField(default=False)
     has_blocks = models.BooleanField(default=False)
     has_apartments = models.BooleanField(default=False)
-    has_residents = models.BooleanField(default=False)
     has_common_areas = models.BooleanField(default=False)
+    has_residents = models.BooleanField(default=False)
 
     @property
     def setup_percentage(self):
         """Calculates the completion percentage of the condominium setup"""
-        total_steps = 4
+        total_steps = 5
         completed_steps = sum(
             [
+                self.has_condominium,
                 self.has_blocks,
                 self.has_apartments,
-                self.has_residents,
                 self.has_common_areas,
+                self.has_residents,
             ]
         )
         return (completed_steps / total_steps) * 100
 
     @property
     def next_step(self):
-        """Returns the next step that needs to be configured"""
+        """Returns the next step that needs to be configured. Order matters."""
+        if not self.has_condominium:
+            return "Create your condominium"
         if not self.has_blocks:
-            return "Create at least one block."
+            return "Create at least one block"
         if not self.has_apartments:
             return "Add apartments to block"
         if not self.has_residents:
-            return "Send invitation to residents"
+            return "Send invitation to residents join the system"
         if not self.has_common_areas:
-            return "Configure common areas"
+            return "Create a common area"
         return "Condominium Setup Complete"
 
     def update_status(self):
         """
         Updates the condominium setup status based on existing relatioships
         """
+        self.has_condominium = (
+            get_user_model().objects.filter(Condominium=self.condominium).exists()
+        )
         self.has_blocks = self.condominium.blocks.exists()
         self.has_apartments = any(
             block.apartments.exists() for block in self.condominium.blocks.all()
