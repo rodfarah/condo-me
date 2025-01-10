@@ -1,5 +1,6 @@
 {% load static %}
 
+
 <section class="py-2 text-center container-fluid">
   <div class="row py-lg-5">
     <div class="col-lg-6 col-md-8 mx-auto">
@@ -8,24 +9,53 @@
     </div>
   </div>
 </section>
-<div class="progress" role="progressbar" aria-label="Condominium setup progress bar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
-  <div class="progress-bar text-bg-warning" style="width: 75%">75%</div>
+
+<div class="py-2 container-fluid">
+  <div class="row g-5 justify-content-center">
+    <div class="col-lg-8 col-md-10">
+      {% if messages %}
+        <div class="form-floating mb-3">
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}" role="alert">
+              {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
 </div>
+
+<div class="progress-stacked">
+  <div class="progress" role="progressbar" aria-label="Segment one" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100" style="width: 15%">
+    <div class="progress-bar">JUST TESTING</div>
+  </div>
+  <div class="progress" role="progressbar" aria-label="Segment two" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" style="width: 30%">
+    <div class="progress-bar bg-success">JUST TESTING</div>
+  </div>
+  <div class="progress" role="progressbar" aria-label="Segment three" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
+    <div class="progress-bar bg-info">JUST TESTING</div>
+  </div>
+</div>
+
+
+
+
 <div class="album py-5 bg-body-tertiary">
   <div class="container-fluid">
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 g-3">
       <div class="col">
         <div class="card shadow-sm">
           {% if condo_cover %}
-            <img src="/media/{{ condo_cover }}" class="bd-placeholder-img card-img-top" width="100%" height="225" style="object-fit: cover;"></img>
+          <img src="/media/{{ condo_cover }}" class="bd-placeholder-img card-img-top" width="100%" height="225" style="object-fit: cover;"></img>
           {% else %}
-            <img src= {% static "/condo/covers/setup_condominium.jpg" %} class="bd-placeholder-img card-img-top" width="100%" height="225" style="object-fit: cover;"></img>
+          <img src= {% static "/condo/covers/setup_condominium.jpg" %} class="bd-placeholder-img card-img-top" width="100%" height="225" style="object-fit: cover;"></img>
           {% endif %}
           <div class="card-body">
             <p class="card-text text-center"><strong>Condominium</strong></p>
             <div class="d-flex justify-content-center align-items-center">
               <div class="btn-group">
-                <a href="{% url "condo:condo_setup_condominium" %}" type="button" class="btn btn-sm btn-outline-warning">{% if condo_exists %}View or Edit {% else %}Create {% endif %}</a>
+                <a href="{% url "condo:condo_setup_condominium" %}" type="button" class="btn btn-sm btn-outline-warning">{% if condo_exists %}View or Edit{% else %}Create{% endif %}</a>
               </div>
             </div>
           </div>
@@ -68,6 +98,8 @@
           <div class="card-body">
             <p class="card-text text-center"><strong>Common Areas</strong></p>
             <div class="d-flex justify-content-center align-items-center">
+
+
               <div class="btn-group">
                 <button type="button" class="btn btn-sm btn-outline-warning">{% if common_area_exists %}View or Edit {% else %}Create {% endif %}</button>
               </div>

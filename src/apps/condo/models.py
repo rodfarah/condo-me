@@ -296,7 +296,7 @@ class SetupProgress(DateLogsBaseModel):
         Updates the condominium setup status based on existing relatioships
         """
         self.has_condominium = (
-            get_user_model().objects.filter(Condominium=self.condominium).exists()
+            get_user_model().objects.filter(condominium=self.condominium).exists()
         )
         self.has_blocks = self.condominium.blocks.exists()
         self.has_apartments = any(

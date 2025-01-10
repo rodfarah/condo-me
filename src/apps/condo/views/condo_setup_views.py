@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
@@ -67,7 +68,7 @@ class SetupProgressMixin:
 
     def update_setup_progress(self):
         setup_progress = self.get_setup_progress()
-        if setup_progress:
+        if setup_progress is not None:
             setup_progress.update_status()
 
 
@@ -81,10 +82,23 @@ class SetupAreaView(SetupViewsWithDecors):
     template_name = "condo/pages/setup_pages/condo_setup_home.html"
 
     def get(self, request):
-        user_has_condo = getattr(request.user, "condominium", None)
+        condominium = getattr(request.user, "condominium", None)
         context = {}
 
-        if user_has_condo:
+        if not condominium:
+            context.update(
+                {
+                    "condo_exists": False,
+                    "condo_cover": None,
+                    "block_exists": False,
+                    "apartment_exists": False,
+                    "common_area_exists": False,
+                    "setup_percentage": 0,
+                    "next_step": None,
+                    "is_setup_complete": False,
+                }
+            )
+        else:
             # first, we get or create the "SetupProgress" object
             setup_progress, true_or_false = SetupProgress.objects.get_or_create(
                 condominium=request.user.condominium
@@ -93,8 +107,13 @@ class SetupAreaView(SetupViewsWithDecors):
             # then we add context variables to be sent to template
             context.update(
                 {
-                    "condo_cover": request.user.condominium.cover.name,  # condominium cover url
-                    "user_has_condo": True,
+                    "condo_exists": True,
+                    "condo_cover": (
+                        condominium.cover.name if condominium.cover else None
+                    ),  # condominium cover url
+                    "block_exists": condominium.blocks.exists(),
+                    "apartment_exists": condominium.apartments.exists(),
+                    "common_area_exists": condominium.common_areas.exists(),
                     "setup_percentage": setup_progress.setup_percentage,
                     "next_step": setup_progress.next_step,
                     "is_setup_complete": setup_progress.setup_percentage == 100,
@@ -107,11 +126,11 @@ class SetupAreaView(SetupViewsWithDecors):
         )
 
 
-class SetupCondominiumView(SetupViewsWithDecors, SetupProgressMixin, UpdateView):
+class SetupCondominiumView(SetupViewsWithDecors, UpdateView, SetupProgressMixin):
     model = Condominium
     template_name = "condo/pages/setup_pages/condo_setup_condominium.html"
     form_class = CondoSetupForm
-    success_url = reverse_lazy("condo:condo_setup_condominium")
+    success_url = reverse_lazy("condo:condo_setup_home")
 
     def get_object(self, queryset=None):
         """
@@ -139,7 +158,35 @@ class SetupCondominiumView(SetupViewsWithDecors, SetupProgressMixin, UpdateView)
         creation or editing interfaces.
         """
         context = super().get_context_data(**kwargs)
-        context["condo_exists"] = bool(self.object)  # True or False
+        # check if condominium exists
+        condominium = self.object
+        if not condominium:
+            context.update(
+                {
+                    "condo_exists": False,
+                    "condo_cover": None,
+                    "block_exists": False,
+                    "apartment_exists": False,
+                    "common_area_exists": False,
+                }
+            )
+        related_objects = (
+            condominium.blocks.exists(),
+            condominium.apartments.exists(),
+            condominium.common_areas.exists(),
+        )
+        # template needs all context elements, not only "condo_exists"
+        context.update(
+            {
+                "condo_exists": bool(condominium),
+                "condo_cover": getattr(condominium, "cover", None),
+                "block_exists": related_objects[0],
+                "apartment_exists": related_objects[1],
+                "common_area_exists": related_objects[2],
+            }
+        )
+        print("Context being sent to template:", context)  # Debugging
+
         return context
 
     def form_valid(self, form):
@@ -149,13 +196,31 @@ class SetupCondominiumView(SetupViewsWithDecors, SetupProgressMixin, UpdateView)
         progress and saves everything.
         """
         # If there is not a condominium object in form (new condominium)
-        if not self.object:
-            form.instance.condominium = self.request.user.condominium
-        self.object = form.save()
-        self.update_setup_progress()
+        it_is_new_condo = not self.object
 
-        messages.success(self.request, "Condominium has been created successfully")
-        return redirect("condo:condo_setup_condominium")
+        # Save form first.
+        # form_valid() returns HttpResponseRedirect (post > redirect > get)
+        success_redirect = super().form_valid(form)
+        condominium_instance = form.instance
+
+        if it_is_new_condo:
+            # Associate user with new condominium
+            self.request.user.condominium = condominium_instance
+            self.request.user.save()
+
+            # Add user as condo_person
+            current_user = get_user_model()
+            current_user.objects.filter(id=self.request.user.id).update(
+                condominium=condominium_instance
+            )
+        message = (
+            "Condominium has been created successfully"
+            if it_is_new_condo
+            else "Condominium has been edited successfully"
+        )
+        messages.success(self.request, message)
+        self.update_setup_progress()
+        return success_redirect
 
 
 class SetupBlockListView(SetupViewsWithDecors, ListView):
@@ -252,6 +317,7 @@ class SetupBlockView(SetupViewsWithDecors, UpdateView, SetupProgressMixin):
 
         # save new block
         self.object.save()
+        self.update_setup_progress()
 
         messages.success(self.request, "Block has been created or edited successfully")
         return HttpResponseRedirect(self.get_success_url())
