@@ -1,8 +1,8 @@
 {% load static %}
 
-<section class="py-2 text-center container">
-  <div class="row py-lg-5">
-    <div class="col-lg-6 col-md-8 mx-auto">
+<section class="py-2 text-center container-fluid">
+  <div class="row py-lg-5 justify-content-center">
+    <div class="col-lg-8 col-md-10">
       <h1 class="fw-light">Block Setup</h1>
       <p class="lead text-body-secondary">Here you can enter or edit information and details about the condominium Blocks.</p>
     </div>
@@ -25,8 +25,8 @@
   </div>
 {% endif %}
 
-<div class="container">
-  <div class="row">
+<div class="py-2 container-fluid">
+  <div class="row g-5 justify-content-center">
     <div class="col-12 py-2">
       <a href="{% url 'condo:condo_setup_home' %}" class="text-decoration-none">
         <i class="bi bi-arrow-left"></i> Back to Setup Area
@@ -41,7 +41,7 @@
       </div>
     </div>
     
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+    <div class="py-2 container-fluid">
       {% for block in object_list %}
         <div class="col">
           <div class="card shadow-sm">
@@ -55,6 +55,7 @@
               <div class="d-flex justify-content-center align-items-center">
                 <div class="btn-group">
                   <a href="{% url 'condo:condo_setup_block_unique' block.id %}" 
+                     type="button"
                      class="btn btn-sm btn-outline-warning">View or Edit</a>
                 </div>
               </div>
@@ -75,7 +76,7 @@
               <div class="d-flex justify-content-center align-items-center">
                 <div class="btn-group">
                   <a href="{% url 'condo:condo_setup_block_create' %}" 
-                    class="btn btn-sm btn-outline-warning">Create</a>
+                    class="btn btn-sm btn-outline-danger">Create</a>
                 </div>
               </div>
             </div>

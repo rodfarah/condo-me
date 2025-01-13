@@ -267,7 +267,7 @@ class SetupBlockView(SetupViewsWithDecors, UpdateView, SetupProgressMixin):
     def get_queryset(self):
         """
         Return a general queryset (not a single object) filtered by user's condominium.
-        The single object will be obtained using get_object() method.
+        The single object will be obtained later, using get_object() method.
         """
         return Block.objects.filter(condominium=self.request.user.condominium)
 
@@ -282,7 +282,7 @@ class SetupBlockView(SetupViewsWithDecors, UpdateView, SetupProgressMixin):
         if (
             queryset is None
         ):  # no blocks created for the condominium yet (condo-setup/block/edit/<uuid:block_id>)
-            return None
+            queryset = self.get_queryset()
         try:
             current_block = queryset.get(pk=block_id)
             return current_block
@@ -301,6 +301,8 @@ class SetupBlockView(SetupViewsWithDecors, UpdateView, SetupProgressMixin):
         """
         context = super().get_context_data(**kwargs)
         context["block_exists"] = bool(self.object)  # self.object == get_object()
+        if self.object:
+            context["block_id"] = self.object.id
         return context
 
     def form_valid(self, form):

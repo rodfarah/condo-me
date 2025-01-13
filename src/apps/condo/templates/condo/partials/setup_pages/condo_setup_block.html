@@ -40,7 +40,7 @@
         <form id="BlockForm" 
         name="block_data"
         autocomplete="on"
-        action="{% if not block_exists %}{% url "condo:condo_setup_block_create" %}{% else %}{% url "condo:condo_setup_block_unique block_id" %}{% endif %}" 
+        action="{% if not block_exists %}{% url "condo:condo_setup_block_create" %}{% else %}{% url 'condo:condo_setup_block_unique' block_id %}{% endif %}" 
         method="POST" 
         class="needs-validation"
         novalidate=""
