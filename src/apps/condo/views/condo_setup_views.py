@@ -170,22 +170,22 @@ class SetupCondominiumView(SetupViewsWithDecors, UpdateView, SetupProgressMixin)
                     "common_area_exists": False,
                 }
             )
-        related_objects = (
-            condominium.blocks.exists(),
-            condominium.apartments.exists(),
-            condominium.common_areas.exists(),
-        )
-        # template needs all context elements, not only "condo_exists"
-        context.update(
-            {
-                "condo_exists": bool(condominium),
-                "condo_cover": getattr(condominium, "cover", None),
-                "block_exists": related_objects[0],
-                "apartment_exists": related_objects[1],
-                "common_area_exists": related_objects[2],
-            }
-        )
-        print("Context being sent to template:", context)  # Debugging
+        else:
+            related_objects = (
+                condominium.blocks.exists(),
+                condominium.apartments.exists(),
+                condominium.common_areas.exists(),
+            )
+            # template needs all context elements, not only "condo_exists"
+            context.update(
+                {
+                    "condo_exists": bool(condominium),
+                    "condo_cover": getattr(condominium, "cover", None),
+                    "block_exists": related_objects[0],
+                    "apartment_exists": related_objects[1],
+                    "common_area_exists": related_objects[2],
+                }
+            )
 
         return context
 
