@@ -2,7 +2,6 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
-from django.db.models.query import QuerySet
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
@@ -336,7 +335,7 @@ class SetupBlockDeleteView(SetupViewsWithDecors, DeleteView, SetupProgressMixin)
         """Send block_id and block_name to template"""
         context = super().get_context_data(**kwargs)
         block_id = self.kwargs.get("block_id")
-        block = Block.objects.filter(pk=block_id).first()
+        block = get_object_or_404(Block, pk=block_id)
         context["block_id"] = block_id
         context["block_name"] = block.name
         return context

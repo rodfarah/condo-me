@@ -12,7 +12,8 @@
 <div class="py-2 container-fluid">
   <div class="row g-5 justify-content-center">
     <div class="col-lg-8 col-md-10">
-      <a href="{% url "condo:condo_setup_home" %}">Back to Setup Area</a>
+      <a href="{% url "condo:condo_setup_block_list" %}" class="text-decoration-none">
+        <i class="bi bi-arrow-left"></i>Back to Setup Blocks</a>
     </div>
   </div>
 </div>
@@ -112,7 +113,9 @@
             </div>
           </div>
           <button class="w-100 btn btn-warning btn-sm btn-lg" id="editBotton" type="submit">Save</button>
-          <a href="{% url 'condo:condo_setup_block_delete' block_id %}" class="w-100 btn btn-danger btn-sm btn-lg">Delete</a>
+          {% if block_id %}
+            <a href="{% url 'condo:condo_setup_block_delete' block_id %}" class="w-100 btn btn-danger btn-sm btn-lg">Delete</a>
+          {% endif %}
         </form>
     </div>
   </div>

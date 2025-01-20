@@ -1,5 +1,3 @@
-{% load static %}
-
 <section class="py-2 text-center container-fluid">
   <div class="row py-lg-5 justify-content-center">
     <div class="col-lg-8 col-md-10">
@@ -9,135 +7,23 @@
   </div>
 </section>
 
-
-
-
-
 <div class="modal-dialog" role="document">
   <div class="modal-content rounded-3 shadow">
     <div class="modal-body p-4 text-center">
-      <h5 class="mb-0">Enable this {{ block_name }}?</h5>
-      <p class="mb-0">You can always change your mind in your account settings.</p>
+      <h5 class="mb-0 text-danger">Are you sure you want to delete {{ block_name }}?</h5>
+      <p class="mb-0">This operation can not be undone!</p>
     </div>
     <div class="modal-footer flex-nowrap p-0">
-      <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0 border-end"><strong>Yes, enable</strong></button>
-      <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0" data-bs-dismiss="modal">No thanks</button>
-    </div>
-  </div>
-</div>
-
-
-
-{% comment %} 
-
-
-
-
-
-<div class="py-2 container-fluid">
-  <div class="row g-5 justify-content-center">
-    <div class="col-lg-8 col-md-10">
-      <a href="{% url "condo:condo_setup_home" %}">Back to Setup Area</a>
-    </div>
-  </div>
-</div>
-
-<div class="py-2 container-fluid">
-  <div class="row g-5 justify-content-center">
-    <div class="col-lg-8 col-md-10">
-      {% if messages %}
-        <div class="form-floating mb-3">
-          {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}" role="alert">
-              {{ message }}
-            </div>
-          {% endfor %}
-        </div>
-      {% endif %}
-    </div>
-  </div>
-</div>
-
-<div class="py-2 container-fluid">
-  <div class="row g-5 justify-content-center">
-    <div class="col-lg-8 col-md-10">
-      <h4 class="mb-3">Create or edit a Block:</h4>
-        <form id="BlockForm" 
-        name="block_data"
-        autocomplete="on"
-        action="{% if not block_exists %}{% url "condo:condo_setup_block_create" %}{% else %}{% url 'condo:condo_setup_block_unique' block_id %}{% endif %}" 
-        method="POST" 
-        class="needs-validation"
-        novalidate=""
-        enctype="multipart/form-data">
-          {% csrf_token %}
-          <div class="row g-3">
-            
-            <div class="col-12">
-              <label for="{{ form.name.id_for_label }}" >{{form.name.label}}</label>
-              <div class="input-group">
-                {{ form.name }}
-              </div>
-                {% if form.name.errors %}
-                <div class="text-danger">
-                  <small>{{ form.name.errors }}</small>
-                </div>
-                {% endif %}
-                {% if block_exists %}
-                  <div class="mt-1">
-                    <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('firstName')">Edit</a>
-                  </div>
-                {% endif %}
-              </div>
-
-            <div class="col-12">
-              <label for="{{ form.description.id_for_label }}">{{form.description.label}}</label>
-              <div class="input-group">
-                {{ form.description }}
-              </div>
-                {% if form.description.errors %}
-                <div class="text-danger">
-                  <small>{{ form.description.errors }}</small>
-                </div>
-                {% endif %}
-                {% if block_exists %}
-                <div class="mt-1">
-                  <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('description')">Edit</a>
-                </div>
-                {% endif %}
-              </div>
-
-              <div class="col-12">
-                <label for="{{ form.apartments_count.id_for_label }}">{{form.apartments_count.label}}</label>
-                <div class="input-group">
-                  {{ form.apartments_count }}
-                </div>
-                  {% if form.apartments_count.errors %}
-                  <div class="text-danger">
-                    <small>{{ form.apartments_count.errors }}</small>
-                  </div>
-                  {% endif %}
-                  {% if block_exists %}
-                  <div class="mt-1">
-                    <a class="btn btn-outline-secondary btn-sm" href="#" role="button" >Edit</a>
-                  </div>
-                  {% endif %}
-                </div>
-
-            <div class="col-6">
-              <label for="{{ form.cover.id_for_label }}">{{ form.cover.label }}</label>
-              <div>
-              {{ form.cover }}
-              {% if form.cover.errors %}
-                <div class="text-danger">
-                  <small>{{ form.cover.errors }}</small>
-                </div>
-              </div>
-              {% endif %}
-            </div>
-          </div>
-          <button class="w-100 btn btn-warning btn-sm btn-lg" id="editBotton" type="submit">Save</button>
-        </form> {% endcomment %}
+      <form method="POST" action="{% url 'condo:condo_setup_block_delete' block_id %}" class="col-6 m-0 p-0">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-lg btn-link fs-6 text-decoration-none w-100 py-3 m-0 rounded-0 border-end">
+          <strong>Yes, delete it!</strong>
+        </button>
+      </form>
+      <a href="{% url 'condo:condo_setup_block_unique' block_id %}" 
+         class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0">
+        No, thanks.
+      </a>
     </div>
   </div>
 </div>
