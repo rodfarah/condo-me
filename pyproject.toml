@@ -27,21 +27,24 @@ pytest-django = "^4.8.0"
 ruff = "^0.5.4"
 mypy = "^1.11.0"
 isort = "^5.13.2"
-black = "^24.8.0"
-
-[tool.black]
-line-length = 88
-target-version = ['py310']
+black = "^24.10.0"
 
 [tool.isort]
 profile = "black"
 line_length = 88
+
+[tool.black]
+line-length = 88
+target-version = ['py310']
 
 [tool.ruff]
 line-length = 88
 select = ["E", "F", "W", "Q", "I"]
 ignore = ["E203"]
 mypy = true
+extend-select = ["C4", "SIM", "TCH"]
+target-version = "py310"
+fix = true
 
 [tool.mypy]
 plugins = [
