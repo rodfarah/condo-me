@@ -2,12 +2,13 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
+from django.db.models.query import QuerySet
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.views.generic import ListView, UpdateView
+from django.views.generic import DeleteView, ListView, UpdateView
 
 from apps.condo.forms import BlockSetupForm, CondoSetupForm
 from apps.condo.models import Block, Condominium, SetupProgress
@@ -323,3 +324,19 @@ class SetupBlockView(SetupViewsWithDecors, UpdateView, SetupProgressMixin):
 
         messages.success(self.request, "Block has been created or edited successfully")
         return HttpResponseRedirect(self.get_success_url())
+
+
+class SetupBlockDeleteView(SetupViewsWithDecors, DeleteView, SetupProgressMixin):
+    model = Block
+    template_name = "condo/pages/setup_pages/condo_setup_block_delete.html"
+    success_url = reverse_lazy("condo:condo_setup_block_list")
+    pk_url_kwarg = "block_id"
+
+    def get_context_data(self, **kwargs):
+        """Send block_id and block_name to template"""
+        context = super().get_context_data(**kwargs)
+        block_id = self.kwargs.get("block_id")
+        block = Block.objects.filter(pk=block_id).first()
+        context["block_id"] = block_id
+        context["block_name"] = block.name
+        return context

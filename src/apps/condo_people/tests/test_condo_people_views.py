@@ -1,11 +1,12 @@
 from datetime import timedelta
 
-from apps.condo_people import views
-from apps.purchase.models import RegistrationToken
 from django.contrib.auth import get_user_model
 from django.contrib.messages import get_messages
 from django.urls import resolve, reverse
 from django.utils import timezone
+
+from apps.condo_people import views
+from apps.purchase.models import RegistrationToken
 
 from .base_test_condo_people import CondoPeopleTestBase, TokenTestBase
 

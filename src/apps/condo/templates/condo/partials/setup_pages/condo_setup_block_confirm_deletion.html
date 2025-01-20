@@ -9,6 +9,31 @@
   </div>
 </section>
 
+
+
+
+
+<div class="modal-dialog" role="document">
+  <div class="modal-content rounded-3 shadow">
+    <div class="modal-body p-4 text-center">
+      <h5 class="mb-0">Enable this {{ block_name }}?</h5>
+      <p class="mb-0">You can always change your mind in your account settings.</p>
+    </div>
+    <div class="modal-footer flex-nowrap p-0">
+      <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0 border-end"><strong>Yes, enable</strong></button>
+      <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0" data-bs-dismiss="modal">No thanks</button>
+    </div>
+  </div>
+</div>
+
+
+
+{% comment %} 
+
+
+
+
+
 <div class="py-2 container-fluid">
   <div class="row g-5 justify-content-center">
     <div class="col-lg-8 col-md-10">
@@ -112,8 +137,7 @@
             </div>
           </div>
           <button class="w-100 btn btn-warning btn-sm btn-lg" id="editBotton" type="submit">Save</button>
-          <a href="{% url 'condo:condo_setup_block_delete' block_id %}" class="w-100 btn btn-danger btn-sm btn-lg">Delete</a>
-        </form>
+        </form> {% endcomment %}
     </div>
   </div>
 </div>

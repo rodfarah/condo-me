@@ -40,6 +40,11 @@ urlpatterns = [
         condo_setup_views.SetupBlockView.as_view(),
         name="condo_setup_block_unique",
     ),
+    path(
+        "condo-setup/block/delete/<uuid:block_id>",
+        condo_setup_views.SetupBlockDeleteView.as_view(),
+        name="condo_setup_block_delete",
+    ),
     # path("condo-setup/apartments/", views.setup_apartments, name="setup_apartments"),
     # path(
     #     "condo-setup/common-areas/", views.setup_common_areas, name="setup_common_areas"
