@@ -52,7 +52,7 @@
               {% endif %}
               {% if condo_exists %}
                 <div class="mt-1">
-                  <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('firstName')">Edit</a>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('name')">Edit</button>
                 </div>
               {% endif %}
             </div>
@@ -69,7 +69,7 @@
               {% endif %}
               {% if condo_exists %}
               <div class="mt-1">
-                <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('description')">Edit</a>
+                <button type="button" class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('description')">Edit</button>
               </div>
               {% endif %}
             </div>
@@ -86,7 +86,7 @@
               {% endif %}
               {% if condo_exists %}
                 <div class="mt-1">
-                  <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('cnpj')">Edit</a>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('cnpj')">Edit</button>
                 </div>
               {% endif %}
             </div>
@@ -103,7 +103,7 @@
               {% endif %}
               {% if condo_exists %}
                 <div class="mt-1">
-                  <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('address1')">Edit</a>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('address1')">Edit</button>
                 </div>
               {% endif %}
             </div>
@@ -120,7 +120,7 @@
             {% endif %}
             {% if condo_exists %}
               <div class="mt-1">
-                  <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('address2')">Edit</a>
+                <button type="button" class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('address2')">Edit</button>
               </div>
             {% endif %}
           </div>
@@ -137,7 +137,7 @@
             {% endif %}
             {% if condo_exists %}
             <div class="mt-1">
-                <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('city')">Edit</a>
+              <button type="button" class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('city')">Edit</button>
             </div>
             {% endif %}
           </div>
@@ -154,7 +154,7 @@
             {% endif %}
             {% if condo_exists %}
             <div class="mt-1">
-                <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('state')">Edit</a>
+              <button type="button" class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('state')">Edit</button>
             </div>
             {% endif %}
           </div>
@@ -168,11 +168,6 @@
             {% if form.country.errors %}
               <div class="text-danger">
                 <small>{{ form.country.errors }}</small>
-              </div>
-            {% endif %}
-            {% if  condo_exists %}
-              <div class="mt-1">
-                  <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('country')">Edit</a>
               </div>
             {% endif %}
           </div>
@@ -189,7 +184,7 @@
             {% endif %}
             {% if  condo_exists %}
               <div class="mt-1">
-                  <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('postal_code')">Edit</a>
+                <button type="button" class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('postal_code')">Edit</button>
               </div>
             {% endif %}
           </div>
@@ -206,7 +201,7 @@
             {% endif %}
           </div>
         </div>
-        <button class="w-100 btn btn-warning btn-sm btn-lg" id="editBotton" type="submit">Save</button>
+        <button class="w-100 btn btn-warning btn-sm btn-lg" id="editButton" type="submit">Save</button>
       </form>
     </div>
   </div>

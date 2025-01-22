@@ -293,6 +293,18 @@ class SetupBlockView(SetupViewsWithDecors, UpdateView, SetupProgressMixin):
             )
             return None
 
+    def get_form(self, form_class=None):
+        """
+        Customizes the form by making fields readonly if a block already exists.
+        This prevents direct editing of fields unless through the 'Edit' buttons.
+        """
+        form = super().get_form(form_class)
+        #  "self.object" is the instance of "get_object()", the current condominium itself
+        if self.object:
+            for field in form.fields.values():
+                field.widget.attrs["readonly"] = True
+        return form
+
     def get_context_data(self, **kwargs):
         """
         Adds additional context data to the template.
@@ -326,16 +338,52 @@ class SetupBlockView(SetupViewsWithDecors, UpdateView, SetupProgressMixin):
 
 
 class SetupBlockDeleteView(SetupViewsWithDecors, DeleteView, SetupProgressMixin):
+    """View for deleting Block objects.
+
+    Handles the deletion of Block instances while ensuring proper permissions
+    and displaying success messages to users.
+    """
+
     model = Block
     template_name = "condo/pages/setup_pages/condo_setup_block_delete.html"
     success_url = reverse_lazy("condo:condo_setup_block_list")
     pk_url_kwarg = "block_id"
+    success_message = "Block has been deleted successfully."
 
     def get_context_data(self, **kwargs):
-        """Send block_id and block_name to template"""
+        """
+        Extends context data with block-specific information.
+
+        Args:
+            **kwargs: Additional context parameters
+
+        Returns:
+            dict: Context dictionary containing:
+                - block_id: UUID of the block
+                - block_name: Name of the block
+                - All other context data from parent classes
+        """
         context = super().get_context_data(**kwargs)
         block_id = self.kwargs.get("block_id")
         block = get_object_or_404(Block, pk=block_id)
         context["block_id"] = block_id
         context["block_name"] = block.name
         return context
+
+    def form_valid(self, form):
+        """
+        Handles the deletion of Block instance.
+
+        Extends DeleteView's form_valid to add a success message
+        before redirecting user to success_url.
+
+        Args:
+            form: The form instance that triggered the deletion
+
+        Returns:
+            HttpResponseRedirect: Redirects to success_url after deletion
+        """
+        success_url = self.get_success_url()
+        self.object.delete()
+        messages.success(self.request, "Block has been successfully deleted.")
+        return HttpResponseRedirect(success_url)

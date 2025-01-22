@@ -61,7 +61,7 @@
                 {% endif %}
                 {% if block_exists %}
                   <div class="mt-1">
-                    <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('firstName')">Edit</a>
+                    <button type="button"  class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('name')">Edit</button>
                   </div>
                 {% endif %}
               </div>
@@ -78,7 +78,7 @@
                 {% endif %}
                 {% if block_exists %}
                 <div class="mt-1">
-                  <a class="btn btn-outline-secondary btn-sm" href="#" role="button" onclick="enableField('description')">Edit</a>
+                  <button type="button"  class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('description')">Edit</button>
                 </div>
                 {% endif %}
               </div>
@@ -91,11 +91,6 @@
                   {% if form.apartments_count.errors %}
                   <div class="text-danger">
                     <small>{{ form.apartments_count.errors }}</small>
-                  </div>
-                  {% endif %}
-                  {% if block_exists %}
-                  <div class="mt-1">
-                    <a class="btn btn-outline-secondary btn-sm" href="#" role="button" >Edit</a>
                   </div>
                   {% endif %}
                 </div>
@@ -112,7 +107,7 @@
               {% endif %}
             </div>
           </div>
-          <button class="w-100 btn btn-warning btn-sm btn-lg" id="editBotton" type="submit">Save</button>
+          <button class="w-100 btn btn-warning btn-sm btn-lg" id="editButton" type="submit">Save</button>
           {% if block_id %}
             <a href="{% url 'condo:condo_setup_block_delete' block_id %}" class="w-100 btn btn-danger btn-sm btn-lg">Delete</a>
           {% endif %}

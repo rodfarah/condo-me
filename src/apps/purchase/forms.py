@@ -1,7 +1,8 @@
-from apps.purchase.models import RegistrationToken
 from django import forms
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+
+from apps.purchase.models import RegistrationToken
 
 
 class PurchaseForm(forms.ModelForm):
@@ -49,7 +50,7 @@ class PurchaseForm(forms.ModelForm):
                     "class": "form-control",
                     "autofocus": True,
                     "autocomplete": True,
-                    "id": "firstName",
+                    "id": "name",
                     "required": True,
                 }
             ),

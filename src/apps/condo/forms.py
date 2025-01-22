@@ -48,7 +48,7 @@ class CondoSetupForm(forms.ModelForm):
                     "class": "form-control",
                     "autofocus": False,
                     "autocomplete": "on",
-                    "id": "firstName",
+                    "id": "name",
                 }
             ),
             "description": forms.TextInput(
@@ -181,7 +181,7 @@ class BlockSetupForm(forms.ModelForm):
                     "class": "form-control",
                     "autofocus": False,
                     "autocomplete": "on",
-                    "id": "firstName",
+                    "id": "name",
                 }
             ),
             "description": forms.TextInput(
