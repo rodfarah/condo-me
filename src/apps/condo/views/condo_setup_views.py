@@ -74,7 +74,7 @@ class SetupProgressMixin:
 
 class SetupAreaView(SetupViewsWithDecors):
     """
-    Setup Area View is associated with the main 'condominium setup page', where manager
+    'Setup Area' View is associated with the main 'condominium setup page', where manager
     user may configure the condominium itself, blocks, apartments, common areas,
     caretakers and residents.
     """

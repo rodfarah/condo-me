@@ -1,7 +1,8 @@
-from apps.condo.models import Condominium
-from apps.condo_people.tests.base_test_condo_people import CondoPeopleTestBase
 from django.contrib.auth.models import Group
 from django.urls import reverse
+
+from apps.condo.models import Condominium
+from apps.condo_people.tests.base_test_condo_people import CondoPeopleTestBase
 
 
 class CondoFormsTest(CondoPeopleTestBase):
@@ -76,6 +77,6 @@ class CondoFormsTest(CondoPeopleTestBase):
 
         self.assertRedirects(
             response,
-            reverse("condo:condo_setup_condominium"),
+            reverse("condo:condo_setup_home"),
             status_code=302,
         )

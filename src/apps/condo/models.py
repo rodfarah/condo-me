@@ -52,7 +52,7 @@ class Condominium(DateLogsBaseModel):
     def num_of_apartments(self) -> int:
         apartments_qty = 0
         for block in self.blocks.all():
-            apartments_qty += block.num_of_apartments()
+            apartments_qty += block.get_apartments_count()
         return apartments_qty
 
     def clean_cnpj(self):

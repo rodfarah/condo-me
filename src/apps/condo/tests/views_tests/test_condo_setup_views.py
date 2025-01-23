@@ -12,11 +12,23 @@ from django.urls import reverse
 from apps.condo.models import Condominium
 
 
-class CondoSetupViewsTest(TestCase):
-    """Condo SetUp Views Tests. Please, consider condo views are login_required"""
+class BaseTestCase(TestCase):
+    """This class has all commmon setup for all tests"""
 
-    # setup for starting each test
     def setUp(self) -> None:
+        """
+        Set up the test environment for the condo setup views tests.
+        This method performs the following actions:
+        1. Calls the parent class's setUp method.
+        2. Creates a user with the specified details.
+        3. Creates a condominium with the specified details.
+        4. Assigns the created condominium to the created user.
+        5. Adds the created user to the "manager" group.
+        6. Logs in the created user.
+        Attributes:
+            current_user (User): The user created for testing.
+            current_condominium (Condominium): The condominium created for testing.
+        """
         super().setUp()
         # create user
         self.current_user = get_user_model().objects.create_user(
@@ -43,17 +55,20 @@ class CondoSetupViewsTest(TestCase):
         self.current_user.condominium = self.current_condominium
 
         # make user belong to "manager" group
-        manager_group, already_exists = Group.objects.get_or_create(name="manager")
+        manager_group, bool_already_exists = Group.objects.get_or_create(name="manager")
         self.current_user.groups.add(manager_group)
         self.current_user.save()
 
         # login user
         self.client.login(username="johndoe", password="P@ssw0rd")
 
-    ######################################
-    ###### Testing SETUP AREA VIEWS ######
-    ######################################
 
+######################################
+###### Testing SETUP AREA VIEWS ######
+######################################
+
+
+class SetupAreaViewsTest(BaseTestCase):
     def test_manager_group_required_permission_denied(self):
         # get user in db
         current_user = get_user_model().objects.first()
@@ -89,12 +104,12 @@ class CondoSetupViewsTest(TestCase):
 #############################################
 
 
-class SetupCondominiumViewsTest(CondoSetupViewsTest):
+class SetupCondominiumViewsTest(BaseTestCase):
     def test_condo_exists_is_none_if_condominium_is_none(self):
         # remove setup condominium instance from db
         Condominium.objects.all().delete()
         # Create a get request
-        url = reverse("condo:condo_setup_block_list")
+        url = reverse("condo:condo_setup_condominium")
         response = self.client.get(path=url)
 
         self.assertEqual(response.context["condo_exists"], False)
