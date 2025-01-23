@@ -42,7 +42,7 @@ class CondoPeopleViewsTest(TokenTestBase, CondoPeopleTestBase):
             response=response, expected_url=reverse("condo_people:invalid_token")
         )
 
-    def test_token_doesnt_exist_removes_session_itens_redirects_invalid_token_view(
+    def test_token_doesnt_exist_removes_session_items_redirects_invalid_token_view(
         self,
     ):
         form_data = {
@@ -70,7 +70,7 @@ class CondoPeopleViewsTest(TokenTestBase, CondoPeopleTestBase):
         )
         self.assertRedirects(
             response=response, expected_url=reverse("condo_people:invalid_token")
-        ),
+        )
 
         # must reload session
         session = self.client.session

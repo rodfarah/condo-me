@@ -89,7 +89,8 @@ class CondoModelsTest(CondoPeopleTestBase):
         }
         form = CondoSetupForm(data=second_cond_data)
         self.assertFalse(form.is_valid())
+        self.assertIn("cnpj", form.errors)
         self.assertIn(
             "This CNPJ is already used. Please, consider choosing a different one.",
-            form.errors.get("cnpj"),
+            form.errors["cnpj"],
         )
