@@ -1,12 +1,13 @@
 from datetime import timedelta
 
 import pytest
-from apps.purchase.models import RegistrationToken
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.test import TestCase
 from django.utils import timezone
 from django.utils.crypto import get_random_string
+
+from apps.purchase.models import RegistrationToken
 
 
 @pytest.mark.django_db
@@ -36,6 +37,16 @@ class TokenTestBase(TestCase):
 
 @pytest.mark.django_db
 class CondoPeopleTestBase(TestCase):
+    """
+    Base test case for the Condo People application.
+    This class provides utility methods for creating and logging in a test user.
+    Methods:
+        create_test_user(first_name, last_name, email, username, password, is_active):
+            Creates and returns a test user with the specified attributes.
+        login_test_user():
+            Logs in the test user with predefined credentials.
+    """
+
     def create_test_user(
         self,
         first_name="Elliot",

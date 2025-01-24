@@ -1,11 +1,21 @@
 from django.contrib.auth.models import Group
 from django.urls import reverse
 
-from apps.condo.models import Condominium
+from apps.condo.forms import BlockSetupForm, CondoSetupForm
+from apps.condo.models import Block, Condominium
 from apps.condo_people.tests.base_test_condo_people import CondoPeopleTestBase
 
 
-class CondoFormsTest(CondoPeopleTestBase):
+class BaseFormTest(CondoPeopleTestBase):
+    """
+    BaseFormTest is a test case class that inherits from CondoPeopleTestBase.
+    It sets up a test environment for testing forms related to condominiums.
+    Methods:
+        setUp():
+            Creates a test user, assigns the user to the 'manager' group, logs in the user,
+            and creates a sample condominium for testing purposes.
+    """
+
     def setUp(self):
         # create a test user
         self.test_user = self.create_test_user()
@@ -19,7 +29,7 @@ class CondoFormsTest(CondoPeopleTestBase):
         self.login_test_user()
 
         # create the first condominium
-        Condominium.objects.create(
+        self.test_condominium = Condominium.objects.create(
             name="MyCondo",
             description="Good Condo",
             cnpj="15306944000169",
@@ -31,8 +41,10 @@ class CondoFormsTest(CondoPeopleTestBase):
             postal_code="88456123",
         )
 
-    def test_condo_name_already_used_return_validation_error_form(self):
 
+class CondoFormsTest(BaseFormTest):
+
+    def test_condo_name_already_used_return_form_validation_error(self):
         condo2_data = {
             "name": "MyCondo",  # same name as condo1 from fixture
             "description": "Bad Condo",
@@ -80,3 +92,59 @@ class CondoFormsTest(CondoPeopleTestBase):
             reverse("condo:condo_setup_home"),
             status_code=302,
         )
+
+    def test_clean_cnpj_propagates_model_validation_error(self):
+        condo2_data = {
+            "name": "YourCondo",  # different name from condo1 in fixture
+            "description": "Bad Condo",
+            "cnpj": "00000000000000",  # invalid CNPJ, different from condo1 in fixture
+            "address1": "Your Street, 20",
+            "address2": "NightmareLand",
+            "city": "Ugly City",
+            "state": "Sick State",
+            "country": "BR",
+            "postal_code": "12345678",
+        }
+        form = CondoSetupForm(data=condo2_data)
+        self.assertFalse(form.is_valid())
+        self.assertIn("cnpj", form.errors)
+        # verify error message matches what model validation must raise
+        self.assertEqual(
+            form.errors["cnpj"][0],
+            "Please, insert a 14 digits valid CNPJ, with or without symbols.",
+        )
+
+
+class BlockFormTest(BaseFormTest):
+    def setUp(self):
+        # include BaseFormTest setUp configuration
+        super().setUp()
+
+        self.test_block = Block.objects.create(
+            name="Violet Block",
+            description="Violet Block has an ocean view",
+            condominium=self.test_condominium,
+        )
+
+    def test_form_raises_error_if_block_name_already_exists(self):
+        second_block_data = {
+            "name": "Violet Block",  # identical to test_block
+            "description": "Violet Block has an ocean view",
+            "condominium": self.test_condominium,
+        }
+        form = BlockSetupForm(data=second_block_data)
+        self.assertFalse(form.is_valid())
+        self.assertIn("name", form.errors)
+        self.assertEqual(
+            form.errors["name"][0],
+            "Block name already exists in this condominium. Please, choose a different one.",
+        )
+
+    def test_form_accepts_valid_cleaned_name(self):
+        second_block_data = {
+            "name": "Jasmine Block",  # identical to test_block
+            "description": "Jasmine Block has a swimming pool view",
+            "condominium": self.test_condominium,
+        }
+        form = BlockSetupForm(data=second_block_data)
+        self.assertTrue(form.is_valid())

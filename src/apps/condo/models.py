@@ -94,7 +94,10 @@ class Condominium(DateLogsBaseModel):
 
 class Block(DateLogsBaseModel):
     name = models.CharField(
-        max_length=120, default="Main Block", blank=False, null=False, unique=True
+        max_length=120,
+        default="Main Block",
+        blank=False,
+        null=False,
     )
     description = models.TextField(
         help_text="Write details about this block.", null=True, blank=True
@@ -103,8 +106,8 @@ class Block(DateLogsBaseModel):
         to=Condominium,
         on_delete=models.CASCADE,
         related_name="blocks",
-        blank=True,
-        null=True,
+        blank=False,
+        null=False,
     )
     cover = models.ImageField(
         upload_to="condo_me/blocks/%Y/%m/%d/",
@@ -130,6 +133,9 @@ class Block(DateLogsBaseModel):
 
     class Meta:
         app_label = "condo"
+        # Lots of condominiums may have 'Block A', but a specific condominium may have
+        # only one. So:
+        unique_together = ["name", "condominium"]
 
 
 class Apartment(DateLogsBaseModel):
