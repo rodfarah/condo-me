@@ -4,6 +4,8 @@ accessible only to 'manager' users.
 These tests are DIFFERENT from 'test_condo_views' which are applied to the first page user will get when logged in.
 """
 
+import uuid
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib.messages import get_messages
@@ -252,6 +254,29 @@ class SetupBlockViewTest(BaseTestCase):
         )
         # verify queryset through context
         self.assertIn(Block.objects.first(), response.context["object_list"])
+
+    def test_setupblockview_get_object_return_current_block_to_be_edited(self):
+        # setUp already created one block
+        block = Block.objects.first()
+
+        # condo-setup/block/edit/<uuid:block_id>
+        url = reverse("condo:condo_setup_block_edit", kwargs={"block_id": block.pk})
+        # make a request
+        response = self.client.get(url)
+        self.assertEqual(response.context["block_id"], Block.objects.first().pk)
+
+    def test_setupblockview_get_object_raises_error_when_invalid_uuid(self):
+        # setUp already created one block, but let's create a random UUID
+        block_id = uuid.uuid4()  # valid, but inexistent
+        # condo-setup/block/edit/<uuid:block_id>
+        url = reverse("condo:condo_setup_block_edit", kwargs={"block_id": block_id})
+        # make a request
+        response = self.client.get(url)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(
+            str(messages[0]),
+            "This block does not exist or you do not have permission to edit it",
+        )
 
 
 class SetupBlockListViewTest(BaseTestCase):
