@@ -38,7 +38,7 @@ urlpatterns = [
     path(
         "condo-setup/block/edit/<uuid:block_id>",
         condo_setup_views.SetupBlockView.as_view(),
-        name="condo_setup_block_unique",
+        name="condo_setup_block_edit",
     ),
     path(
         "condo-setup/block/delete/<uuid:block_id>",
