@@ -275,18 +275,17 @@ class SetupBlockView(SetupViewsWithDecors, UpdateView, SetupProgressMixin):
         # url may contain a uuid pk ("condo-setup/block/edit/<uuid:block_id>")
         block_id = self.kwargs.get("block_id")
 
-        if (
-            block_id is None
-        ):  # it is a new block to be created ("condo-setup/block/create")
+        if block_id is None:
+            # it is a new block to be created ("condo-setup/block/create")
             return None  # no object to be edited
-        if (
-            queryset is None
-        ):  # no blocks created for the condominium yet (condo-setup/block/edit/<uuid:block_id>)
+        if queryset is None:
+            # no blocks created for the condominium yet (condo-setup/block/edit/<uuid:block_id>)
             queryset = self.get_queryset()
         try:
             current_block = queryset.get(pk=block_id)
             return current_block
         except Block.DoesNotExist:
+            # invalid or inexistent uuid on url
             messages.error(
                 self.request,
                 "This block does not exist or you do not have permission to edit it",
