@@ -1,7 +1,8 @@
 """
 'test_setup_condominium_views' are applied to the condominium configuration page,
 accessible only to 'manager' users.
-These tests are DIFFERENT from 'test_condo_views' which are applied to the first page user will get when logged in.
+These tests are DIFFERENT from 'test_condo_views' which are applied to the first page 
+user will get when logged in.
 """
 
 import uuid
@@ -293,7 +294,7 @@ class SetupBlockListViewTest(BaseTestCase):
 
         self.response = self.client.post(url, block_one_data, follow=True)
 
-    def test_view_sends_queryset(self):
+    def test_setupblocklistview_sends_queryset(self):
         # create one more block
         Block.objects.create(
             name="Block Two",
@@ -311,3 +312,45 @@ class SetupBlockListViewTest(BaseTestCase):
 
         expected_blocks = Block.objects.all().order_by("id")
         self.assertQuerySetEqual(queryset, expected_blocks)
+
+
+class SetupBlockDeleteViewTest(BaseTestCase):
+
+    def setUp(self) -> None:
+        """Create one block to current condominium"""
+        super().setUp()
+        block_one_data = {
+            "name": "Block One",
+            "description": "First Block",
+            "condominium": self.current_condominium,
+        }
+
+        url = reverse("condo:condo_setup_block_create")
+
+        self.response = self.client.post(url, block_one_data, follow=True)
+
+    def test_setupblockdeleteview_get_context_method(self):
+        # get the only existing block, created by setUp
+        current_block = Block.objects.first()
+
+        url = reverse(
+            "condo:condo_setup_block_delete", kwargs={"block_id": current_block.pk}
+        )
+        # make a request
+        response = self.client.get(url)
+
+        self.assertEqual(response.context["block_name"], "Block One")
+
+    def test_setupblockdeleteview_form_valid_succeeds(self):
+        # get the only existing block, created by setUp
+        current_block = Block.objects.first()
+
+        url = reverse(
+            "condo:condo_setup_block_delete", kwargs={"block_id": current_block.pk}
+        )
+        # make a request
+        response = self.client.post(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        messages = list(get_messages(response.wsgi_request))
+
+        self.assertEqual(str(messages[0]), "Block has been successfully deleted.")

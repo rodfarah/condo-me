@@ -348,7 +348,6 @@ class SetupBlockDeleteView(SetupViewsWithDecors, DeleteView, SetupProgressMixin)
     template_name = "condo/pages/setup_pages/condo_setup_block_delete.html"
     success_url = reverse_lazy("condo:condo_setup_block_list")
     pk_url_kwarg = "block_id"
-    success_message = "Block has been deleted successfully."
 
     def get_context_data(self, **kwargs):
         """
