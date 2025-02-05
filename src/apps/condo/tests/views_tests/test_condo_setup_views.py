@@ -10,9 +10,7 @@ from django.contrib.messages import get_messages
 from django.test import TestCase
 from django.urls import reverse
 
-from apps.condo.forms import CondoSetupForm
-from apps.condo.models import Condominium
-from apps.condo.views import SetupCondominiumView
+from apps.condo.models import Block, Condominium
 
 
 class BaseTestCase(TestCase):
@@ -189,3 +187,102 @@ class SetupCondominiumViewsTest(BaseTestCase):
 
         self.assertTrue(messages)
         self.assertEqual(str(messages[0]), "Condominium has been created successfully")
+
+
+#############################################
+######### Testing SETUP Block VIEWS #########
+#############################################
+
+
+class SetupBlockViewTest(BaseTestCase):
+    def setUp(self) -> None:
+        """Create one block to current condominium"""
+        super().setUp()
+        block_one_data = {
+            "name": "Block One",
+            "description": "First Block",
+            "condominium": self.current_condominium,
+        }
+
+        url = reverse("condo:condo_setup_block_create")
+
+        self.response = self.client.post(url, block_one_data, follow=True)
+
+    def test_setupblockview_creates_block(self):
+        self.assertEqual(self.response.status_code, 200)
+
+        messages = list(get_messages(self.response.wsgi_request))
+        self.assertEqual(
+            str(messages[0]), "Block has been created or edited successfully"
+        )
+
+    def test_setupblockview_sends_error_message_if_user_creates_block_with_no_condominium(
+        self,
+    ):
+        Condominium.objects.all().delete()
+        block_data = {
+            "name": "Block with no Condo",
+            "description": "Impossible to create",
+        }
+        url = reverse("condo:condo_setup_block_create")
+        response = self.client.post(url, block_data, follow=True)
+
+        messages = list(get_messages(response.wsgi_request))
+
+        self.assertTrue(messages)
+
+        self.assertEqual(
+            str(messages[0]),
+            "In order to create or edit a block, you must create a condominium first.",
+        )
+
+        self.assertRedirects(
+            response,
+            expected_url=reverse("condo:condo_setup_condominium"),
+            status_code=302,
+        )
+
+    def test_setupblockview_get_queryset(self):
+        # make a request
+        response = self.client.get(reverse("condo:condo_setup_block_create"))
+        # test view behavior
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(
+            response, "condo/pages/setup_pages/condo_setup_block.html"
+        )
+        # verify queryset through context
+        self.assertIn(Block.objects.first(), response.context["object_list"])
+
+
+class SetupBlockListViewTest(BaseTestCase):
+    def setUp(self) -> None:
+        """Create one block to current condominium"""
+        super().setUp()
+        block_one_data = {
+            "name": "Block One",
+            "description": "First Block",
+            "condominium": self.current_condominium,
+        }
+
+        url = reverse("condo:condo_setup_block_create")
+
+        self.response = self.client.post(url, block_one_data, follow=True)
+
+    def test_view_sends_queryset(self):
+        # create one more block
+        Block.objects.create(
+            name="Block Two",
+            description="Second Block",
+            condominium=self.current_condominium,
+        )
+
+        # get from block_list_view
+        response = self.client.get(path=reverse("condo:condo_setup_block_list"))
+
+        queryset = response.context["object_list"].order_by("id")
+
+        # check if there are two objects inside queryset
+        self.assertEqual(queryset.count(), 2)
+
+        expected_blocks = Block.objects.all().order_by("id")
+        self.assertQuerySetEqual(queryset, expected_blocks)

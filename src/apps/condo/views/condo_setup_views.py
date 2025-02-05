@@ -312,6 +312,7 @@ class SetupBlockView(SetupViewsWithDecors, UpdateView, SetupProgressMixin):
         creation or editing interfaces.
         """
         context = super().get_context_data(**kwargs)
+        context["object_list"] = self.get_queryset()
         context["block_exists"] = bool(self.object)  # self.object == get_object()
         if self.object:
             context["block_id"] = self.object.id
