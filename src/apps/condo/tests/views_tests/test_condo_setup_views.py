@@ -204,7 +204,6 @@ class SetupBlockViewTest(BaseTestCase):
         block_one_data = {
             "name": "Block One",
             "description": "First Block",
-            "condominium": self.current_condominium,
         }
 
         url = reverse("condo:condo_setup_block_create")
@@ -322,23 +321,23 @@ class SetupBlockDeleteViewTest(BaseTestCase):
         block_one_data = {
             "name": "Block One",
             "description": "First Block",
-            "condominium": self.current_condominium,
         }
 
         url = reverse("condo:condo_setup_block_create")
 
         self.response = self.client.post(url, block_one_data, follow=True)
 
-    def test_setupblockdeleteview_get_context_method(self):
+    def test_setupblockdeleteview_get_context_data_method(self):
         # get the only existing block, created by setUp
         current_block = Block.objects.first()
 
+        # "condo-setup/block/delete/<uuid:block_id>/",
         url = reverse(
             "condo:condo_setup_block_delete", kwargs={"block_id": current_block.pk}
         )
         # make a request
         response = self.client.get(url)
-
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["block_name"], "Block One")
 
     def test_setupblockdeleteview_form_valid_succeeds(self):

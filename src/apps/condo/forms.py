@@ -181,13 +181,6 @@ class BlockSetupForm(forms.ModelForm):
             ),
         }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if self.instance:
-            self.fields["apartments_count"].initial = (
-                self.instance.get_apartments_count()
-            )
-
     def clean_name(self):
         block_name_in_form = self.cleaned_data.get("name")
         instance = self.instance  # Current instance beeing edited
@@ -195,12 +188,12 @@ class BlockSetupForm(forms.ModelForm):
         # Check if block name already exists in db, excluding instance
         if (
             Block.objects.filter(
-                name=block_name_in_form, condominium=instance.condominium
+                name=block_name_in_form,
             )
             .exclude(pk=instance.pk)
             .exists()
         ):
-            raise ValidationError(
+            raise forms.ValidationError(
                 "Block name already exists in this condominium. Please, choose a different one."
             )
         return block_name_in_form

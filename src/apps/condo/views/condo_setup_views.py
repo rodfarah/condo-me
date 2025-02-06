@@ -10,7 +10,7 @@ from django.views import View
 from django.views.generic import DeleteView, ListView, UpdateView
 
 from apps.condo.forms import BlockSetupForm, CondoSetupForm
-from apps.condo.models import Block, Condominium, SetupProgress
+from apps.condo.models import Apartment, Block, Condominium, SetupProgress
 
 
 # Create a 'manager group required' decorator
@@ -386,3 +386,14 @@ class SetupBlockDeleteView(SetupViewsWithDecors, DeleteView, SetupProgressMixin)
         self.object.delete()
         messages.success(self.request, "Block has been successfully deleted.")
         return HttpResponseRedirect(success_url)
+
+
+class SetupApartmentUpdateView(SetupViewsWithDecors, UpdateView, SetupProgressMixin):
+    http_method_names = ["get", "post"]
+    model = Apartment
+    template_name = "condo/pages/setup_pages/condo_setup_apartment.html"
+    # form_class = ApartmentSetupForm
+    pk_url_kwarg = (
+        "apartment_id"  # to help get_object() method find uuid apartment pk from url
+    )
+    success_url = reverse_lazy("condo:condo_setup_apartment_list")

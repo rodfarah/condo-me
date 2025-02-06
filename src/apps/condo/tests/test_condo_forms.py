@@ -17,6 +17,12 @@ class BaseFormTest(CondoPeopleTestBase):
     """
 
     def setUp(self):
+        # create a test user
+        self.test_user = self.create_test_user()
+        # get 'manager' group
+        manager_group = Group.objects.get(name="manager")
+        # concede "manager group" to test_user
+        self.test_user.groups.add(manager_group)
         # create the first condominium
         test_condominium = Condominium.objects.create(
             name="MyCondo",
@@ -29,23 +35,18 @@ class BaseFormTest(CondoPeopleTestBase):
             country="BR",
             postal_code="88456123",
         )
-        # create a test user
-        test_user = self.create_test_user()
-        # get 'manager' group
-        manager_group = Group.objects.get(name="manager")
-        # concede "manager group" to test_user
-        test_user.groups.add(manager_group)
-        test_user.condominium = test_condominium
-        test_user.save()
+        # associate test_condominium with user.condominium
+        self.test_user.condominium = test_condominium
+        self.test_user.save()
 
         self.login_test_user()
 
 
-class CondoFormsTest(BaseFormTest):
+class CondoSetupFormsTest(BaseFormTest):
 
-    def test_unique_condo_name_and_cnpj_gets_status_code_302_form(self):
+    def test_unique_condo_cnpj_gets_status_code_302_form(self):
         condo2_data = {
-            "name": "YourCondo",  # different name from condo1 in fixture
+            "name": "YourCondo",
             "description": "Bad Condo",
             "cnpj": "39053118000113",  # Valid CNPJ, different from condo1 in fixture
             "address1": "Your Street, 20",
@@ -93,7 +94,7 @@ class CondoFormsTest(BaseFormTest):
         )
 
 
-class BlockFormTest(BaseFormTest):
+class BlockSetupFormTest(BaseFormTest):
     def setUp(self):
         # include BaseFormTest setUp configuration
         super().setUp()
@@ -101,9 +102,10 @@ class BlockFormTest(BaseFormTest):
         self.test_block = Block.objects.create(
             name="Violet Block",
             description="Violet Block has an ocean view",
+            condominium=self.test_user.condominium,
         )
 
-    def test_form_raises_error_if_block_name_already_exists(self):
+    def test_blocksetupform_raises_error_if_new_block_object_name_already_exists(self):
         second_block_data = {
             "name": "Violet Block",  # identical to test_block
             "description": "Violet Block has an ocean view",
@@ -116,11 +118,10 @@ class BlockFormTest(BaseFormTest):
             "Block name already exists in this condominium. Please, choose a different one.",
         )
 
-    def test_form_accepts_valid_cleaned_name(self):
+    def test_blocksetupform_accepts_valid_cleaned_name(self):
         second_block_data = {
-            "name": "Jasmine Block",  # identical to test_block
+            "name": "Jasmine Block",  # different from test_block
             "description": "Jasmine Block has a swimming pool view",
-            "condominium": self.test_condominium,
         }
         form = BlockSetupForm(data=second_block_data)
         self.assertTrue(form.is_valid())
