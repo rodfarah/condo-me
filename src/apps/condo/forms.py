@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django_countries import countries
 
-from apps.condo.models import Block, Condominium
+from apps.condo.models import Apartment, Block, Condominium
 
 
 class CondoSetupForm(forms.ModelForm):
@@ -113,21 +113,6 @@ class CondoSetupForm(forms.ModelForm):
             ),
         }
 
-    def clean_name(self):
-        condo_name_in_form = self.cleaned_data.get("name")
-        instance = self.instance  # Current instance beeing edited
-
-        # Check if condo name already exists in db, excluding instance
-        if (
-            Condominium.objects.filter(name=condo_name_in_form)
-            .exclude(pk=instance.pk)
-            .exists()
-        ):
-            raise ValidationError(
-                "Condominium name already exists. Please, choose a different one."
-            )
-        return condo_name_in_form
-
     def clean_cnpj(self):
         cnpj = self.cleaned_data.get("cnpj")
 
@@ -209,7 +194,9 @@ class BlockSetupForm(forms.ModelForm):
 
         # Check if block name already exists in db, excluding instance
         if (
-            Block.objects.filter(name=block_name_in_form)
+            Block.objects.filter(
+                name=block_name_in_form, condominium=instance.condominium
+            )
             .exclude(pk=instance.pk)
             .exists()
         ):
@@ -217,3 +204,50 @@ class BlockSetupForm(forms.ModelForm):
                 "Block name already exists in this condominium. Please, choose a different one."
             )
         return block_name_in_form
+
+
+class ApartmentSetupForm(forms.ModelForm):
+
+    class Meta:
+        model = Apartment
+
+        fields = [
+            "number_or_name",
+        ]
+
+        labels = {"number_or_name": "Apartment Number or Name"}
+
+        error_messages = {
+            "number_or_name": {
+                "required": "Please, insert the apartment number or name."
+            }
+        }
+
+        widgets = {
+            "number_or_name": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "autofocus": True,
+                    "autocomplete": "on",
+                    "id": "number_or_name",
+                }
+            ),
+        }
+
+    def clean_name(self):
+        apartment_name_in_form = self.cleaned_data.get("number_or_name")
+        instance = self.instance  # current instance beeing edited
+
+        if (
+            Apartment.objects.filter(
+                number_or_name=apartment_name_in_form,
+                condominium=instance.condominium,
+                block=instance.block,
+            )
+            .exclude(pk=instance.pk)
+            .exists()
+        ):
+            raise ValidationError(
+                "Apartment number (or name) already exists in this block. Please, choose a different one."
+            )
+        return apartment_name_in_form

@@ -27,7 +27,7 @@ class DateLogsBaseModel(models.Model):
 
 
 class Condominium(DateLogsBaseModel):
-    name = models.CharField(max_length=120, blank=False, null=False, unique=True)
+    name = models.CharField(max_length=120, blank=False, null=False, unique=False)
     cnpj = models.CharField(
         max_length=18,
         unique=True,
