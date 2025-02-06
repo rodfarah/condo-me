@@ -16,7 +16,7 @@ urlpatterns = [
     path("common_areas/", condo_base_views.common_areas, name="common_areas"),
     # CONDO SETUP (only 'manager' group users have access to condo setup)
     path(
-        "condo-setup/home",
+        "condo-setup/home/",
         condo_setup_views.SetupAreaView.as_view(),
         name="condo_setup_home",
     ),
@@ -31,22 +31,27 @@ urlpatterns = [
         name="condo_setup_block_list",
     ),
     path(
-        "condo-setup/block/create",
+        "condo-setup/block/create/",
         condo_setup_views.SetupBlockView.as_view(),
         name="condo_setup_block_create",
     ),
     path(
-        "condo-setup/block/edit/<uuid:block_id>",
+        "condo-setup/block/edit/<uuid:block_id>/",
         condo_setup_views.SetupBlockView.as_view(),
         name="condo_setup_block_edit",
     ),
     path(
-        "condo-setup/block/delete/<uuid:block_id>",
+        "condo-setup/block/delete/<uuid:block_id>/",
         condo_setup_views.SetupBlockDeleteView.as_view(),
         name="condo_setup_block_delete",
     ),
-    # path("condo-setup/apartments/", views.setup_apartments, name="setup_apartments"),
+    path(
+        "condo-setup/apartment-list/",
+        condo_setup_views.SetupApartmentUpdateView.as_view(),
+        name="condo_setup_apartment_list",
+    ),
     # path(
-    #     "condo-setup/common-areas/", views.setup_common_areas, name="setup_common_areas"
-    # ),
+    #     "condo-setup/apartment/create/",
+    #     condo_setup_views.
+    # )
 ]
