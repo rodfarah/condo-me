@@ -61,7 +61,11 @@
             <p class="card-text text-center"><strong>Condominium</strong></p>
             <div class="d-flex justify-content-center align-items-center">
               <div class="btn-group">
-                <a href="{% url "condo:condo_setup_condominium" %}" type="button" class="btn btn-sm btn-outline-warning">{% if condo_exists %}View or Edit{% else %}Create{% endif %}</a>
+                <a href="{% url "condo:condo_setup_condominium" %}" type="button" class="btn btn-sm btn-outline-warning">{% if condo_exists %}
+                  <i class="bi bi-pencil-square"></i> View & Edit
+                  {% else %}
+                  <i class="bi bi-plus-circle"></i> Create Condominium
+                  {% endif %}</a>
               </div>
             </div>
           </div>
@@ -75,7 +79,11 @@
             <p class="card-text text-center"><strong>Blocks</strong></p>
             <div class="d-flex justify-content-center align-items-center">
               <div class="btn-group">
-                <a href="{% url "condo:condo_setup_block_list" %}" type="button" class="btn btn-sm btn-outline-warning">{% if block_exists %}View or Edit {% else %}Create {% endif %}</a>
+                <a href="{% url "condo:condo_setup_block_list" %}" type="button" class="btn btn-sm btn-outline-warning">{% if block_exists %}
+                  <i class="bi bi-pencil-square"></i> View & Edit 
+                {% else %}
+                <i class="bi bi-plus-circle"></i> Create Block
+                {% endif %}</a>
               </div>
             </div>
           </div>
@@ -90,7 +98,11 @@
             <p class="card-text text-center"><strong>Apartments</strong></p>
             <div class="d-flex justify-content-center align-items-center">
               <div class="btn-group">
-                <button type="button" class="btn btn-sm btn-outline-warning">{% if apartment_exists %}View or Edit {% else %}Create {% endif %}</button>
+                <button type="button" class="btn btn-sm btn-outline-warning">{% if apartment_exists %}
+                  <i class="bi bi-pencil-square"></i> View & Edit
+                  {% else %}
+                  <i class="bi bi-plus-circle"></i> Create Apartments
+                  {% endif %}</button>
               </div>
             </div>
           </div>
@@ -107,7 +119,11 @@
 
 
               <div class="btn-group">
-                <button type="button" class="btn btn-sm btn-outline-warning">{% if common_area_exists %}View or Edit {% else %}Create {% endif %}</button>
+                <button type="button" class="btn btn-sm btn-outline-warning">{% if common_area_exists %}
+                  <i class="bi bi-pencil-square"></i> View & Edit
+                  {% else %}
+                  <i class="bi bi-plus-circle"></i> Create Common Area
+                  {% endif %}</button>
               </div>
             </div>
           </div>

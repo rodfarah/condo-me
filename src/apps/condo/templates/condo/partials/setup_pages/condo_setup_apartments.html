@@ -7,6 +7,14 @@
   </div>
 </section>
 
+<div class="py-2 container-fluid">
+  <div class="row g-5 justify-content-center">
+    <div class="col-lg-8 col-md-10">
+      <a href="{% url 'condo:condo_setup_home' %}" class="text-decoration-none">
+        <i class="bi bi-arrow-left"></i> Back to Setup Area
+      </a>
+    </div>
+  </div>
 
 <div class="py-2 container-fluid">
   <div class="row g-5 justify-content-center">
@@ -22,24 +30,15 @@
               <div class="alert alert-{{ message.tags }}" role="alert">
                 {{ message }}
               </div>
-           {% endif %}
+            {% endif %}
           {% endfor %}
         </div>
       {% endif %}
     </div>
   </div>
 </div>
-    
-<div class="py-2 container-fluid">
-  <div class="row g-5 justify-content-center">
-    <div class="col-lg-8 col-md-10">
-      <a href="{% url 'condo:condo_setup_home' %}" class="text-decoration-none">
-        <i class="bi bi-arrow-left"></i> Back to Setup Area
-      </a>
-    </div>
-  </div>
 
-  <div class="py-2 container-fluid">
+<div class="py-2 container-fluid">
   <div class="row g-5 justify-content-center">
     <div class="col-lg-8 col-md-10">
       <h4 class="mb-3">Condominium Information (all fields are <span class="small text-danger">required</span> except Image)</h4>
