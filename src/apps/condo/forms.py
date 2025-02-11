@@ -60,7 +60,7 @@ class CondoSetupForm(forms.ModelForm):
             ),
             "cnpj": forms.TextInput(
                 attrs={
-                    "placeholder": "XX.XXX.XXX/XXXX-XX",
+                    "placeholder": "XX.XXX.XXX/XXXX-XX    or    ONLY NUMBERS",
                     "class": "form-control",
                     "autocomplete": "on",
                     "id": "cnpj",
