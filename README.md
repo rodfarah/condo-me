@@ -53,7 +53,39 @@ This project is still in development.
    
    More details about the extensions and their configuration can be found in the `pyproject.toml` file.
 
+---
+## Testing Strategy
 
+This project embraces a balanced approach to testing, with test development occurring alongside the main codebase development. While strict Test-Driven Development (TDD) practices are still being progressively incorporated as the development team grows in expertise, we maintain a strong commitment to testing through:
+
+- **Coverage Analysis**: Using the `coverage` library to track and improve test coverage
+- **Continuous Testing**: Tests are developed in parallel with new features
+- **Testing Tools**:
+  - `pytest` for test execution
+  - `coverage` for test coverage analysis
+  - `pytest-django` for Django-specific testing utilities
+
+### Running Tests
+
+To run the tests and generate a coverage report:
+
+```bash
+# Activate virtual environment
+poetry shell
+
+# Run tests with coverage
+poetry run coverage run -m pytest
+
+# Generate coverage report
+poetry run coverage report
+
+# Generate HTML coverage report
+poetry run coverage html
+```
+
+The HTML coverage report will be available in the `htmlcov/` directory.
+
+---
 ## Setting Up the Environment
 
 1. **Create the `.env` file**  
@@ -153,14 +185,23 @@ This project follows a Django and Docker-based structure optimized for scalabili
 ```
 ---
 
-## What's been done so far (DEC/2024)
+## What's been done so far (FEB/2025)
 
 - **prelogin** Basicaly static templates, basic info about the product, faq, prices, etc.
 - **Registration and authentication** Although payment features are not implemented yet, a user may "buy" the product, register and login. This user will belong to the "manager" group. There are also two more groups (already programmed), "caretaker" and "resident", but they are not in use yet.
-- **Condominium Setup** "manager" user may create the condominium object.
+- **Condominium Setup** 
+   ├── "manager" user may create the condominium object.
+   ├── "manager" user may create block objects.
+   ├── "manager" user may create apartment objects (IN PROGRESS).
+
 ---
-## What's yet to be done
-- **Blocks, Apartments, Common Areas and Reservations** are yet to be programmed.
+## Main things that are yet to be done
+- **Condominium Setup** 
+   ├── "manager" user may create common_area objects.
+   ├── "manager" user may define an create rules for reservation objects.
+   ├── "manager" user may send invitations for caretakers and residents in order to join the system.
+   ├── Program and configure Reports.
+
 ---
 
 ## License
