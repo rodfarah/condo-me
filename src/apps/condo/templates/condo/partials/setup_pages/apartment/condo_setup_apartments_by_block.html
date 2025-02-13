@@ -1,0 +1,62 @@
+{% load static %}
+
+<section class="py-2 text-center container-fluid">
+  <div class="row py-lg-5">
+    <div class="col-lg-6 col-md-8 mx-auto">
+      <h1 class="fw-light">Apartments Setup</h1>
+      <p class="lead text-body-secondary">Here you can enter or edit information and details about the condominium Apartments.</p>
+    </div>
+  </div>
+</section>
+
+<div class="px-4">
+<div class="py-3">
+  <div class="row justify-content-center">
+    <div class="col-12">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="py-3">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="{% url 'condo:condo_setup_blocks_to_apartments' %}" class="text-decoration-none">
+          <i class="bi bi-arrow-left"></i> Back to Apartments Setup
+        </a>
+      </li>
+    </ol>
+  </nav>
+</div>
+
+
+    {% if not block_to_apartments.apartments.all %}
+
+    <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+      <div class="col-10 col-sm-8 col-lg-6">
+        <img src="/media/{{ block_to_apartments.cover }}" class="d-block mx-lg-auto img-fluid" alt="Block Image" width="700" height="500" loading="lazy">
+      </div>
+      <div class="col-lg-6">
+        <h4 class="display-8 fw-bold text-body-emphasis lh-1 mb-3">"{{ block_to_apartments.number_or_name }}" has no registered apartments yet</h1>
+        <p class="lead">
+          There are two ways to create apartments in <strong>{{ block_to_apartments.number_or_name }}</strong>: one by one (manually) or multiple at once (using floor patterns). <p> Which method do you prefer?
+        </p>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+          <button type="button" class="btn btn-outline-warning btn-lg px-4">One by One</button>
+          <button type="button" class="btn btn-outline-warning btn-lg px-4">Multiple at Once</button>
+        </div>
+      </div>
+    </div>
+    {% else %}
+      <h1>There are apartments already registered in this block, but template needs to be coded accordingly</h1>
+    {% endif %}
+
+  

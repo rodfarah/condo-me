@@ -100,27 +100,27 @@ class BlockSetupFormTest(BaseFormTest):
         super().setUp()
 
         self.test_block = Block.objects.create(
-            name="Violet Block",
+            number_or_name="Violet Block",
             description="Violet Block has an ocean view",
             condominium=self.test_user.condominium,
         )
 
     def test_blocksetupform_raises_error_if_new_block_object_name_already_exists(self):
         second_block_data = {
-            "name": "Violet Block",  # identical to test_block
-            "description": "Violet Block has an ocean view",
+            "number_or_name": "Violet Block",  # identical to test_block
+            "description": "Creating a test block which contains a name identical to other one (form must be invalid)",
         }
         form = BlockSetupForm(data=second_block_data)
         self.assertFalse(form.is_valid())
-        self.assertIn("name", form.errors)
+        self.assertIn("number_or_name", form.errors)
         self.assertEqual(
-            form.errors["name"][0],
-            "Block name already exists in this condominium. Please, choose a different one.",
+            form.errors["number_or_name"][0],
+            "Block number (or name) already exists in this condominium. Please, choose a different one.",
         )
 
     def test_blocksetupform_accepts_valid_cleaned_name(self):
         second_block_data = {
-            "name": "Jasmine Block",  # different from test_block
+            "number_or_name": "Jasmine Block",  # different from test_block
             "description": "Jasmine Block has a swimming pool view",
         }
         form = BlockSetupForm(data=second_block_data)

@@ -36,12 +36,16 @@ class CondoModelsTest(CondoPeopleTestBase):
         self.assertEqual(str(self.first_condominium), "MyCondo")
 
     def test_condominium_num_of_blocks_method_returns_correct_value(self):
-        Block.objects.create(name="Fender", condominium=self.first_condominium)
+        Block.objects.create(
+            number_or_name="Fender", condominium=self.first_condominium
+        )
 
         self.assertEqual(self.first_condominium.num_of_blocks(), 1)
 
     def test_condominium_num_of_apartment_method_returns_correct_value(self):
-        block = Block.objects.create(name="Fender", condominium=self.first_condominium)
+        block = Block.objects.create(
+            number_or_name="Fender", condominium=self.first_condominium
+        )
 
         Apartment.objects.create(
             number_or_name="102", block=block, condominium=self.first_condominium

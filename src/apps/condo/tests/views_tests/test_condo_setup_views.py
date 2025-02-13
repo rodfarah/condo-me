@@ -91,7 +91,7 @@ class SetupAreaViewsTest(BaseTestCase):
         response = self.client.get(reverse("condo:condo_setup_home"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(
-            response, "condo/pages/setup_pages/condo_setup_home.html"
+            response, "condo/pages/setup_pages/setup_main/condo_setup_home.html"
         )
 
     def test_user_doesnt_have_condo_gets_rendered_template_without_context(self):
@@ -202,7 +202,7 @@ class SetupBlockViewTest(BaseTestCase):
         """Create one block to current condominium"""
         super().setUp()
         block_one_data = {
-            "name": "Block One",
+            "number_or_name": "Block One",
             "description": "First Block",
         }
 
@@ -223,7 +223,7 @@ class SetupBlockViewTest(BaseTestCase):
     ):
         Condominium.objects.all().delete()
         block_data = {
-            "name": "Block with no Condo",
+            "number_or_name": "Block with no Condo",
             "description": "Impossible to create",
         }
         url = reverse("condo:condo_setup_block_create")
@@ -250,7 +250,7 @@ class SetupBlockViewTest(BaseTestCase):
         # test view behavior
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(
-            response, "condo/pages/setup_pages/condo_setup_block.html"
+            response, "condo/pages/setup_pages/block/condo_setup_block.html"
         )
         # verify queryset through context
         self.assertIn(Block.objects.first(), response.context["object_list"])
@@ -284,7 +284,7 @@ class SetupBlockListViewTest(BaseTestCase):
         """Create one block to current condominium"""
         super().setUp()
         block_one_data = {
-            "name": "Block One",
+            "number_or_name": "Block One",
             "description": "First Block",
             "condominium": self.current_condominium,
         }
@@ -296,7 +296,7 @@ class SetupBlockListViewTest(BaseTestCase):
     def test_setupblocklistview_sends_queryset(self):
         # create one more block
         Block.objects.create(
-            name="Block Two",
+            number_or_name="Block Two",
             description="Second Block",
             condominium=self.current_condominium,
         )
@@ -319,7 +319,7 @@ class SetupBlockDeleteViewTest(BaseTestCase):
         """Create one block to current condominium"""
         super().setUp()
         block_one_data = {
-            "name": "Block One",
+            "number_or_name": "Block One",
             "description": "First Block",
         }
 
