@@ -1,8 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.core.exceptions import PermissionDenied, ValidationError
-from django.db.models.query import QuerySet
+from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
@@ -80,7 +79,7 @@ class SetupAreaView(SetupViewsWithDecors):
     caretakers and residents.
     """
 
-    template_name = "condo/pages/setup_pages/condo_setup_home.html"
+    template_name = "condo/pages/setup_pages/setup_main/condo_setup_home.html"
 
     def get(self, request):
         condominium = getattr(request.user, "condominium", None)
@@ -129,7 +128,7 @@ class SetupAreaView(SetupViewsWithDecors):
 
 class SetupCondominiumView(SetupViewsWithDecors, UpdateView, SetupProgressMixin):
     model = Condominium
-    template_name = "condo/pages/setup_pages/condo_setup_condominium.html"
+    template_name = "condo/pages/setup_pages/condominium/condo_setup_condominium.html"
     form_class = CondoSetupForm
     success_url = reverse_lazy("condo:condo_setup_home")
 
@@ -231,7 +230,7 @@ class SetupBlockListView(SetupViewsWithDecors, ListView):
 
     model = Block
     http_method_names = ["get"]
-    template_name = "condo/pages/setup_pages/condo_setup_blocks.html"
+    template_name = "condo/pages/setup_pages/block/condo_setup_blocks.html"
 
     def get_queryset(self):
         return Block.objects.filter(condominium=self.request.user.condominium)
@@ -251,7 +250,7 @@ class SetupBlockView(SetupViewsWithDecors, UpdateView, SetupProgressMixin):
 
     http_method_names = ["get", "post"]
     model = Block
-    template_name = "condo/pages/setup_pages/condo_setup_block.html"
+    template_name = "condo/pages/setup_pages/block/condo_setup_block.html"
     form_class = BlockSetupForm
     pk_url_kwarg = "block_id"  # to help get_object() method find uuid block pk from url
     success_url = reverse_lazy("condo:condo_setup_block_list")
@@ -346,7 +345,7 @@ class SetupBlockDeleteView(SetupViewsWithDecors, DeleteView, SetupProgressMixin)
     """
 
     model = Block
-    template_name = "condo/pages/setup_pages/condo_setup_block_delete.html"
+    template_name = "condo/pages/setup_pages/block/condo_setup_block_delete.html"
     success_url = reverse_lazy("condo:condo_setup_block_list")
     pk_url_kwarg = "block_id"
 
@@ -397,7 +396,9 @@ class SetupBlocksToCreateApartmentsListView(SetupViewsWithDecors, ListView):
 
     model = Block
     http_method_names = ["get"]
-    template_name = "condo/pages/setup_pages/condo_setup_blocks_to_apartments.html"
+    template_name = (
+        "condo/pages/setup_pages/apartment/condo_setup_blocks_to_apartments.html"
+    )
 
     def get_queryset(self):
         return Block.objects.filter(condominium=self.request.user.condominium)
@@ -413,7 +414,9 @@ class SetupBlockDetailView(SetupViewsWithDecors, DetailView, SetupProgressMixin)
     http_method_names = ["get"]
     model = Block
     pk_url_kwarg = "block_id"
-    template_name = "condo/pages/setup_pages/condo_setup_apartments_by_block.html"
+    template_name = (
+        "condo/pages/setup_pages/apartment/condo_setup_apartments_by_block.html"
+    )
 
     def has_block_permission(self, block) -> bool:
         """Verify if user has permissions to manage current block object"""
@@ -433,9 +436,6 @@ class SetupBlockDetailView(SetupViewsWithDecors, DetailView, SetupProgressMixin)
             # check if user has permissions to manage block object
             if self.has_block_permission(block):
                 return block
-            raise PermissionDenied(
-                "This block does not exist or you do not have permitions\
-                                to view it."
-            )
+            raise PermissionDenied("You do not have permitions to manage this block.")
         except Block.DoesNotExist:
             raise Http404("Block not found")
