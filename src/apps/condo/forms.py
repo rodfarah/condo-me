@@ -145,28 +145,28 @@ class BlockSetupForm(forms.ModelForm):
         model = Block
 
         fields = [
-            "name",
+            "number_or_name",
             "description",
             "cover",
         ]
 
         labels = {
-            "name": "Block Name",
+            "number_or_name": "Block Name",
             "description": "Description",
             "cover": "Image",
         }
 
         error_messages = {
-            "name": {"required": "Please, insert the block name."},
+            "number_or_name": {"required": "Please, insert the block number_or_name."},
         }
 
         widgets = {
-            "name": forms.TextInput(
+            "number_or_name": forms.TextInput(
                 attrs={
                     "class": "form-control",
                     "autofocus": False,
                     "autocomplete": "on",
-                    "id": "name",
+                    "id": "number_or_name",
                 }
             ),
             "description": forms.TextInput(
@@ -182,13 +182,13 @@ class BlockSetupForm(forms.ModelForm):
         }
 
     def clean_name(self):
-        block_name_in_form = self.cleaned_data.get("name")
+        block_number_or_name_in_form = self.cleaned_data.get("number_or_name")
         instance = self.instance  # Current instance beeing edited
 
         # Check if block name already exists in db, excluding instance
         if (
             Block.objects.filter(
-                name=block_name_in_form,
+                number_or_name=block_number_or_name_in_form,
             )
             .exclude(pk=instance.pk)
             .exists()
@@ -196,7 +196,7 @@ class BlockSetupForm(forms.ModelForm):
             raise forms.ValidationError(
                 "Block name already exists in this condominium. Please, choose a different one."
             )
-        return block_name_in_form
+        return block_number_or_name_in_form
 
 
 class ApartmentSetupForm(forms.ModelForm):

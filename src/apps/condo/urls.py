@@ -46,12 +46,18 @@ urlpatterns = [
         name="condo_setup_block_delete",
     ),
     path(
-        "condo-setup/apartment-list/",
-        condo_setup_views.SetupApartmentUpdateView.as_view(),
-        name="condo_setup_apartment_list",
+        "condo-setup/blocks-to-apartments/",
+        condo_setup_views.SetupBlocksToCreateApartmentsListView.as_view(),
+        name="condo_setup_blocks_to_apartments",
+    ),
+    path(
+        "condo-setup/block/<uuid:block_id>/apartments/",
+        condo_setup_views.SetupBlockDetailView.as_view(),
+        name="condo_setup_block_details_to_create_apartments",
     ),
     # path(
-    #     "condo-setup/apartment/create/",
-    #     condo_setup_views.
-    # )
+    #     "condo-setup/block/<uuid:block_id/apartments/create/",
+    #     condo_setup_views.SetupApartmentsUpdateView.as_view(),
+    #     name="condo_setup_apartments_by_block",
+    # ),
 ]

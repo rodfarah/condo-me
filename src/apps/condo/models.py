@@ -93,11 +93,12 @@ class Condominium(DateLogsBaseModel):
 
 
 class Block(DateLogsBaseModel):
-    name = models.CharField(
+    number_or_name = models.CharField(
         max_length=120,
         default="Main Block",
         blank=False,
         null=False,
+        verbose_name="Number (or name)",
     )
     description = models.TextField(
         help_text="Write details about this block.", null=True, blank=True
@@ -118,7 +119,7 @@ class Block(DateLogsBaseModel):
     )
 
     def __str__(self) -> str:
-        return self.name
+        return self.number_or_name
 
     def get_cover_url(self):
         """Returns the URL of the cover image or a default image
@@ -135,7 +136,7 @@ class Block(DateLogsBaseModel):
         app_label = "condo"
         # Lots of condominiums may have 'Block A', but a specific condominium may have
         # only one. So:
-        unique_together = ["name", "condominium"]
+        unique_together = ["number_or_name", "condominium"]
 
 
 class Apartment(DateLogsBaseModel):

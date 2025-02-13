@@ -1,5 +1,6 @@
-from apps.condo.models import Apartment, Block, CommonArea, Condominium
 from django.contrib import admin
+
+from apps.condo.models import Apartment, Block, CommonArea, Condominium
 
 # change Django Administrator (title)
 admin.site.site_header = "Condo-me - Admin Panel"
@@ -25,7 +26,7 @@ class CommonAreaAdmin(admin.ModelAdmin):
 class ApartmentAdmin(admin.ModelAdmin):
     # items to be shown in users admin main list
     list_display = ["number_or_name", "block"]
-    search_fields = ["number"]
+    search_fields = ["number_or_name"]
     # Items to be shown as you choose one apartment
     fields = [
         "number_or_name",

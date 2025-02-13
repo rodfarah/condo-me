@@ -3,8 +3,8 @@
 <section class="py-2 text-center container-fluid">
   <div class="row py-lg-5">
     <div class="col-lg-6 col-md-8 mx-auto">
-      <h1 class="fw-light">Block Setup</h1>
-      <p class="lead text-body-secondary">Here you can enter or edit information and details about the condominium Blocks.</p>
+      <h1 class="fw-light">Apartments Setup</h1>
+      <p class="lead text-body-secondary">Here you can enter or edit information and details about the condominium Apartments.</p>
     </div>
   </div>
 </section>
@@ -40,25 +40,32 @@
 <div class="py-4">
   <div class="row g-4">
 
-    <div class="col-12 col-md-6 col-lg-4">
-      <div class="card h-100 shadow-sm ">
-        <img src="{% static 'condo/covers/setup_blocks.jpg' %}" 
-             class="card-img-top"
-             height="200"
-             style="object-fit: cover">
-        <div class="card-body d-flex flex-column">
-          <h5 class="card-title text-primary text-center">Create New Block</h5>
-          <div class="mt-auto text-center">
-            <a href="{% url 'condo:condo_setup_block_create' %}" 
-               class="btn btn-outline-primary">
-               <i class="bi bi-plus-circle"></i> Create Block
-            </a>
-          </div>
+    {% if not object_list %}
+    <div class="container">
+      <div class="row justify-content-center">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content rounded-3 shadow">
+        <div class="modal-body p-4 text-center">
+          <h5 class="mb-0">There are no Blocks registered yet!</h5>
+          <p class="mb-0">Apartments must be related to a specific block. Would you like to create a Block?</p>
+        </div>
+        <div class="modal-footer flex-nowrap p-0">
+          <a href="{% url 'condo:condo_setup_block_create' block_id %}" 
+          class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0">
+          Yes, create a Block.
+          </a>
+          <a href="{% url 'condo:condo_setup_home' %}" 
+          class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0">
+          No, thanks.
+          </a>
         </div>
       </div>
     </div>
+  </div>
+</div>
 
-    {% if object_list %}
+
+    {% else %}
       {% for block in object_list %}
         <div class="col-12 col-md-6 col-lg-4">
           <div class="card h-100 shadow-sm">
@@ -69,9 +76,9 @@
             <div class="card-body d-flex flex-column">
               <h5 class="card-title text-center">{{ block.number_or_name }}</h5>
               <div class="mt-auto text-center">
-                <a href="{% url 'condo:condo_setup_block_edit' block.id %}" 
+                <a href="{% url "condo:condo_setup_block_details_to_create_apartments" block.id %}" 
                    class="btn btn-outline-warning">
-                   <i class="bi bi-pencil-square"></i> View & Edit
+                   <i class="bi bi-plus-circle"></i> Manage apartments to this block
                 </a>
               </div>
             </div>

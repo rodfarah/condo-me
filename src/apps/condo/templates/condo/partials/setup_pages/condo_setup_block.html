@@ -56,18 +56,18 @@
           <div class="row g-3">
             
             <div class="col-12">
-              <label for="{{ form.name.id_for_label }}" >{{form.name.label}}</label>
+              <label for="{{ form.number_or_name.id_for_label }}" >{{form.number_or_name.label}}</label>
               <div class="input-group">
-                {{ form.name }}
+                {{ form.number_or_name }}
               </div>
-                {% if form.name.errors %}
+                {% if form.number_or_name.errors %}
                 <div class="text-danger">
-                  <small>{{ form.name.errors }}</small>
+                  <small>{{ form.number_or_name.errors }}</small>
                 </div>
                 {% endif %}
                 {% if block_exists %}
                   <div class="mt-1">
-                    <button type="button"  class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('name')">Edit</button>
+                    <button type="button"  class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('number_or_name')">Edit</button>
                   </div>
                 {% endif %}
               </div>

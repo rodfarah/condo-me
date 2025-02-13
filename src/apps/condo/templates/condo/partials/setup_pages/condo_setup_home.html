@@ -98,11 +98,11 @@
             <p class="card-text text-center"><strong>Apartments</strong></p>
             <div class="d-flex justify-content-center align-items-center">
               <div class="btn-group">
-                <button type="button" class="btn btn-sm btn-outline-warning">{% if apartment_exists %}
+                <a href="{% url "condo:condo_setup_blocks_to_apartments" %}"type="button" class="btn btn-sm btn-outline-warning">{% if apartment_exists %}
                   <i class="bi bi-pencil-square"></i> View & Edit
                   {% else %}
                   <i class="bi bi-plus-circle"></i> Create Apartments
-                  {% endif %}</button>
+                  {% endif %}</a>
               </div>
             </div>
           </div>

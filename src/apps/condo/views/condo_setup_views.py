@@ -1,16 +1,17 @@
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseRedirect
+from django.core.exceptions import PermissionDenied, ValidationError
+from django.db.models.query import QuerySet
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.views.generic import DeleteView, ListView, UpdateView
+from django.views.generic import DeleteView, DetailView, ListView, UpdateView
 
 from apps.condo.forms import BlockSetupForm, CondoSetupForm
-from apps.condo.models import Apartment, Block, Condominium, SetupProgress
+from apps.condo.models import Block, Condominium, SetupProgress
 
 
 # Create a 'manager group required' decorator
@@ -359,14 +360,14 @@ class SetupBlockDeleteView(SetupViewsWithDecors, DeleteView, SetupProgressMixin)
         Returns:
             dict: Context dictionary containing:
                 - block_id: UUID of the block
-                - block_name: Name of the block
+                - block_name: number_or_name of the block
                 - All other context data from parent classes
         """
         context = super().get_context_data(**kwargs)
         block_id = self.kwargs.get("block_id")
         block = get_object_or_404(Block, pk=block_id)
         context["block_id"] = block_id
-        context["block_name"] = block.name
+        context["block_name"] = block.number_or_name
         return context
 
     def form_valid(self, form):
@@ -388,12 +389,53 @@ class SetupBlockDeleteView(SetupViewsWithDecors, DeleteView, SetupProgressMixin)
         return HttpResponseRedirect(success_url)
 
 
-class SetupApartmentUpdateView(SetupViewsWithDecors, UpdateView, SetupProgressMixin):
-    http_method_names = ["get", "post"]
-    model = Apartment
-    template_name = "condo/pages/setup_pages/condo_setup_apartment.html"
-    # form_class = ApartmentSetupForm
-    pk_url_kwarg = (
-        "apartment_id"  # to help get_object() method find uuid apartment pk from url
-    )
-    success_url = reverse_lazy("condo:condo_setup_apartment_list")
+class SetupBlocksToCreateApartmentsListView(SetupViewsWithDecors, ListView):
+    """
+    This class generates a list of blocks of the user condominium.
+    User will choose a block in order to register apartments on it.
+    """
+
+    model = Block
+    http_method_names = ["get"]
+    template_name = "condo/pages/setup_pages/condo_setup_blocks_to_apartments.html"
+
+    def get_queryset(self):
+        return Block.objects.filter(condominium=self.request.user.condominium)
+
+
+class SetupBlockDetailView(SetupViewsWithDecors, DetailView, SetupProgressMixin):
+    """
+    Once a block object has been chosen (from SetupBlocksToCreateApartmentsListView),
+    this class sends all block object details as context.
+    """
+
+    context_object_name = "block_to_apartments"
+    http_method_names = ["get"]
+    model = Block
+    pk_url_kwarg = "block_id"
+    template_name = "condo/pages/setup_pages/condo_setup_apartments_by_block.html"
+
+    def has_block_permission(self, block) -> bool:
+        """Verify if user has permissions to manage current block object"""
+        return self.request.user.condominium == block.condominium
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(pk=self.kwargs[self.pk_url_kwarg])
+            .select_related("condominium")
+        )
+
+    def get_object(self, queryset=None):
+        try:
+            block = super().get_object(queryset)
+            # check if user has permissions to manage block object
+            if self.has_block_permission(block):
+                return block
+            raise PermissionDenied(
+                "This block does not exist or you do not have permitions\
+                                to view it."
+            )
+        except Block.DoesNotExist:
+            raise Http404("Block not found")

@@ -7,23 +7,27 @@
   </div>
 </section>
 
-<div class="modal-dialog" role="document">
-  <div class="modal-content rounded-3 shadow">
-    <div class="modal-body p-4 text-center">
-      <h5 class="mb-0 text-danger">Are you sure you want to delete {{ block_name }}?</h5>
-      <p class="mb-0">This operation can not be undone!</p>
-    </div>
-    <div class="modal-footer flex-nowrap p-0">
-      <form method="POST" action="{% url 'condo:condo_setup_block_delete' block_id %}" class="col-6 m-0 p-0">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-lg btn-link fs-6 text-decoration-none w-100 py-3 m-0 rounded-0 border-end">
-          <strong>Yes, delete it!</strong>
-        </button>
-      </form>
-      <a href="{% url 'condo:condo_setup_block_edit' block_id %}" 
-         class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0">
-        No, thanks.
-      </a>
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content rounded-3 shadow">
+        <div class="modal-body p-4 text-center">
+          <h5 class="mb-0 text-danger">Are you sure you want to delete {{ block_name }}?</h5>
+          <p class="mb-0">This operation can not be undone!</p>
+        </div>
+        <div class="modal-footer flex-nowrap p-0">
+          <form method="POST" action="{% url 'condo:condo_setup_block_delete' block_id %}" class="col-6 m-0 p-0">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-lg btn-link fs-6 text-decoration-none w-100 py-3 m-0 rounded-0 border-end">
+              <strong>Yes, delete it!</strong>
+            </button>
+          </form>
+          <a href="{% url 'condo:condo_setup_block_edit' block_id %}" 
+             class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0">
+            No, thanks.
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 </div>

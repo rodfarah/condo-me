@@ -27,7 +27,6 @@
         <path d="M5.5 4a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m8 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0 8a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-8 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m4-4a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
     </symbol>
   </svg>
-<div class="d-flex flex-nowrap">
     <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 280px;">
         <a href="{% url "condo:condo_setup_home" %}" class="nav-link">
         <svg class="bi pe-none me-2" width="40" height="32"><use xlink:href="#buildings"></use></svg>
@@ -48,7 +47,7 @@
                 </a>
             </li>
             <li>
-                <a href="#" class="nav-link">
+                <a href="{% url "condo:condo_setup_blocks_to_apartments" %}" class="nav-link">
                     <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#apartments"></use></svg>
                     Apartments
                 </a>
