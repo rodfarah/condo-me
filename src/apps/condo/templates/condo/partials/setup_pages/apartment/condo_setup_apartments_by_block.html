@@ -42,7 +42,7 @@
 
     <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
       <div class="col-10 col-sm-8 col-lg-6">
-        <img src="/media/{{ block_to_apartments.cover }}" class="d-block mx-lg-auto img-fluid" alt="Block Image" width="700" height="500" loading="lazy">
+        <img src="{% if block_to_apartments.get_cover_url %}{{ block_to_apartments.get_cover_url }} {% else %} {% static "condo/covers/setup_blocks.jpg" %} {% endif %}" class="d-block mx-lg-auto img-fluid" alt="Block Image" width="700" height="500" loading="lazy">
       </div>
       <div class="col-lg-6">
         <h4 class="display-8 fw-bold text-body-emphasis lh-1 mb-3">"{{ block_to_apartments.number_or_name }}" has no registered apartments yet</h1>
