@@ -133,6 +133,15 @@ class CondoSetupForm(forms.ModelForm):
 
 class BlockSetupForm(forms.ModelForm):
 
+    def __init__(self, *args, **kwargs):
+        # A condominium must not have two blocks with identical names
+        # Notice that SetupBlockView sends "condominium" through "get_form_kwargs()"
+        condominium = kwargs.pop("condominium", None)
+        if condominium is None:
+            raise ValueError("There is no condominium registered yet.")
+        self.condominium = condominium
+        super().__init__(*args, **kwargs)
+
     apartments_count = forms.IntegerField(
         required=False,
         disabled=True,
@@ -191,6 +200,7 @@ class BlockSetupForm(forms.ModelForm):
         if (
             Block.objects.filter(
                 number_or_name__iexact=number_or_name,
+                condominium=self.condominium,
             )
             .exclude(pk=instance.pk)
             .exists()

@@ -292,6 +292,11 @@ class SetupBlockView(SetupViewsWithDecors, UpdateView, SetupProgressMixin):
             )
             return None
 
+    def get_form_kwargs(self) -> dict:
+        form_kwargs = super().get_form_kwargs()
+        form_kwargs.update({"condominium": self.request.user.condominium})
+        return form_kwargs
+
     def get_form(self, form_class=None):
         """
         Customizes the form by making fields readonly if a block already exists.
