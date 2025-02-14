@@ -134,7 +134,9 @@ class CondoSetupForm(forms.ModelForm):
 class BlockSetupForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
-        # A condominium must not have two blocks with identical names
+        # A condominium must not have two blocks with identical names, so the form must
+        # receive the "condominium" object from the view, once "condominium" is not a
+        # block form field.
         # Notice that SetupBlockView sends "condominium" through "get_form_kwargs()"
         condominium = kwargs.pop("condominium", None)
         if condominium is None:
