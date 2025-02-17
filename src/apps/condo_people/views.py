@@ -1,4 +1,3 @@
-from apps.purchase.models import RegistrationToken
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.auth import views as auth_views
@@ -7,6 +6,8 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
+
+from apps.purchase.models import RegistrationToken
 
 from .forms import LoginForm, RegisterForm
 
@@ -66,7 +67,7 @@ def register_create(request):
         request.session.flush()
         # Redirect user to login page.
         messages.success(request, "You are now registered, please log in.")
-        return redirect("condo_people:login")
+        return redirect(reverse("condo_people:login"))
     else:
         request.session["register_form_data"] = request.POST
         return redirect(

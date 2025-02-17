@@ -38,16 +38,58 @@
 </div>
 
 
-    {% if not block_to_apartments.apartments.all %}
 
-    <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-      <div class="col-10 col-sm-8 col-lg-6">
-        <img src="{% if block_to_apartments.get_cover_url %}{{ block_to_apartments.get_cover_url }} {% else %} {% static "condo/covers/setup_blocks.jpg" %} {% endif %}" class="d-block mx-lg-auto img-fluid" alt="Block Image" width="700" height="500" loading="lazy">
-      </div>
-      <div class="col-lg-6">
-        <h4 class="display-8 fw-bold text-body-emphasis lh-1 mb-3">"{{ block_to_apartments.number_or_name }}" has no registered apartments yet</h1>
+<div class="row flex-lg-row-reverse align-items-center g-5 py-2">
+  <div class="col-10 col-sm-8 col-lg-6">
+    <img src="{% if current_block.get_cover_url %}{{ current_block.get_cover_url }} {% else %} {% static "condo/covers/setup_blocks.jpg" %} {% endif %}" class="d-block mx-lg-auto img-fluid" alt="Block Image" width="700" height="500" loading="lazy">
+  </div>
+  <div class="col-lg-6">
+    <h4 class="display-8 fw-bold text-body-emphasis lh-1 mb-3">
+      {% if not apartments_in_block %}
+        "{{ current_block.number_or_name }}" has no registered apartments yet</h1>
+      {% else %}
+      "{{ current_block.number_or_name }}" has the following registered apartments:</h1>
+
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Block</th>
+                <th scope="col">Resident Name</th>
+                <th scope="col">Resident ID</th>
+                <th scope="col">Resident E-mail</th>
+                <th scope="col">Action</th>
+
+              </tr>
+            </thead>
+            <tbody>
+
+              {% for apartment in apartments_in_block %}
+              <tr>
+                <th scope="row">{{ apartment.number_or_name }}</th>
+                <td>{{ current_block.number_or_name }}</td>
+                {% if apartment.condo_person.first %}
+                <td>{{ apartment.condo_person.first }}</td>
+                <td>{{ apartment.condo_person.first.id }}</td>
+                <td>{{ apartment.condo_person.first.email }}</td>
+                {% else %}
+                <td></td>
+                <td></td>
+                <td></td>
+                {% endif %}
+                <td>EDIT OR DELETE</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+
+
+      {% endif %}
+
         <p class="lead">
-          There are two ways to create apartments in <strong>{{ block_to_apartments.number_or_name }}</strong>: one by one (manually) or multiple at once (using floor patterns). <p> Which method do you prefer?
+          There are two ways to create apartments in <strong>{{ current_block.number_or_name }}</strong>: one by one (manually) or multiple at once (using floor patterns). <p> Do you want to <strong>CREATE</strong> apartments to {{ current_block.number_or_name }}?
         </p>
         <div class="d-grid gap-2 d-md-flex justify-content-md-start">
           <button type="button" class="btn btn-outline-warning btn-lg px-4">One by One</button>
@@ -55,8 +97,5 @@
         </div>
       </div>
     </div>
-    {% else %}
-      <h1>There are apartments already registered in this block, but template needs to be coded accordingly</h1>
-    {% endif %}
 
   

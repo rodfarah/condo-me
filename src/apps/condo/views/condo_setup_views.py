@@ -2,15 +2,15 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
-from django.http import Http404, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.views.generic import DeleteView, DetailView, ListView, UpdateView
+from django.views.generic import DeleteView, ListView, UpdateView
 
 from apps.condo.forms import BlockSetupForm, CondoSetupForm
-from apps.condo.models import Block, Condominium, SetupProgress
+from apps.condo.models import Apartment, Block, Condominium, SetupProgress
 
 
 # Create a 'manager group required' decorator
@@ -409,38 +409,59 @@ class SetupBlocksToCreateApartmentsListView(SetupViewsWithDecors, ListView):
         return Block.objects.filter(condominium=self.request.user.condominium)
 
 
-class SetupBlockDetailView(SetupViewsWithDecors, DetailView, SetupProgressMixin):
+class SetupApartmentsByBlockListView(SetupViewsWithDecors, ListView):
     """
     Once a block object has been chosen (from SetupBlocksToCreateApartmentsListView),
-    this class sends all block object details as context.
+    in order to create apartments on it, this class sends all block object details
+    as context.
     """
 
-    context_object_name = "block_to_apartments"
+    model = Apartment
     http_method_names = ["get"]
-    model = Block
-    pk_url_kwarg = "block_id"
+    template_name = (
+        "condo/pages/setup_pages/apartment/condo_setup_apartments_by_block.html"
+    )
+    context_object_name = "apartments_in_block"
+
+    def dispatch(self, request, *args, **kwargs):
+        block_id = kwargs.get("block_id")
+        if not Block.objects.filter(
+            condominium=request.user.condominium, pk=block_id
+        ).exists():
+            messages.error(
+                self.request,
+                "The requested block does not exist or does not belong to your condominium.",
+            )
+            return redirect(reverse("condo:condo_setup_blocks_to_apartments"))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        block_id = self.kwargs.get("block_id")
+        return Apartment.objects.filter(
+            condominium=self.request.user.condominium,
+            # Apartment has "block" attribute. Django creates "block_id" automatically
+            block_id=block_id,
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        block_id = self.kwargs.get("block_id")
+        context["current_block"] = Block.objects.get(
+            condominium=self.request.user.condominium, pk=block_id
+        )
+        return context
+
+
+class SetupApartmentListView(SetupViewsWithDecors, ListView):
+    """
+    This class generates a list of apartments of a specific block
+    """
+
+    model = Apartment
+    http_method_names = ["get"]
     template_name = (
         "condo/pages/setup_pages/apartment/condo_setup_apartments_by_block.html"
     )
 
-    def has_block_permission(self, block) -> bool:
-        """Verify if user has permissions to manage current block object"""
-        return self.request.user.condominium == block.condominium
-
     def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .filter(pk=self.kwargs[self.pk_url_kwarg])
-            .select_related("condominium")
-        )
-
-    def get_object(self, queryset=None):
-        try:
-            block = super().get_object(queryset)
-            # check if user has permissions to manage block object
-            if self.has_block_permission(block):
-                return block
-            raise PermissionDenied("You do not have permitions to manage this block.")
-        except Block.DoesNotExist:
-            raise Http404("Block not found")
+        return Apartment.objects.filter(condominium=self.request.user.condominium)

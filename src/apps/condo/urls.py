@@ -52,8 +52,8 @@ urlpatterns = [
     ),
     path(
         "condo-setup/block/<uuid:block_id>/apartments/",
-        condo_setup_views.SetupBlockDetailView.as_view(),
-        name="condo_setup_block_details_to_create_apartments",
+        condo_setup_views.SetupApartmentsByBlockListView.as_view(),
+        name="condo_setup_apartment_list_by_block",
     ),
     # path(
     #     "condo-setup/block/<uuid:block_id/apartments/create/",
