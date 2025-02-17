@@ -83,18 +83,16 @@
               {% endfor %}
             </tbody>
           </table>
-
-
-
       {% endif %}
 
-      <p class="lead py-4"> <strong>Do you want to <strong class="text-warning">CREATE</strong> apartments to {{ current_block.number_or_name }}?</strong>
-       <br>
-       <br>
-        There are two ways to create apartments in <strong>{{ current_block.number_or_name }}</strong>: one by one (manually) or multiple at once (using floor patterns). </p>
+      <p class="lead py-2"> 
+        
+      <strong>Do you want to <strong class="text-warning">CREATE</strong> apartments to {{ current_block.number_or_name }}?</strong>
+         </p>
         <div class="d-grid gap-2 d-md-flex justify-content-md-start">
           <a href="{% url "condo:condo_setup_apartment_create" current_block.id %}" type="button" class="btn btn-outline-warning btn-lg px-4">Yes, One by One</a>
           <button type="button" class="btn btn-outline-warning btn-lg px-4">Yes, Multiple at Once</button>
+          <a href="{% url "condo:condo_setup_blocks_to_apartments" %}" type="button" class="btn btn-outline-danger btn-lg px-4">No, back to Apartment Setup</a>
         </div>
       </div>
     </div>
