@@ -7,9 +7,15 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.views.generic import DeleteView, ListView, UpdateView
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+)
 
-from apps.condo.forms import BlockSetupForm, CondoSetupForm
+from apps.condo.forms import ApartmentSetupForm, BlockSetupForm, CondoSetupForm
 from apps.condo.models import Apartment, Block, Condominium, SetupProgress
 
 
@@ -411,9 +417,27 @@ class SetupBlocksToCreateApartmentsListView(SetupViewsWithDecors, ListView):
 
 class SetupApartmentsByBlockListView(SetupViewsWithDecors, ListView):
     """
-    Once a block object has been chosen (from SetupBlocksToCreateApartmentsListView),
-    in order to create apartments on it, this class sends all block object details
-    as context.
+    List view for displaying and managing apartments within a specific block during condominium setup.
+    This view allows users to manage apartments for a selected block in their condominium.
+    It provides the list of existing apartments and context for creating new ones.
+    Inherits from:
+        SetupViewsWithDecors: Base class for setup views with decorators
+        ListView: Django generic list view
+    Attributes:
+        model (Model): Apartment model
+        http_method_names (list): Allowed HTTP methods (only GET)
+        template_name (str): Path to template for rendering the view
+        context_object_name (str): Name of the context variable to store apartments list
+    Methods:
+        dispatch(request, *args, **kwargs):
+            Validates if the requested block exists and belongs to user's condominium.
+            Returns: HTTP response (redirect or super dispatch)
+        get_queryset():
+            Filters apartments by condominium and block.
+            Returns: QuerySet of Apartment objects
+        get_context_data(**kwargs):
+            Adds the current block object to context.
+            Returns: Context dictionary with block and apartments data
     """
 
     model = Apartment
@@ -424,6 +448,21 @@ class SetupApartmentsByBlockListView(SetupViewsWithDecors, ListView):
     context_object_name = "apartments_in_block"
 
     def dispatch(self, request, *args, **kwargs):
+        """
+        Override dispatch method to validate block access before proceeding.
+        This method checks if the requested block exists and belongs to the user's condominium.
+        If validation fails, redirects user back to block setup page with error message.
+        Args:
+            request: The HTTP request object
+            *args: Variable length argument list
+            **kwargs: Arbitrary keyword arguments. Must contain 'block_id'
+        Returns:
+            HttpResponseRedirect: Redirects to block setup page if validation fails
+            super().dispatch: Proceeds with normal dispatch if validation passes
+        Raises:
+            None
+        """
+
         block_id = kwargs.get("block_id")
         if not Block.objects.filter(
             condominium=request.user.condominium, pk=block_id
@@ -452,16 +491,96 @@ class SetupApartmentsByBlockListView(SetupViewsWithDecors, ListView):
         return context
 
 
-class SetupApartmentListView(SetupViewsWithDecors, ListView):
-    """
-    This class generates a list of apartments of a specific block
+class SetupApartmentCreateView(SetupViewsWithDecors, CreateView):
+    """View class for creating a single apartment within a specific block in the condominium.
+
+    This class extends SetupViewsWithDecors and CreateView to handle the creation of apartment objects. It ensures that apartments can only be created within existing blocks that belong to the user's condominium.
+
+    Attributes:
+        model: The Apartment model used for creating new apartments context_object_name: Name used to reference the apartment object in templates
+        form_class: Form class used for apartment creation (ApartmentSetupForm)
+        http_method_names: Allowed HTTP methods (GET and POST)
+        pk_url_kwarg: URL parameter name for apartment ID
+        template_name: Path to the template used for rendering the apartment creation form
+
+    Methods:
+        dispatch: Validates if the block exists before proceeding with the request
+        get_context_data: Adds the current block to the template context
+        get_success_url: Returns the URL to redirect after successful apartment creation
+        get_form_kwargs: Provides condominium and block information to the form
+        form_valid: Handles form submission, sets apartment properties and saves the object
+
+    URL Parameters:
+        block_id: ID of the block where the apartment will be created
+        apartment_id: ID of the apartment (used in URL configuration)
     """
 
     model = Apartment
-    http_method_names = ["get"]
-    template_name = (
-        "condo/pages/setup_pages/apartment/condo_setup_apartments_by_block.html"
-    )
+    context_object_name = "current_apartment"
+    form_class = ApartmentSetupForm
+    http_method_names = ["get", "post"]
+    pk_url_kwarg = "apartment_id"
+    template_name = "condo/pages/setup_pages/apartment/condo_setup_apartments_create_one_by_one.html"
 
-    def get_queryset(self):
-        return Apartment.objects.filter(condominium=self.request.user.condominium)
+    def dispatch(self, request, *args, **kwargs):
+        block_id = self.kwargs.get("block_id")
+        block_queryset = Block.objects.filter(
+            condominium=self.request.user.condominium, pk=block_id
+        )
+        if not block_queryset.exists():
+            messages.error(
+                request,
+                "You are trying to create apartments in a block that does not exist",
+            )
+            return redirect(reverse("condo:condo_setup_apartment_list_by_block"))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        current_block = Block.objects.get(
+            condominium=self.request.user.condominium, pk=self.kwargs.get("block_id")
+        )
+        context["current_block"] = current_block
+        return context
+
+    def get_success_url(self) -> str:
+        return reverse(
+            "condo:condo_setup_apartment_list_by_block",
+            kwargs={"block_id": self.kwargs.get("block_id")},
+        )
+
+    def get_form_kwargs(self) -> dict:
+        form_kwargs = super().get_form_kwargs()
+        form_kwargs["condominium"] = self.request.user.condominium
+        form_kwargs["block"] = get_object_or_404(
+            Block,
+            condominium=self.request.user.condominium,
+            pk=self.kwargs.get("block_id"),
+        )
+        return form_kwargs
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        block = get_object_or_404(
+            Block,
+            condominium=self.request.user.condominium,
+            pk=self.kwargs.get("block_id"),
+        )
+        self.object.condominium = self.request.user.condominium
+        self.object.block = block
+        self.object.save()
+        messages.success(self.request, "Apartment has been created successfully.")
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class SetupApartmentDetailView(SetupViewsWithDecors, DetailView):
+    """
+    User may view or edit apartments. This class offers details about a specific
+    apartment object
+    """
+
+    context_object_name = "current_apartment"
+    http_method_names = ["get", "post"]
+    model = Apartment
+    pk_url_kwarg = "apartment_id"
+    template_name = ""

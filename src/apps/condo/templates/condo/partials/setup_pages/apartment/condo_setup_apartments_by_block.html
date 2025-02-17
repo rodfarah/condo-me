@@ -88,12 +88,13 @@
 
       {% endif %}
 
-        <p class="lead">
-          There are two ways to create apartments in <strong>{{ current_block.number_or_name }}</strong>: one by one (manually) or multiple at once (using floor patterns). <p> Do you want to <strong>CREATE</strong> apartments to {{ current_block.number_or_name }}?
-        </p>
+      <p class="lead py-4"> <strong>Do you want to <strong class="text-warning">CREATE</strong> apartments to {{ current_block.number_or_name }}?</strong>
+       <br>
+       <br>
+        There are two ways to create apartments in <strong>{{ current_block.number_or_name }}</strong>: one by one (manually) or multiple at once (using floor patterns). </p>
         <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-          <button type="button" class="btn btn-outline-warning btn-lg px-4">One by One</button>
-          <button type="button" class="btn btn-outline-warning btn-lg px-4">Multiple at Once</button>
+          <a href="{% url "condo:condo_setup_apartment_create" current_block.id %}" type="button" class="btn btn-outline-warning btn-lg px-4">Yes, One by One</a>
+          <button type="button" class="btn btn-outline-warning btn-lg px-4">Yes, Multiple at Once</button>
         </div>
       </div>
     </div>

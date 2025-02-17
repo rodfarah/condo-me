@@ -215,6 +215,22 @@ class BlockSetupForm(forms.ModelForm):
 
 class ApartmentSetupForm(forms.ModelForm):
 
+    def __init__(self, *args, **kwargs):
+        """A block must not have two apartments with identical number_or_name, so we
+        must receive the "condominium" and "block" objects from the view once we can not
+        access them from form fields.
+        Notice that SetupApartmentCreateView() sends "block" through "get_form_kwargs()".
+        """
+        condominium = kwargs.pop("condominium", None)
+        block = kwargs.pop("block", None)
+        if condominium is None:
+            raise ValueError("There is no condominium registered yet.")
+        self.condominium = condominium
+        if block is None:
+            raise ValueError("There is no block registered yet.")
+        self.block = block
+        super().__init__(*args, **kwargs)
+
     class Meta:
         model = Apartment
 
@@ -241,20 +257,19 @@ class ApartmentSetupForm(forms.ModelForm):
             ),
         }
 
-    def clean_name(self):
-        apartment_name_in_form = self.cleaned_data.get("number_or_name")
-        instance = self.instance  # current instance beeing edited
+    def clean_number_or_name(self):
+        apartment_number_or_name_in_form = self.cleaned_data.get("number_or_name")
 
         if (
             Apartment.objects.filter(
-                number_or_name=apartment_name_in_form,
-                condominium=instance.condominium,
-                block=instance.block,
+                number_or_name=apartment_number_or_name_in_form,
+                condominium=self.condominium,
+                block=self.block,
             )
-            .exclude(pk=instance.pk)
+            .exclude(pk=self.instance.pk)
             .exists()
         ):
             raise ValidationError(
                 "Apartment number (or name) already exists in this block. Please, choose a different one."
             )
-        return apartment_name_in_form
+        return apartment_number_or_name_in_form
