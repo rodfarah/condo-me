@@ -7,13 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.views.generic import (
-    CreateView,
-    DeleteView,
-    DetailView,
-    ListView,
-    UpdateView,
-)
+from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
 from apps.condo.forms import ApartmentSetupForm, BlockSetupForm, CondoSetupForm
 from apps.condo.models import Apartment, Block, Condominium, SetupProgress
@@ -133,6 +127,27 @@ class SetupAreaView(SetupViewsWithDecors):
 
 
 class SetupCondominiumView(SetupViewsWithDecors, UpdateView, SetupProgressMixin):
+    """A view class for setting up and managing condominiums.
+    This view handles both creation and editing of condominium objects. It provides
+    form handling, context data for templates, and associates condominiums with users.
+    The view implements the following key functionalities:
+    - Displays and processes the condominium setup form
+    - Makes form fields readonly when editing existing condominiums
+    - Provides context data about the existence of related objects
+    - Associates newly created condominiums with the current user
+    - Updates setup progress tracking
+    - Handles success messages
+    Attributes:
+        model: The Condominium model class
+        template_name: Path to the template for rendering the view
+        form_class: The form class used for condominium setup
+        success_url: URL to redirect to after successful form submission
+    Inherits from:
+        SetupViewsWithDecors: Base class for setup-related views
+        UpdateView: Django's generic view for updating objects
+        SetupProgressMixin: Mixin for tracking setup progress
+    """
+
     model = Condominium
     template_name = "condo/pages/setup_pages/condominium/condo_setup_condominium.html"
     form_class = CondoSetupForm
@@ -231,7 +246,15 @@ class SetupCondominiumView(SetupViewsWithDecors, UpdateView, SetupProgressMixin)
 
 class SetupBlockListView(SetupViewsWithDecors, ListView):
     """
-    This class generates a list of blocks of the user condominium.
+    Display a list of blocks associated with the user's condominium.
+    This view inherits from SetupViewsWithDecors and ListView to provide a paginated
+    list of Block objects filtered by the current user's condominium.
+    Attributes:
+        model (Block): The model class to query for the list view
+        http_method_names (list): Restricts the view to only handle GET requests
+        template_name (str): Path to the template used to render the block list
+    Methods:
+        get_queryset(): Returns a queryset of Block objects filtered by user's condominium
     """
 
     model = Block
@@ -242,117 +265,181 @@ class SetupBlockListView(SetupViewsWithDecors, ListView):
         return Block.objects.filter(condominium=self.request.user.condominium)
 
 
-class SetupBlockView(SetupViewsWithDecors, UpdateView, SetupProgressMixin):
+class SetupBlockCreateView(SetupViewsWithDecors, CreateView, SetupProgressMixin):
     """
-    This class is responsible for creating, reading and updating a block object.
-    Please, notice there are two different URLs that lead to this View:
-        "condo-setup/block/create"  ==> User wants to create a new block
-        "condo-setup/block/edit/<uuid:block_id>" ==> User wants to edit a specific block
-    Validation is important here:
-        - User must create a condominium at first in order to create/edit a block;
-        - If there is a block uuid pk in url: if exists, the block must belong to
-          user's condominium. Otherwise, user is unauthorized.
+    A view for creating a new block in a condominium setup process.
+    This view handles both GET and POST requests for creating new blocks within a condominium.
+    It ensures that the user has an associated condominium before allowing block creation and
+    validates that block names are unique within the condominium.
+    Attributes:
+        http_method_names (list): Allowed HTTP methods ['get', 'post']
+        context_object_name (str): Name used for the block object in templates
+        pk_url_kwarg (str): URL parameter name for block ID
+        form_class: Form class used for block creation
+        success_url: URL to redirect after successful block creation
+        template_name (str): Template used for rendering the view
+    Methods:
+        dispatch: Validates that user has a condominium before proceeding
+        form_valid: Handles form submission, validates block name uniqueness,
+                   associates block with condominium and updates setup progress
+    Inherits from:
+        SetupViewsWithDecors
+        CreateView
+        SetupProgressMixin
     """
 
     http_method_names = ["get", "post"]
-    model = Block
-    template_name = "condo/pages/setup_pages/block/condo_setup_block.html"
+    context_object_name = "current_block"
+    pk_url_kwarg = "block_id"
     form_class = BlockSetupForm
-    pk_url_kwarg = "block_id"  # to help get_object() method find uuid block pk from url
     success_url = reverse_lazy("condo:condo_setup_block_list")
+    template_name = "condo/pages/setup_pages/block/condo_setup_block_create.html"
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.condominium:
             messages.error(
                 request,
-                "In order to create or edit a block, you must create a condominium first.",
+                "In order to create a block, you must create a condominium first.",
             )
             return redirect("condo:condo_setup_condominium")
         return super().dispatch(request, *args, **kwargs)
 
-    def get_queryset(self):
-        """
-        Return a general queryset (not a single object) filtered by user's condominium.
-        The single object will be obtained later, using get_object() method.
-        """
-        return Block.objects.filter(condominium=self.request.user.condominium)
-
-    def get_object(self, queryset=None):
-        # url may contain a uuid pk ("condo-setup/block/edit/<uuid:block_id>")
-        block_id = self.kwargs.get("block_id")
-
-        if block_id is None:
-            # it is a new block to be created ("condo-setup/block/create")
-            return None  # no object to be edited
-        if queryset is None:
-            # no blocks created for the condominium yet (condo-setup/block/edit/<uuid:block_id>)
-            queryset = self.get_queryset()
-        try:
-            current_block = queryset.get(pk=block_id)
-            return current_block
-        except Block.DoesNotExist:
-            # invalid or inexistent uuid on url
-            messages.error(
-                self.request,
-                "This block does not exist or you do not have permission to edit it",
-            )
-            return None
-
-    def get_form_kwargs(self) -> dict:
-        form_kwargs = super().get_form_kwargs()
-        form_kwargs.update({"condominium": self.request.user.condominium})
-        return form_kwargs
-
-    def get_form(self, form_class=None):
-        """
-        Customizes the form by making fields readonly if a block already exists.
-        This prevents direct editing of fields unless through the 'Edit' buttons.
-        """
-        form = super().get_form(form_class)
-        #  "self.object" is the instance of "get_object()", the current condominium itself
-        if self.object:
-            for field in form.fields.values():
-                field.widget.attrs["readonly"] = True
-        return form
-
-    def get_context_data(self, **kwargs):
-        """
-        Adds additional context data to the template.
-        The 'condo_exists' flag helps the template determine whether to show
-        creation or editing interfaces.
-        """
-        context = super().get_context_data(**kwargs)
-        context["object_list"] = self.get_queryset()
-        context["block_exists"] = bool(self.object)  # self.object == get_object()
-        if self.object:
-            context["block_id"] = self.object.id
-        return context
-
     def form_valid(self, form):
-        """
-        This method is called after the form is validated successfully.
-        Ensure new block will be associated to the current condominium.
-        """
-
         # get form instance without saving it
         self.object = form.save(commit=False)
 
-        # make sure user's condominium is associated to block
+        # Check if block name already exists in condominium
+        if (
+            Block.objects.filter(
+                condominium=self.request.user.condominium,
+                number_or_name__iexact=self.object.number_or_name,
+            )
+            .exclude(pk=self.object.pk)
+            .exists()
+        ):
+            form.add_error(
+                "number_or_name",
+                "Block number (or name) already exists in this condominium. \
+                    Please, choose a different one.",
+            )
+            return self.form_invalid(form)
+
+        # associate user's condominium with block been created
         self.object.condominium = self.request.user.condominium
 
         # save new block
         self.object.save()
+
+        # update setup progress bar
         self.update_setup_progress()
 
-        messages.success(self.request, "Block has been created or edited successfully")
+        messages.success(self.request, "Block has been created successfully.")
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class SetupBlockEditView(SetupViewsWithDecors, UpdateView, SetupProgressMixin):
+    """
+    Class responsible for editing an existing condominium block.
+    This view inherits from SetupViewsWithDecors, UpdateView and SetupProgressMixin to handle
+    block editing functionality while ensuring proper setup progress tracking and decorators.
+    Attributes:
+        http_method_names (list): Allowed HTTP methods ('get' and 'post')
+        context_object_name (str): Name used for the block object in templates
+        form_class: Form class used for block editing
+        model: Database model for blocks
+        pk_url_kwarg (str): URL parameter name for block ID
+        success_url: URL to redirect after successful edit
+        template_name (str): Template used for rendering the edit form
+    Methods:
+        dispatch: Validates if user has a condominium and if block exists before processing
+        get_context_data: Adds block_id to template context
+        form_valid: Validates and processes the form submission, checking for duplicate block names
+    Raises:
+        None directly, but may show error messages through Django's message framework
+    Returns:
+        HttpResponseRedirect: Redirects to block list on success
+        Rendered template: Shows edit form with error messages if validation fails
+    """
+
+    http_method_names = ["get", "post"]
+    context_object_name = "current_block"
+    form_class = BlockSetupForm
+    model = Block
+    pk_url_kwarg = "block_id"
+    success_url = reverse_lazy("condo:condo_setup_block_list")
+    template_name = "condo/pages/setup_pages/block/condo_setup_block_edit.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.condominium:
+            messages.error(
+                request,
+                "In order to edit a block, you must create a condominium first.",
+            )
+            return redirect("condo:condo_setup_condominium")
+        if not Block.objects.filter(
+            condominium=self.request.user.condominium, pk=self.kwargs.get("block_id")
+        ).exists():
+            messages.error(
+                request,
+                "The block you are trying to edit does not exist, or you do not have\
+                      permitions to do so.",
+            )
+            return redirect(reverse("condo:condo_setup_block_list"))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs) -> dict:
+        context = super().get_context_data(**kwargs)
+        context["block_id"] = self.kwargs.get("block_id")
+        return context
+
+    def form_valid(self, form):
+        # get form instance without saving it
+        self.object = form.save(commit=False)
+
+        # verify if block number_or_name already exists in condominium
+        if (
+            Block.objects.filter(
+                condominium=self.request.user.condominium,
+                number_or_name__iexact=self.object.number_or_name,
+            )
+            .exclude(pk=self.object.pk)
+            .exists()
+        ):
+            form.add_error(
+                "number_or_name",
+                "Block number (or name) already exists in this condominium. \
+                    Please, choose a different one.",
+            )
+            return self.form_invalid(form)
+
+        # save updated block
+        self.object.save()
+
+        # update setup progress bar
+        self.update_setup_progress()
+
+        messages.success(self.request, "Block has been updated successfully.")
         return HttpResponseRedirect(self.get_success_url())
 
 
 class SetupBlockDeleteView(SetupViewsWithDecors, DeleteView, SetupProgressMixin):
-    """View for deleting Block objects.
-
-    Handles the deletion of Block instances while ensuring proper permissions
-    and displaying success messages to users.
+    """
+    Class-based view for deleting Block instances in the condo setup process.
+    This view provides functionality to delete a Block instance while maintaining setup progress tracking.
+    It displays a confirmation page before deletion and handles the deletion process with appropriate
+    user feedback.
+    Attributes:
+        model (Block): Model class to be used for deletion
+        template_name (str): Path to the template used for rendering the deletion confirmation page
+        success_url (str): URL to redirect to after successful deletion
+        pk_url_kwarg (str): URL parameter name for the block's primary key
+    Inherits From:
+        SetupViewsWithDecors: Provides setup-specific decorators
+        DeleteView: Django's generic view for deletion operations
+        SetupProgressMixin: Handles setup progress tracking
+    Usage:
+        This view should be accessed through a URL pattern that provides a block_id parameter.
+        It will show a confirmation page and handle the block deletion upon form submission.
     """
 
     model = Block
@@ -376,8 +463,7 @@ class SetupBlockDeleteView(SetupViewsWithDecors, DeleteView, SetupProgressMixin)
         context = super().get_context_data(**kwargs)
         block_id = self.kwargs.get("block_id")
         block = get_object_or_404(Block, pk=block_id)
-        context["block_id"] = block_id
-        context["block_name"] = block.number_or_name
+        context["current_block"] = block
         return context
 
     def form_valid(self, form):
@@ -401,8 +487,19 @@ class SetupBlockDeleteView(SetupViewsWithDecors, DeleteView, SetupProgressMixin)
 
 class SetupBlocksToCreateApartmentsListView(SetupViewsWithDecors, ListView):
     """
-    This class generates a list of blocks of the user condominium.
-    User will choose a block in order to register apartments on it.
+    A view that displays a list of condominium blocks for apartment registration.
+    This view inherits from SetupViewsWithDecors and ListView to show blocks belonging
+    to the user's condominium. It allows users to select a block where they want to
+    register apartments.
+    Attributes:
+        model (Block): The Block model used for querying data
+        http_method_names (list): Allowed HTTP methods, restricted to "get" only
+        template_name (str): Path to the template that renders the blocks list
+    Methods:
+        get_queryset(): Filters Block objects to show only those belonging to the
+                       user's condominium
+    Returns:
+        A rendered template displaying the list of blocks available for apartment registration
     """
 
     model = Block
@@ -492,27 +589,24 @@ class SetupApartmentsByBlockListView(SetupViewsWithDecors, ListView):
 
 
 class SetupApartmentCreateView(SetupViewsWithDecors, CreateView):
-    """View class for creating a single apartment within a specific block in the condominium.
-
-    This class extends SetupViewsWithDecors and CreateView to handle the creation of apartment objects. It ensures that apartments can only be created within existing blocks that belong to the user's condominium.
-
+    """
+    A view for creating new apartments within a specific block during condo setup.
+    This view handles the creation of individual apartments within a condominium block.
+    It ensures that apartments can only be created in existing blocks and associates
+    them with the correct condominium and block.
     Attributes:
-        model: The Apartment model used for creating new apartments context_object_name: Name used to reference the apartment object in templates
-        form_class: Form class used for apartment creation (ApartmentSetupForm)
-        http_method_names: Allowed HTTP methods (GET and POST)
-        pk_url_kwarg: URL parameter name for apartment ID
-        template_name: Path to the template used for rendering the apartment creation form
-
+        model (Model): The Apartment model class
+        context_object_name (str): Name used to reference the apartment in templates
+        form_class (Form): The form class used for apartment creation
+        http_method_names (list): Allowed HTTP methods (GET and POST)
+        pk_url_kwarg (str): URL parameter name for the apartment ID
+        template_name (str): Path to the template for apartment creation
     Methods:
-        dispatch: Validates if the block exists before proceeding with the request
+        dispatch: Validates block existence before proceeding with the request
         get_context_data: Adds the current block to the template context
-        get_success_url: Returns the URL to redirect after successful apartment creation
-        get_form_kwargs: Provides condominium and block information to the form
-        form_valid: Handles form submission, sets apartment properties and saves the object
-
-    URL Parameters:
-        block_id: ID of the block where the apartment will be created
-        apartment_id: ID of the apartment (used in URL configuration)
+        get_success_url: Returns the URL to redirect after successful creation
+        get_form_kwargs: Provides condominium and block context to the form
+        form_valid: Handles the apartment creation and sets required relationships
     """
 
     model = Apartment
@@ -573,14 +667,50 @@ class SetupApartmentCreateView(SetupViewsWithDecors, CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class SetupApartmentDetailView(SetupViewsWithDecors, DetailView):
+class SetupApartmentDeleteView(SetupViewsWithDecors, DeleteView):
     """
-    User may view or edit apartments. This class offers details about a specific
-    apartment object
+    A view for deleting apartment entries in the condo setup process.
+    This view handles the deletion of Apartment model instances and provides
+    confirmation before deletion. It includes context data for the confirmation
+    template and handles success messages and redirects.
+    Inherits:
+        SetupViewsWithDecors: Base class containing setup-related decorators
+        DeleteView: Django's generic delete view
+    Attributes:
+        model (Apartment): The model class to be deleted
+        template_name (str): Path to the confirmation template
+        pk_url_kwarg (str): URL parameter name for the apartment ID
+    Methods:
+        get_context_data: Adds apartment-specific data to template context
+        get_success_url: Determines the URL to redirect after successful deletion
+        form_valid: Handles the deletion process and success message
+    Returns:
+        HttpResponseRedirect: Redirects to the apartment list view after deletion
     """
 
-    context_object_name = "current_apartment"
-    http_method_names = ["get", "post"]
     model = Apartment
+    template_name = (
+        "condo/pages/setup_pages/apartment/condo_setup_apartments_confirm_deletion.html"
+    )
     pk_url_kwarg = "apartment_id"
-    template_name = ""
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        apartment_id = self.kwargs.get("apartment_id")
+        apartment = get_object_or_404(Apartment, pk=apartment_id)
+        context["apartment_id"] = apartment_id
+        context["apartment_num_or_name"] = apartment.number_or_name
+        context["apartment_block"] = apartment.block
+        return context
+
+    def get_success_url(self) -> str:
+        return reverse(
+            "condo:condo_setup_apartment_list_by_block",
+            kwargs={"block_id": self.object.block.id},
+        )
+
+    def form_valid(self, form):
+        success_url = self.get_success_url()
+        self.object.delete()
+        messages.success(self.request, "Apartment has been successfully deleted")
+        return HttpResponseRedirect(success_url)

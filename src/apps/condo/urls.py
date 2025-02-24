@@ -32,12 +32,12 @@ urlpatterns = [
     ),
     path(
         "condo-setup/block/create/",
-        condo_setup_views.SetupBlockView.as_view(),
+        condo_setup_views.SetupBlockCreateView.as_view(),
         name="condo_setup_block_create",
     ),
     path(
         "condo-setup/block/edit/<uuid:block_id>/",
-        condo_setup_views.SetupBlockView.as_view(),
+        condo_setup_views.SetupBlockEditView.as_view(),
         name="condo_setup_block_edit",
     ),
     path(
@@ -59,5 +59,10 @@ urlpatterns = [
         "condo-setup/block/<uuid:block_id>/apartments/create/",
         condo_setup_views.SetupApartmentCreateView.as_view(),
         name="condo_setup_apartment_create",
+    ),
+    path(
+        "condo-setup/apartments/<uuid:apartment_id>/delete/",
+        condo_setup_views.SetupApartmentDeleteView.as_view(),
+        name="condo_setup_apartment_delete",
     ),
 ]

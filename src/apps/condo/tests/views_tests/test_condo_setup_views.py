@@ -250,10 +250,10 @@ class SetupBlockViewTest(BaseTestCase):
         # test view behavior
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(
-            response, "condo/pages/setup_pages/block/condo_setup_block.html"
+            response, "condo/pages/setup_pages/block/condo_setup_block_create.html"
         )
         # verify queryset through context
-        self.assertIn(Block.objects.first(), response.context["object_list"])
+        self.assertIn(Block.objects.first(), response.context["block_list"])
 
     def test_setupblockview_get_object_return_current_block_to_be_edited(self):
         # setUp already created one block
@@ -304,7 +304,7 @@ class SetupBlockListViewTest(BaseTestCase):
         # get from block_list_view
         response = self.client.get(path=reverse("condo:condo_setup_block_list"))
 
-        queryset = response.context["object_list"].order_by("id")
+        queryset = response.context["block_list"].order_by("id")
 
         # check if there are two objects inside queryset
         self.assertEqual(queryset.count(), 2)

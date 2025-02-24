@@ -1,0 +1,113 @@
+{% load static %}
+
+<section class="py-2 text-center container-fluid">
+  <div class="row py-lg-5 justify-content-center">
+    <div class="col-lg-8 col-md-10">
+      <h1 class="fw-light">Block Setup</h1>
+      <p class="lead text-body-secondary">Here you can register, edit or delete information and details about a condominium Block.</p>
+    </div>
+  </div>
+</section>
+
+<div class="py-2 container-fluid">
+  <div class="row g-5 justify-content-center">
+    <div class="col-lg-8 col-md-10">
+      <a href="{% url "condo:condo_setup_block_list" %}" class="text-decoration-none">
+        <i class="bi bi-arrow-left"></i>Back to Setup Blocks</a>
+    </div>
+  </div>
+</div>
+
+<div class="py-2 container-fluid">
+  <div class="row g-5 justify-content-center">
+    <div class="col-lg-8 col-md-10">
+      {% if messages %}
+        <div class="form-floating mb-3">
+          {% for message in messages %}
+            {% if message.tags == "error" %}
+              <div class="alert alert-danger" role="alert">
+                {{ message }}
+              </div>  
+            {% else %}
+              <div class="alert alert-{{ message.tags }}" role="alert">
+                {{ message }}
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="py-2 container-fluid">
+  <div class="row g-5 justify-content-center">
+    <div class="col-lg-8 col-md-10">
+      <h4 class="mb-3">Edit a Block:</h4>
+        <form id="BlockForm" 
+        name="block_data"
+        autocomplete="on"
+        action="{% url 'condo:condo_setup_block_edit' block_id %}" 
+        method="POST" 
+        class="needs-validation"
+        novalidate=""
+        enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="row g-3">
+            
+            <div class="col-12">
+              <label for="{{ form.number_or_name.id_for_label }}" >{{form.number_or_name.label}}</label>
+              <div class="input-group">
+                {{ form.number_or_name }}
+              </div>
+                {% if form.number_or_name.errors %}
+                <div class="text-danger">
+                  <small>{{ form.number_or_name.errors }}</small>
+                </div>
+                {% endif %}
+              </div>
+
+            <div class="col-12">
+              <label for="{{ form.description.id_for_label }}">{{form.description.label}}</label>
+              <div class="input-group">
+                {{ form.description }}
+              </div>
+                {% if form.description.errors %}
+                <div class="text-danger">
+                  <small>{{ form.description.errors }}</small>
+                </div>
+                {% endif %}
+              </div>
+
+              <div class="col-12">
+                <label for="{{ form.apartments_count.id_for_label }}">{{form.apartments_count.label}}</label>
+                <div class="input-group">
+                  {{ form.apartments_count }}
+                </div>
+                  {% if form.apartments_count.errors %}
+                  <div class="text-danger">
+                    <small>{{ form.apartments_count.errors }}</small>
+                  </div>
+                  {% endif %}
+                </div>
+
+            <div class="col-6">
+              <label for="{{ form.cover.id_for_label }}">{{ form.cover.label }}</label>
+              <div>
+              {{ form.cover }}
+              {% if form.cover.errors %}
+                <div class="text-danger">
+                  <small>{{ form.cover.errors }}</small>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          <button class="w-100 btn btn-warning btn-sm btn-lg" id="editButton" type="submit">Save</button>
+          {% if block_id %}
+            <a href="{% url 'condo:condo_setup_block_delete' block_id %}" class="w-100 btn btn-danger btn-sm btn-lg">Delete</a>
+          {% endif %}
+        </form>
+    </div>
+  </div>
+</div>

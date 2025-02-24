@@ -42,7 +42,7 @@ class BaseFormTest(CondoPeopleTestBase):
         self.login_test_user()
 
 
-class CondoSetupFormsTest(BaseFormTest):
+class CondoSetupCondominiumFormsTest(BaseFormTest):
 
     def test_unique_condo_cnpj_gets_status_code_302_form(self):
         condo2_data = {
@@ -94,7 +94,7 @@ class CondoSetupFormsTest(BaseFormTest):
         )
 
 
-class BlockSetupFormTest(BaseFormTest):
+class CondoSetupBlockFormsTest(BaseFormTest):
     def setUp(self):
         # include BaseFormTest setUp configuration
         super().setUp()

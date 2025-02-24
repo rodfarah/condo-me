@@ -58,8 +58,8 @@
       </div>
     </div>
 
-    {% if object_list %}
-      {% for block in object_list %}
+    {% if block_list %}
+      {% for block in block_list %}
         <div class="col-12 col-md-6 col-lg-4">
           <div class="card h-100 shadow-sm">
             <img src="{% if block.get_cover_url %}{{ block.get_cover_url }}{% else %}{% static 'condo/covers/setup_blocks.jpg' %}{% endif %}" 

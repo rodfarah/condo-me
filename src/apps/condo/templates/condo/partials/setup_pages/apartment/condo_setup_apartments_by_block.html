@@ -41,7 +41,7 @@
 
 <div class="row flex-lg-row-reverse align-items-center g-5 py-2">
   <div class="col-10 col-sm-8 col-lg-6">
-    <img src="{% if current_block.get_cover_url %}{{ current_block.get_cover_url }} {% else %} {% static "condo/covers/setup_blocks.jpg" %} {% endif %}" class="d-block mx-lg-auto img-fluid" alt="Block Image" width="700" height="500" loading="lazy">
+    <img src="{% static "condo/covers/setup_apartments.jpg" %}" class="d-block mx-lg-auto img-fluid" alt="Block Image" width="700" height="500" loading="lazy">
   </div>
   <div class="col-lg-6">
     <h4 class="display-8 fw-bold text-body-emphasis lh-1 mb-3">
@@ -78,7 +78,10 @@
                 <td></td>
                 <td></td>
                 {% endif %}
-                <td>EDIT OR DELETE</td>
+                <td><div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                  <a href="{% url "condo:condo_setup_apartment_create" apartment.id %}" type="button" class="btn btn-outline-warning btn-sm px-4">Edit</a>
+                  <a href="{% url "condo:condo_setup_apartment_delete" apartment.id %}" type="button" class="btn btn-outline-danger btn-sm px-4">Delete</a>
+                </div></td>
               </tr>
               {% endfor %}
             </tbody>
@@ -87,7 +90,7 @@
 
       <p class="lead py-2"> 
         
-      <strong>Do you want to <strong class="text-warning">CREATE</strong> apartments to {{ current_block.number_or_name }}?</strong>
+      <strong>Do you want to <strong class="text-warning">CREATE APARTMENTS</strong>  to {{ current_block.number_or_name }}?</strong>
          </p>
         <div class="d-grid gap-2 d-md-flex justify-content-md-start">
           <a href="{% url "condo:condo_setup_apartment_create" current_block.id %}" type="button" class="btn btn-outline-warning btn-lg px-4">Yes, One by One</a>
