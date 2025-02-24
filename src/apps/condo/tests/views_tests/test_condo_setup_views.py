@@ -197,7 +197,11 @@ class SetupCondominiumViewsTest(BaseTestCase):
 #############################################
 
 
-class SetupBlockViewTest(BaseTestCase):
+class SetupBlockViewsTest(BaseTestCase):
+    """
+    Tests all Block views. Notice there is one specific view for each CRUD item.
+    """
+
     def setUp(self) -> None:
         """Create one block to current condominium"""
         super().setUp()
@@ -210,15 +214,15 @@ class SetupBlockViewTest(BaseTestCase):
 
         self.response = self.client.post(url, block_one_data, follow=True)
 
-    def test_setupblockview_creates_block(self):
+    ######### SetupBlockCreateView() #########
+
+    def test_setupblockcreateview_creates_block(self):
         self.assertEqual(self.response.status_code, 200)
 
         messages = list(get_messages(self.response.wsgi_request))
-        self.assertEqual(
-            str(messages[0]), "Block has been created or edited successfully"
-        )
+        self.assertEqual(str(messages[0]), "Block has been created successfully.")
 
-    def test_setupblockview_sends_error_message_if_user_creates_block_with_no_condominium(
+    def test_setupblockcreateview_sends_error_message_if_user_creates_block_with_no_condominium(
         self,
     ):
         Condominium.objects.all().delete()
@@ -235,7 +239,7 @@ class SetupBlockViewTest(BaseTestCase):
 
         self.assertEqual(
             str(messages[0]),
-            "In order to create or edit a block, you must create a condominium first.",
+            "In order to create a block, you must create a condominium first.",
         )
 
         self.assertRedirects(
@@ -244,18 +248,7 @@ class SetupBlockViewTest(BaseTestCase):
             status_code=302,
         )
 
-    def test_setupblockview_get_queryset(self):
-        # make a request
-        response = self.client.get(reverse("condo:condo_setup_block_create"))
-        # test view behavior
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(
-            response, "condo/pages/setup_pages/block/condo_setup_block_create.html"
-        )
-        # verify queryset through context
-        self.assertIn(Block.objects.first(), response.context["block_list"])
-
-    def test_setupblockview_get_object_return_current_block_to_be_edited(self):
+    def test_setupblockcreateview_get_object_return_current_block_to_be_edited(self):
         # setUp already created one block
         block = Block.objects.first()
 
@@ -264,6 +257,8 @@ class SetupBlockViewTest(BaseTestCase):
         # make a request
         response = self.client.get(url)
         self.assertEqual(response.context["block_id"], Block.objects.first().pk)
+
+    ######### SetupBlockEditView() #########
 
     def test_setupblockview_get_object_raises_error_when_invalid_uuid(self):
         # setUp already created one block, but let's create a random UUID
@@ -275,23 +270,11 @@ class SetupBlockViewTest(BaseTestCase):
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(
             str(messages[0]),
-            "This block does not exist or you do not have permission to edit it",
+            "The block you are trying to edit does not exist, or you do not have\
+                      permitions to do so.",
         )
 
-
-class SetupBlockListViewTest(BaseTestCase):
-    def setUp(self) -> None:
-        """Create one block to current condominium"""
-        super().setUp()
-        block_one_data = {
-            "number_or_name": "Block One",
-            "description": "First Block",
-            "condominium": self.current_condominium,
-        }
-
-        url = reverse("condo:condo_setup_block_create")
-
-        self.response = self.client.post(url, block_one_data, follow=True)
+    ######### SetupBlockListView() #########
 
     def test_setupblocklistview_sends_queryset(self):
         # create one more block
@@ -338,7 +321,7 @@ class SetupBlockDeleteViewTest(BaseTestCase):
         # make a request
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context["block_name"], "Block One")
+        self.assertEqual(response.context["block"], current_block)
 
     def test_setupblockdeleteview_form_valid_succeeds(self):
         # get the only existing block, created by setUp

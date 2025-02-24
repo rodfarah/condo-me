@@ -1,8 +1,8 @@
 from django.contrib.auth.models import Group
 from django.urls import reverse
 
-from apps.condo.forms import BlockSetupForm, CondoSetupForm
-from apps.condo.models import Block, Condominium
+from apps.condo.forms import CondoSetupForm
+from apps.condo.models import Condominium
 from apps.condo_people.tests.base_test_condo_people import CondoPeopleTestBase
 
 
@@ -92,36 +92,3 @@ class CondoSetupCondominiumFormsTest(BaseFormTest):
             form.errors["cnpj"][0],
             "Please, insert a 14 digits valid CNPJ, with or without symbols.",
         )
-
-
-class CondoSetupBlockFormsTest(BaseFormTest):
-    def setUp(self):
-        # include BaseFormTest setUp configuration
-        super().setUp()
-
-        self.test_block = Block.objects.create(
-            number_or_name="Violet Block",
-            description="Violet Block has an ocean view",
-            condominium=self.test_user.condominium,
-        )
-
-    def test_blocksetupform_raises_error_if_new_block_object_name_already_exists(self):
-        second_block_data = {
-            "number_or_name": "Violet Block",  # identical to test_block
-            "description": "Creating a test block which contains a name identical to other one (form must be invalid)",
-        }
-        form = BlockSetupForm(data=second_block_data)
-        self.assertFalse(form.is_valid())
-        self.assertIn("number_or_name", form.errors)
-        self.assertEqual(
-            form.errors["number_or_name"][0],
-            "Block number (or name) already exists in this condominium. Please, choose a different one.",
-        )
-
-    def test_blocksetupform_accepts_valid_cleaned_name(self):
-        second_block_data = {
-            "number_or_name": "Jasmine Block",  # different from test_block
-            "description": "Jasmine Block has a swimming pool view",
-        }
-        form = BlockSetupForm(data=second_block_data)
-        self.assertTrue(form.is_valid())
