@@ -19,8 +19,8 @@
     <h2 class="pb-2 border-bottom">Welcome {{ user.first_name }}!</h2>
     <div class="row row-cols-1 row-cols-lg-3 align-items-stretch g-4 py-5">
       <div class="col">
-        {% if condo_cover %}
-          <div class="card card-cover squared-card h-100 overflow-hidden text-bg-secondary rounded-4 shadow-lg" style="background-image: url('/media/{{ condo_cover }}');">
+        {% if current_condominium.get_cover_url %}
+          <div class="card card-cover squared-card h-100 overflow-hidden text-bg-secondary rounded-4 shadow-lg" style="background-image: url('/media/{{ current_condominium.get_cover_url }}');">
         {% else %}
           <div class="card card-cover squared-card h-100 overflow-hidden text-bg-secondary rounded-4 shadow-lg" style="background-image: url({% static 'prelogin/media/covers/condo_friends_hp.jpg'%});">
         {% endif %}
@@ -48,6 +48,7 @@
           </div>
         </div>
       </div>
+    {% if current_condominium.has_common_areas %}
     <div class="col">
       <div class="card card-cover squared-card h-100 overflow-hidden text-bg-secondary rounded-4 shadow-lg" style="background-image: url({% static '/condo/covers/swimming_pool_2.jpg' %});">
         <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
@@ -65,6 +66,7 @@
         </div>
       </div>
     </div>
+    {% endif %}
     <div class="col">
       <div class="card card-cover squared-card h-100 overflow-hidden text-bg-secondary rounded-4 shadow-lg" style="background-image: url({% static '/condo/covers/scheddule.jpg' %});">
         <div class="d-flex flex-column h-100 p-5 pb-3 text-shadow-1">

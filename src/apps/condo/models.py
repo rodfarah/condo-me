@@ -46,6 +46,14 @@ class Condominium(DateLogsBaseModel):
     def __str__(self) -> str:
         return self.name
 
+    def get_cover_url(self):
+        """Returns the URL of the cover image or a default image
+        if none exists
+        """
+        if self.cover and hasattr(self.cover, "url"):
+            return self.cover.url
+        return None
+
     def num_of_blocks(self) -> int:
         return self.blocks.count()
 
@@ -54,6 +62,9 @@ class Condominium(DateLogsBaseModel):
         for block in self.blocks.all():
             apartments_qty += block.get_apartments_count()
         return apartments_qty
+
+    def has_common_areas(self) -> bool:
+        return CommonArea.objects.filter(condominium=self).exists()
 
     def clean_cnpj(self):
         """

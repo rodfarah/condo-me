@@ -9,9 +9,7 @@ def home(request):
         return render(
             request,
             template_name="condo/pages/home_pages/welcome.html",
-            context={
-                "condo_cover": request.user.condominium.cover.name
-            },  # .name == "path",
+            context={"current_condominium": request.user.condominium},
         )
     # if not condominium, no need to send condo cover. Template will use a standard one
     return render(request, "condo/pages/home_pages/welcome.html")
@@ -19,7 +17,12 @@ def home(request):
 
 @login_required(redirect_field_name="redirect_to", login_url="/condo_people/login")
 def condominium(request):
-    return render(request, template_name="condo/pages/home_pages/condominium.html")
+    current_condominium = request.user.condominium
+    return render(
+        request,
+        template_name="condo/pages/home_pages/condominium.html",
+        context={"current_condominium": current_condominium},
+    )
 
 
 @login_required(redirect_field_name="redirect_to", login_url="/condo_people/login")

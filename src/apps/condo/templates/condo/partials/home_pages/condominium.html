@@ -1,11 +1,12 @@
+{% load static %}
 <div class="b-example-divider"></div>
 <div class="container col-xxl-8 px-4 py-5">
   <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
     <div class="col-10 col-sm-8 col-lg-6">
       <img
-        src="#"
+        src="{% if current_condominium.get_cover_url %}{{ current_condominium.get_cover_url }}{% else %}{% static "prelogin/media/covers/condo_friends_hp.jpg" %}{% endif %}"
         class="d-block mx-lg-auto img-fluid"
-        alt="INSERT_CONDO_IMAGE"
+        alt="Condominium Picture"
         width="700"
         height="500"
         loading="lazy"
@@ -13,16 +14,26 @@
     </div>
     <div class="col-lg-6">
       <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">
-        About [CONDO_NAME]
+        {% if current_condominium %}
+        About {{ current_condominium.name }}
+        {% else %}
+        Can't wait to see your condominium here?
+        {% endif %}
       </h1>
-      <p class="lead">[CONDO_DESCRIPTION]</p>
+      <p class="lead">{% if current_condominium %}{{ current_condominium.description }}{% else %}Soon the <strong>condominium manager</strong> will register the condominium itself here and we all will know more about the beautiful place we live and share!{% endif %}</p>
       <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+        {% if current_condominium %}
         <button type="button" class="btn btn-primary btn-lg px-4 me-md-2">
           Common Areas
         </button>
         <button type="button" class="btn btn-outline-secondary btn-lg px-4">
           Reserve
         </button>
+        {% else %}
+        <a href="{% url "condo:home" %}" type="button" class="btn btn-warning btn-lg px-4 me-md-2">
+          Home
+        </a>
+      {% endif %}
       </div>
     </div>
   </div>
