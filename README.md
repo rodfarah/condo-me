@@ -114,33 +114,37 @@ The HTML coverage report will be available in the `htmlcov/` directory.
    ```bash
    docker compose up
    ```
-4. **On terminal change directory to "src" folder (where manage.py file bellongs)**
+4. **Install project dependencies**
+   ```bash
+   poetry install
+   ```
+5. **On terminal change directory to "src" folder (where manage.py file bellongs)**
    ```bash
    cd src
    ```
-5. **DB Migrations**  
+6. **DB Migrations**  
    **Inside src directory** on terminal, run both following commands to migrate DB Data:
    ```bash
    poetry shell
    poetry run python manage.py makemigrations
    poetry run python manage.py migrate 
    ```
-6. **Create Superuser**
+7. **Create Superuser**
    **Inside src directory**, run the following commands (and follow the instructions)**
    ```bash
    poetry run python manage.py createsuperuser
    ```
-7. **Collect Static Files**  
+8. **Collect Static Files**  
    **Inside src directory** on terminal, run the following commands to copy static files into specific folder:
    ```bash
    poetry run python manage.py collectstatic
    ```
-8. **Run Server**  
+9. **Run Server**  
    **Inside src directory** on terminal, run the following commands:
    ```bash
    poetry run python manage.py **runserver**
    ```
-9. **Stop the Containers**  
+10. **Stop the Containers**  
    If needed, run the following command in order to stop all running containers and services:
    ```bash
    docker-compose stop
