@@ -187,18 +187,17 @@ class BlockSetupForm(forms.ModelForm):
 class ApartmentSetupForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
-        """A block must not have two apartments with identical number_or_name, so we
-        must receive the "condominium" and "block" objects from the view once we can not
-        access them from form fields.
-        Notice that SetupApartmentCreateView() sends "block" through "get_form_kwargs()".
+        """A block must not have two apartments with identical number_or_name (see clean
+         method bellow), so we must receive the "condominium" and "block" objects from
+          the view once we can not access them from form fields.
+        Notice that SetupApartmentCreateView() sends "condominium" and "block" through
+        "get_form_kwargs()".
         """
         condominium = kwargs.pop("condominium", None)
-        block = kwargs.pop("block", None)
         if condominium is None:
             raise ValueError("There is no condominium registered yet.")
         self.condominium = condominium
-        if block is None:
-            raise ValueError("There is no block registered yet.")
+        block = kwargs.pop("block", None)
         self.block = block
         super().__init__(*args, **kwargs)
 

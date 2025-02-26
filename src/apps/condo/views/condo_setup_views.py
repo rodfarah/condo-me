@@ -617,6 +617,15 @@ class SetupApartmentCreateView(SetupViewsWithDecors, CreateView):
     template_name = "condo/pages/setup_pages/apartment/condo_setup_apartments_create_one_by_one.html"
 
     def dispatch(self, request, *args, **kwargs):
+        # first, let's check if condominium exists
+        if not request.user.condominium:
+            messages.error(
+                request,
+                "In order to create apartments, you must create a condominium first.",
+            )
+            return redirect(reverse("condo:condo_setup_condominium"))
+
+        # now, let's check if block exists
         block_id = self.kwargs.get("block_id")
         block_queryset = Block.objects.filter(
             condominium=self.request.user.condominium, pk=block_id
@@ -646,10 +655,8 @@ class SetupApartmentCreateView(SetupViewsWithDecors, CreateView):
     def get_form_kwargs(self) -> dict:
         form_kwargs = super().get_form_kwargs()
         form_kwargs["condominium"] = self.request.user.condominium
-        form_kwargs["block"] = get_object_or_404(
-            Block,
-            condominium=self.request.user.condominium,
-            pk=self.kwargs.get("block_id"),
+        form_kwargs["block"] = Block.objects.get(
+            condominium=self.request.user.condominium, pk=self.kwargs.get("block_id")
         )
         return form_kwargs
 

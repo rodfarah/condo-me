@@ -4,11 +4,12 @@ These tests are DIFFERENT from 'test_setup_condominium_views', which are applied
 configuration page accessible only to 'manager' users.
 """
 
-from apps.condo import views
-from apps.condo.models import Condominium
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import resolve, reverse
+
+from apps.condo import views
+from apps.condo.models import Condominium
 
 
 class CondoViewsTest(TestCase):
@@ -53,7 +54,7 @@ class CondoViewsTest(TestCase):
             "/condo_people/login?redirect_to=/condo/",
         )
 
-    def test_condo_home_view_send_condo_cover_url_as_context_if_condo_cover_exists(
+    def test_condo_home_view_send_current_condominium_as_context_if_it_exists(
         self,
     ):
         current_user = get_user_model().objects.first()
@@ -74,8 +75,8 @@ class CondoViewsTest(TestCase):
         response = self.client.get(reverse("condo:home"))
 
         self.assertEqual(
-            response.context["condo_cover"],
-            f"{condo.cover.name}",
+            response.context["current_condominium"],
+            current_user.condominium,
         )
 
     # CONDOMINIUM VIEW TESTS
