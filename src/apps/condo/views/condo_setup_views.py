@@ -246,23 +246,34 @@ class SetupCondominiumView(SetupViewsWithDecors, UpdateView, SetupProgressMixin)
 
 class SetupBlockListView(SetupViewsWithDecors, ListView):
     """
-    Display a list of blocks associated with the user's condominium.
-    This view inherits from SetupViewsWithDecors and ListView to provide a paginated
-    list of Block objects filtered by the current user's condominium.
+    A view for displaying a list of Block objects in a condominium setup context.
+    This view extends SetupViewsWithDecors and Django's ListView to display blocks
+    that belong to the current user's condominium. It supports different template
+    rendering modes based on the template_purpose attribute.
     Attributes:
-        model (Block): The model class to query for the list view
+        model (Model): The Django model class (Block) this view will query
         http_method_names (list): Restricts the view to only handle GET requests
-        template_name (str): Path to the template used to render the block list
+        template_purpose (str): Determines which template to use for rendering
+        templates (dict): Maps purpose identifiers to template paths
     Methods:
-        get_queryset(): Returns a queryset of Block objects filtered by user's condominium
+        get_queryset: Filters blocks to only show those belonging to the user's condominium
+        get_template_names: Selects the appropriate template based on template_purpose
     """
 
     model = Block
     http_method_names = ["get"]
-    template_name = "condo/pages/setup_pages/block/condo_setup_blocks.html"
+    template_purpose = "default"
+    templates = {
+        "default": "condo/pages/setup_pages/block/condo_setup_blocks.html",
+        "apartments": "condo/pages/setup_pages/apartment/condo_setup_blocks_to_apartments.html",
+    }
 
     def get_queryset(self):
         return Block.objects.filter(condominium=self.request.user.condominium)
+
+    def get_template_names(self):
+        template = self.templates.get(self.template_purpose, self.templates["default"])
+        return template
 
 
 class SetupBlockCreateView(SetupViewsWithDecors, CreateView, SetupProgressMixin):
@@ -475,33 +486,6 @@ class SetupBlockDeleteView(SetupViewsWithDecors, DeleteView, SetupProgressMixin)
         self.object.delete()
         messages.success(self.request, "Block has been successfully deleted.")
         return HttpResponseRedirect(success_url)
-
-
-class SetupBlocksToCreateApartmentsListView(SetupViewsWithDecors, ListView):
-    """
-    A view that displays a list of condominium blocks for apartment registration.
-    This view inherits from SetupViewsWithDecors and ListView to show blocks belonging
-    to the user's condominium. It allows users to select a block where they want to
-    register apartments.
-    Attributes:
-        model (Block): The Block model used for querying data
-        http_method_names (list): Allowed HTTP methods, restricted to "get" only
-        template_name (str): Path to the template that renders the blocks list
-    Methods:
-        get_queryset(): Filters Block objects to show only those belonging to the
-                       user's condominium
-    Returns:
-        A rendered template displaying the list of blocks available for apartment registration
-    """
-
-    model = Block
-    http_method_names = ["get"]
-    template_name = (
-        "condo/pages/setup_pages/apartment/condo_setup_blocks_to_apartments.html"
-    )
-
-    def get_queryset(self):
-        return Block.objects.filter(condominium=self.request.user.condominium)
 
 
 class SetupApartmentsByBlockListView(SetupViewsWithDecors, ListView):

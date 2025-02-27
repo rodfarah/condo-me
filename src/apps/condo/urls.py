@@ -47,7 +47,7 @@ urlpatterns = [
     ),
     path(
         "condo-setup/blocks-to-apartments/",
-        condo_setup_views.SetupBlocksToCreateApartmentsListView.as_view(),
+        condo_setup_views.SetupBlockListView.as_view(template_purpose="apartments"),
         name="condo_setup_blocks_to_apartments",
     ),
     path(
