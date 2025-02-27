@@ -83,7 +83,7 @@ poetry run coverage report
 poetry run coverage html
 ```
 
-The HTML coverage report will be available in the `htmlcov/` directory.
+The HTML coverage report will be available in the `htmlcov/index.html` directory.
 
 ---
 ## Setting Up the Environment
