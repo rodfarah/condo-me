@@ -194,8 +194,6 @@ class ApartmentSetupForm(forms.ModelForm):
         "get_form_kwargs()".
         """
         condominium = kwargs.pop("condominium", None)
-        if condominium is None:
-            raise ValueError("There is no condominium registered yet.")
         self.condominium = condominium
         block = kwargs.pop("block", None)
         self.block = block

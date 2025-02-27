@@ -319,8 +319,7 @@ class SetupBlockCreateView(SetupViewsWithDecors, CreateView, SetupProgressMixin)
         ):
             form.add_error(
                 "number_or_name",
-                "Block number (or name) already exists in this condominium. \
-                    Please, choose a different one.",
+                "Block number (or name) already exists in this condominium. Please, choose a different one.",
             )
             return self.form_invalid(form)
 
@@ -370,12 +369,6 @@ class SetupBlockEditView(SetupViewsWithDecors, UpdateView, SetupProgressMixin):
     template_name = "condo/pages/setup_pages/block/condo_setup_block_edit.html"
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.condominium:
-            messages.error(
-                request,
-                "In order to edit a block, you must create a condominium first.",
-            )
-            return redirect("condo:condo_setup_condominium")
         if not Block.objects.filter(
             condominium=self.request.user.condominium, pk=self.kwargs.get("block_id")
         ).exists():
@@ -407,8 +400,7 @@ class SetupBlockEditView(SetupViewsWithDecors, UpdateView, SetupProgressMixin):
         ):
             form.add_error(
                 "number_or_name",
-                "Block number (or name) already exists in this condominium. \
-                    Please, choose a different one.",
+                "Block number (or name) already exists in this condominium. Please, choose a different one.",
             )
             return self.form_invalid(form)
 

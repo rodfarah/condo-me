@@ -258,9 +258,27 @@ class SetupBlockViewsTest(BaseTestCase):
         response = self.client.get(url)
         self.assertEqual(response.context["block_id"], Block.objects.first().pk)
 
+    def test_setupblockcreateview_add_error_to_form_if_duplicated_number_or_name(self):
+        # create second block
+        block_two_data = {
+            "number_or_name": "Block One",  # duplicated name
+            "description": "Second Block",
+        }
+        url = reverse("condo:condo_setup_block_create")
+        response = self.client.post(url, block_two_data, follow=True)
+
+        form = response.context["form"]
+        # form should be invalid
+        self.assertFalse(form.is_valid())
+        # check if error was sent to form
+        self.assertEqual(
+            form.errors["number_or_name"][0],
+            "Block number (or name) already exists in this condominium. Please, choose a different one.",
+        )
+
     ######### SetupBlockEditView() #########
 
-    def test_setupblockview_get_object_raises_error_when_invalid_uuid(self):
+    def test_setupblockeditview_get_object_raises_error_when_invalid_uuid(self):
         # setUp already created one block, but let's create a random UUID
         block_id = uuid.uuid4()  # valid, but inexistent
         # condo-setup/block/edit/<uuid:block_id>
@@ -272,6 +290,34 @@ class SetupBlockViewsTest(BaseTestCase):
             str(messages[0]),
             "The block you are trying to edit does not exist, or you do not have\
                       permitions to do so.",
+        )
+
+    def test_setupblockeditview_add_error_to_form_if_new_number_or_name_already_exists(
+        self,
+    ):
+        # create a second block that is unique
+        second_block = Block.objects.create(
+            condominium=self.current_condominium,
+            number_or_name="Block Two",
+            description="Second Block",
+        )
+        # edit second block name, same as first block
+        second_block_form_data = {
+            "number_or_name": "Block One",  # already exists
+            "description": "same name as first block",
+        }
+
+        response = self.client.post(
+            path=reverse(
+                "condo:condo_setup_block_edit", kwargs={"block_id": second_block.id}
+            ),
+            data=second_block_form_data,
+            follow=True,
+        )
+
+        self.assertEqual(
+            response.context["form"].errors["number_or_name"][0],
+            "Block number (or name) already exists in this condominium. Please, choose a different one.",
         )
 
     ######### SetupBlockListView() #########
