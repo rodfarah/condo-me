@@ -320,6 +320,23 @@ class SetupBlockViewsTest(BaseTestCase):
             "Block number (or name) already exists in this condominium. Please, choose a different one.",
         )
 
+    def test_setupblockeditview_saves_edited_block_and_raises_success_message(self):
+        # edit test block
+        edit_data = {
+            "number_or_name": "Edited Block One",
+            "description": "Editing Block One",
+        }
+        response = self.client.post(
+            reverse(
+                "condo:condo_setup_block_edit",
+                kwargs={"block_id": Block.objects.get(number_or_name="Block One").pk},
+            ),
+            data=edit_data,
+        )
+        self.assertIn(
+            response.content.decode("utf-8"), "Block has been updated successfully."
+        )
+
     ######### SetupBlockListView() #########
 
     def test_setupblocklistview_sends_queryset(self):
