@@ -611,7 +611,7 @@ class SetupApartmentCreateView(SetupViewsWithDecors, CreateView):
                 request,
                 "You are trying to create apartments in a block that does not exist",
             )
-            return redirect(reverse("condo:condo_setup_apartment_list_by_block"))
+            return redirect(reverse("condo:condo_setup_blocks_to_apartments"))
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):

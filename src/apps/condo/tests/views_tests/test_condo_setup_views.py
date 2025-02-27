@@ -13,7 +13,7 @@ from django.contrib.messages import get_messages
 from django.test import TestCase
 from django.urls import reverse
 
-from apps.condo.models import Block, Condominium
+from apps.condo.models import Apartment, Block, Condominium
 
 
 class BaseTestCase(TestCase):
@@ -399,3 +399,85 @@ class SetupBlockDeleteViewTest(BaseTestCase):
         messages = list(get_messages(response.wsgi_request))
 
         self.assertEqual(str(messages[0]), "Block has been successfully deleted.")
+
+
+#################################################
+######### Testing SETUP Apartment VIEWS #########
+#################################################
+
+
+class SetupApartmentViewTest(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        # create a block to the condominium
+        self.block_one = Block.objects.create(
+            number_or_name="Block One",
+            description="First Block",
+            condominium=self.current_condominium,
+        )
+        # create an apartment in this block
+        Apartment.objects.create(
+            number_or_name="101",
+            block=self.block_one,
+            condominium=self.current_condominium,
+        )
+
+    ######### SetupApartmentsByBlockListView() #########
+
+    def test_apartmentsbyblocklistview_raises_error_if_block_doesnot_exist(self):
+        block_id = uuid.uuid4()  # valid, but inexistent
+        response = self.client.get(
+            reverse(
+                "condo:condo_setup_apartment_list_by_block",
+                kwargs={"block_id": block_id},
+            ),
+            follow=True,
+        )
+        messages = list(get_messages(response.wsgi_request))
+
+        self.assertIn(
+            str(messages[0]),
+            "The requested block does not exist or does not belong to your condominium.",
+        )
+        self.assertRedirects(
+            response, reverse("condo:condo_setup_blocks_to_apartments")
+        )
+
+    def test_apartmentsbyblocklistview_get_queryset_properly(self):
+        block_id = self.block_one.pk
+
+        expected_queryset = Apartment.objects.filter(
+            condominium=self.current_condominium, block=self.block_one
+        )
+
+        response = self.client.get(
+            reverse(
+                "condo:condo_setup_apartment_list_by_block",
+                kwargs={"block_id": block_id},
+            )
+        )
+
+        self.assertQuerySetEqual(
+            list(response.context["apartments_in_block"]),
+            list(expected_queryset),
+            ordered=False,
+        )
+
+    ######### SetupApartmentCreateView() #########
+
+    def test_apartmentcreateview_raises_error_if_block_does_not_exist(self):
+        block_id = uuid.uuid4()  # valid, but inexistent
+
+        response = self.client.post(
+            reverse(
+                "condo:condo_setup_apartment_create", kwargs={"block_id": block_id}
+            ),
+            follow=True,
+        )
+
+        messages = list(get_messages(response.wsgi_request))
+
+        self.assertEqual(
+            str(messages[0]),
+            "You are trying to create apartments in a block that does not exist",
+        )
