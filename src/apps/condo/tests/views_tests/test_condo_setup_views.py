@@ -1,7 +1,7 @@
 """
 'test_setup_condominium_views' are applied to the condominium configuration page,
 accessible only to 'manager' users.
-These tests are DIFFERENT from 'test_condo_views' which are applied to the first page 
+These tests are DIFFERENT from 'test_condo_base_views' which are applied to the first page 
 user will get when logged in.
 """
 
@@ -416,7 +416,7 @@ class SetupApartmentViewTest(BaseTestCase):
             condominium=self.current_condominium,
         )
         # create an apartment in this block
-        Apartment.objects.create(
+        self.apartment_one_o_one = Apartment.objects.create(
             number_or_name="101",
             block=self.block_one,
             condominium=self.current_condominium,
@@ -480,4 +480,112 @@ class SetupApartmentViewTest(BaseTestCase):
         self.assertEqual(
             str(messages[0]),
             "You are trying to create apartments in a block that does not exist",
+        )
+        self.assertRedirects(
+            response, reverse("condo:condo_setup_blocks_to_apartments")
+        )
+
+    def test_apartmentcreateview_success_url_returns_correct_url(self):
+        # create another apartment
+        form_data = {"number_or_name": "102"}
+        response = self.client.post(
+            path=reverse(
+                "condo:condo_setup_apartment_create",
+                kwargs={"block_id": self.block_one.pk},
+            ),
+            data=form_data,
+            follow=True,
+        )
+
+        self.assertRedirects(
+            response,
+            reverse(
+                "condo:condo_setup_apartment_list_by_block",
+                kwargs={"block_id": self.block_one.pk},
+            ),
+        )
+
+    def test_apartmentcreateview_redirects_ok_and_raises_success_message_if_request_is_ok(
+        self,
+    ):
+        # create another apartment
+        form_data = {"number_or_name": "302"}
+        response = self.client.post(
+            path=reverse(
+                "condo:condo_setup_apartment_create",
+                kwargs={"block_id": self.block_one.pk},
+            ),
+            data=form_data,
+            follow=False,  # in order to confirm redirect status code
+        )
+        # verify redirection
+        self.assertEqual(response.status_code, 302)
+
+        # verify redirect url
+        expected_url = reverse(
+            "condo:condo_setup_apartment_list_by_block",
+            kwargs={"block_id": self.block_one.pk},
+        )
+        self.assertRedirects(response, expected_url=expected_url)
+
+        # verify success message
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn("Apartment has been created successfully.", str(messages[0]))
+
+        # verify apartment has been created
+        self.assertTrue(
+            Apartment.objects.filter(
+                number_or_name="302",
+                block=self.block_one,
+                condominium=self.current_condominium,
+            ).exists()
+        )
+
+    ######### SetupApartmentDeleteView() #########
+    def test_apartmentdeleteview_sends_correct_context_to_template(self):
+        # make a delete request
+        response = self.client.get(
+            path=reverse(
+                "condo:condo_setup_apartment_delete",
+                kwargs={"apartment_id": self.apartment_one_o_one.pk},
+            ),
+            follow=False,
+        )
+        # verify context data
+        self.assertEqual(response.context["apartment_id"], self.apartment_one_o_one.pk)
+        self.assertEqual(response.context["apartment_num_or_name"], "101")
+        self.assertEqual(response.context["apartment_block"], self.block_one)
+
+    def test_apartmentdeleteview_redirects_success_url_and_raises_success_message(self):
+        # verify if apartment exists
+        self.assertTrue(
+            Apartment.objects.filter(
+                number_or_name="101",
+                block=self.block_one,
+                condominium=self.current_condominium,
+            ).exists()
+        )
+        # make a delete request
+        response = self.client.post(
+            path=reverse(
+                "condo:condo_setup_apartment_delete",
+                kwargs={"apartment_id": self.apartment_one_o_one.pk},
+            ),
+            follow=True,
+        )
+
+        # verify redirect to success url
+        expected_url = reverse(
+            "condo:condo_setup_apartment_list_by_block",
+            kwargs={"block_id": self.block_one.pk},
+        )
+        self.assertRedirects(response, expected_url)
+
+        # verify success message was added
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn("Apartment has been successfully deleted", str(messages[0]))
+
+        # verify apartment was really deleted
+        self.assertFalse(
+            Apartment.objects.filter(pk=self.apartment_one_o_one.pk).exists()
         )
