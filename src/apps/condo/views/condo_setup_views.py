@@ -695,5 +695,5 @@ class SetupApartmentDeleteView(SetupViewsWithDecors, DeleteView):
     def form_valid(self, form):
         success_url = self.get_success_url()
         self.object.delete()
-        messages.success(self.request, "Apartment has been successfully deleted")
+        messages.success(self.request, "Apartment has been successfully deleted.")
         return HttpResponseRedirect(success_url)
