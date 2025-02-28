@@ -8,8 +8,14 @@ from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
+from django.views.generic.edit import FormView
 
-from apps.condo.forms import ApartmentSetupForm, BlockSetupForm, CondoSetupForm
+from apps.condo.forms import (
+    ApartmentMultipleSetupForm,
+    ApartmentSetupForm,
+    BlockSetupForm,
+    CondoSetupForm,
+)
 from apps.condo.models import Apartment, Block, Condominium, SetupProgress
 
 
@@ -648,6 +654,118 @@ class SetupApartmentCreateView(SetupViewsWithDecors, CreateView):
         self.object.save()
         messages.success(self.request, "Apartment has been created successfully.")
         return HttpResponseRedirect(self.get_success_url())
+
+
+class SetupApartmentMultipleCreateView(SetupViewsWithDecors, FormView):
+    # model = Apartment
+    # context_object_name = "current_apartment"
+    form_class = ApartmentMultipleSetupForm
+    # http_method_names = ["get", "post"]
+    # pk_url_kwarg = "apartment_id"
+    template_name = (
+        "condo/pages/setup_pages/apartment/condo_setup_apartments_create_multiple.html"
+    )
+
+    def get_success_url(self) -> str:
+        return reverse(
+            "condo:condo_setup_apartment_list_by_block",
+            kwargs={"block_id": self.kwargs.get("block_id")},
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["current_block"] = Block.objects.get(
+            pk=self.kwargs.get("block_id"), condominium=self.request.user.condominium
+        )
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["current_condominium"] = self.request.user.condominium
+        kwargs["current_block"] = Block.objects.filter(
+            pk=self.kwargs.get("block_id"), condominium=self.request.user.condominium
+        ).first()
+        return kwargs
+
+    def form_valid(self, form):
+        # Verify if we are in last step, when user confirms apartments to be created
+        if "confirm" in self.request.POST:
+            # recover session data
+            apartment_data = self.request.session.get("apartment_data", {})
+
+            # obtain necessary objects
+            current_block = Block.objects.filter(
+                condominium=self.request.user.condominium,
+                pk=self.kwargs.get("block_id"),
+            )
+            current_condominium = self.request.user.condominium
+
+            # Create multiple apartments
+            apartments_created = []
+
+            for apt_number in apartment_data["apartment_to_create"]:
+                # create each apartment
+                each_apartment = Apartment.objects.create(
+                    number_or_name=str(apt_number),
+                    block=current_block,
+                    condominium=current_condominium,
+                )
+                apartments_created.append(each_apartment)
+
+            # save all apartments in one role
+            Apartment.objects.bulk_create(apartments_created)
+
+            # clean session data
+            if "apartment_data" in self.request.session:
+                del self.request.session["apartment_data"]
+
+            messages.success(
+                self.request,
+                f"{len(apartments_created)} apartments were created successfully!",
+            )
+            return super().form_valid(form)
+        # we are in first step, when user sends the first form (first level, last level,
+        # apartments per level, etc)
+        else:
+            # obtain form data
+            first_level = form.cleaned_data["first_level"]
+            last_level = form.cleaned_data["last_level"]
+            apartments_per_level = form.cleaned_data["apartments_per_level"]
+
+            # generate apartment number (to be created) list
+            apartments_to_create = []
+
+            levels = list(range(first_level, last_level + 1))
+
+            for level in levels:
+                for n in range(apartments_per_level):
+                    apartments_to_create.append(level * 10 + (n + 1))
+
+            # store data in session for future use
+            self.request.session["apartment_data"] = {
+                "first_level": first_level,
+                "last_level": last_level,
+                "apartments_per_level": apartments_per_level,
+                "apartments_to_create": apartments_to_create,
+            }
+
+            # prepare data as context to be used in confirmation template
+            context = {
+                "form": form,
+                "apartments_to_create": apartments_to_create,
+                "total_created_apartments": len(apartments_to_create),
+                "current_block": Block.objects.filter(
+                    condominium=self.request.user.condominium,
+                    pk=self.kwargs.get("block_id"),
+                ),
+            }
+
+            # render confirmation template
+            return render(
+                request=self.request,
+                template_name=self.get_template_names(),
+                context=context,
+            )
 
 
 class SetupApartmentDeleteView(SetupViewsWithDecors, DeleteView):

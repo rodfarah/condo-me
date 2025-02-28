@@ -61,6 +61,11 @@ urlpatterns = [
         name="condo_setup_apartment_create",
     ),
     path(
+        "condo-setup/block/<uuid:block_id>/apartments/create/multiple/",
+        condo_setup_views.SetupApartmentMultipleCreateView.as_view(),
+        name="condo_setup_apartment_multiple_create",
+    ),
+    path(
         "condo-setup/apartments/<uuid:apartment_id>/delete/",
         condo_setup_views.SetupApartmentDeleteView.as_view(),
         name="condo_setup_apartment_delete",

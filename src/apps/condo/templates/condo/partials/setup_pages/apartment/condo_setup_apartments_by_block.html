@@ -94,7 +94,7 @@
          </p>
         <div class="d-grid gap-2 d-md-flex justify-content-md-start">
           <a href="{% url "condo:condo_setup_apartment_create" current_block.id %}" type="button" class="btn btn-outline-warning btn-lg px-4">Yes, One by One</a>
-          <button type="button" class="btn btn-outline-warning btn-lg px-4">Yes, Multiple at Once</button>
+          <a href="{% url "condo:condo_setup_apartment_multiple_create" current_block.id%}" type="button" class="btn btn-outline-warning btn-lg px-4">Yes, Multiple at Once</a>
           <a href="{% url "condo:condo_setup_blocks_to_apartments" %}" type="button" class="btn btn-outline-danger btn-lg px-4">No, back to Apartment Setup</a>
         </div>
       </div>

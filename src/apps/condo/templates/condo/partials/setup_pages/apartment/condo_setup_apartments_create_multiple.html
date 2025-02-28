@@ -1,0 +1,121 @@
+{% load static %}
+
+
+<section class="py-2 text-center container-fluid">
+  <div class="row py-lg-5">
+    <div class="col-lg-6 col-md-8 mx-auto">
+      <h1 class="fw-light">Apartments Setup</h1>
+      <p class="lead text-body-secondary">
+        Here you can enter or edit information and details about the condominium Apartments.
+      </p>
+    </div>
+  </div>
+</section>
+
+<div class="px-4">
+  <div class="py-3">
+    <div class="row justify-content-center">
+      <div class="col-12">
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="py-3">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="{% url 'condo:condo_setup_blocks_to_apartments' %}" class="text-decoration-none">
+            <i class="bi bi-arrow-left"></i> Back to Apartments Setup
+          </a>
+        </li>
+      </ol>
+    </nav>
+  </div>
+
+  <div class="row flex-lg-row-reverse align-items-center g-5 py-2">
+    <div class="col-10 col-sm-8 col-lg-6">
+      <img
+        src="{% if current_block.get_cover_url %}{{ current_block.get_cover_url }}{% else %}{% static 'condo/covers/setup_blocks.jpg' %}{% endif %}"
+        class="d-block mx-lg-auto img-fluid"
+        alt="Block Image"
+        width="700"
+        height="500"
+        loading="lazy"
+      >
+    </div>
+    <div class="col-lg-6">
+      <h4 class="mb-3">Create Multiple Apartments in {{ current_block.number_or_name }}:</h4>
+
+
+      <form
+        id="ApartmentMultipleSetupForm"
+        name="apartment_data"
+        autocomplete="on"
+        action="{% url 'condo:condo_setup_apartment_multiple_create' current_block.id %}"
+        method="POST"
+        class="needs-validation"
+        novalidate=""
+        enctype="multipart/form-data"
+      >
+        {% csrf_token %}
+        <div class="row g-3">
+          <div class="col-12">
+            <label for="{{ form.first_level.id_for_label }}">
+              {{ form.first_level.label }}
+            </label>
+            <div class="input-group">
+              {{ form.first_level }}
+            </div>
+            {% if form.first_level.errors %}
+              <div class="text-danger">
+                <small>{{ form.first_level.errors }}</small>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="col-12">
+            <label for="{{ form.last_level.id_for_label }}">
+              {{ form.last_level.label }}
+            </label>
+            <div class="input-group">
+              {{ form.last_level }}
+            </div>
+            {% if form.last_level.errors %}
+              <div class="text-danger">
+                <small>{{ form.last_level.errors }}</small>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="col-12">
+            <label for="{{ form.apartments_per_level.id_for_label }}">
+              {{ form.apartments_per_level.label }}
+            </label>
+            <div class="input-group">
+              {{ form.apartments_per_level }}
+            </div>
+            {% if form.apartments_per_level.errors %}
+              <div class="text-danger">
+                <small>{{ form.apartments_per_level.errors }}</small>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+        <br>
+        <button class="w-100 btn btn-warning btn-sm btn-lg" id="editButton" type="submit">
+          Confirm
+        </button>
+      </form>
+
+
+    </div>
+  </div>
+</div>
