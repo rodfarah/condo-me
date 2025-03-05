@@ -1,0 +1,70 @@
+{% load static %}
+
+<div class="container-fluid py-4">
+  <div class="row mb-4">
+    <div class="col-12 text-center">
+      <h1 class="fw-light">Apartments Setup</h1>
+      <p class="lead text-body-secondary">Here you can enter or edit information and details about the condominium Apartments.</p>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-12">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="{% url 'condo:condo_setup_blocks_to_apartments' %}" class="text-decoration-none">
+              <i class="bi bi-arrow-left"></i> Back to Apartments Setup
+            </a>
+          </li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  <div class="row align-items-center justify-content-center">
+    <div class="col-lg-5 order-lg-2 mb-4 mb-lg-0">
+      <div class="position-relative">
+        <img 
+          src="{% static 'condo/covers/setup_apartments.jpg' %}"
+          class="img-fluid rounded shadow-sm"
+          alt="Apartments Image"
+          loading="lazy"
+        >
+        <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark opacity-25 rounded"></div>
+      </div>
+    </div>
+
+    <div class="col-lg-5 order-lg-1">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4 text-center">
+          <div class="mb-4">
+            <i class="bi bi-exclamation-triangle text-warning display-4"></i>
+          </div>
+          <h4 class="card-title text-warning mb-3">Apartment Create Confirmation</h4>
+          <p class="card-text mb-4">
+            Are you sure you want to create the following <strong>{{ total_created_apartments }} apartments</strong> in {{ current_block.number_or_name }}?
+            <br>
+            <br>
+            {% for apartment in request.session.apartments_to_create %}
+            <strong>APTO {{ apartment }}</strong><br>
+            {% endfor %}
+          </p>
+          
+          <div class="d-grid gap-2">
+            <form method="POST" action="{% url 'condo:condo_setup_apartment_multiple_create' current_block.id %}">
+              {% csrf_token %}
+              <button type="submit" name="Confirm" class="btn btn-warning btn-lg w-100 mb-2">
+                <i class="bi bi-check me-2"></i>Confirm
+              </button>
+            </form>
+            <a href="{% url 'condo:condo_setup_apartment_list_by_block' current_block.id%}" 
+               class="btn btn-outline-secondary btn-lg">
+               <i class="bi bi-x-circle me-2"></i>No, cancel
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

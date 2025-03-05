@@ -14,17 +14,23 @@
   <div class="row justify-content-center">
     <div class="col-12">
       {% if messages %}
+      <div class="form-floating mb-3">
         {% for message in messages %}
-          <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
+          {% if message.tags == "error" %}
+            <div class="alert alert-danger" role="alert">
+              {{ message }}
+            </div>  
+          {% else %}
+            <div class="alert alert-{{ message.tags }}" role="alert">
+              {{ message }}
+            </div>
+          {% endif %}
         {% endfor %}
-      {% endif %}
+      </div>
+    {% endif %}
     </div>
   </div>
 </div>
-
 <div class="py-3">
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
