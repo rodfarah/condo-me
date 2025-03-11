@@ -8,7 +8,6 @@ from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
-from django.views.generic.edit import FormView
 
 from apps.condo.forms import (
     ApartmentMultipleSetupForm,
@@ -662,6 +661,27 @@ class SetupApartmentMultipleCreateView(SetupViewsWithDecors):
     )
     confirmation_template = "condo/pages/setup_pages/apartment/condo_setup_apartments_confirm_create_multiple.html"
 
+    def dispatch(self, request, *args, **kwargs):
+        # Verify if condominium exists
+        if not request.user.condominium:
+            messages.error(
+                request,
+                "In order to create apartments, you must create a condominium first.",
+            )
+            return redirect(reverse("condo:condo_setup_condominium"))
+
+        # verify if block exists
+        block_id = self.kwargs.get("block_id")
+        if not Block.objects.filter(
+            condominium=request.user.condominium, pk=block_id
+        ).exists():
+            messages.error(
+                request,
+                "You are trying to create apartments in a block that does not exist",
+            )
+            return redirect(reverse("condo:condo_setup_blocks_to_apartments"))
+        return super().dispatch(request, *args, **kwargs)
+
     def get(self, request, *args, **kwargs):
         form = ApartmentMultipleSetupForm()
         context = {
@@ -686,7 +706,17 @@ class SetupApartmentMultipleCreateView(SetupViewsWithDecors):
 
         if not form.is_valid():
             # render again with errors
-            return render(request, self.form_template, {"form": form})
+            return render(
+                request,
+                self.form_template,
+                {
+                    "form": form,
+                    "current_block": Block.objects.get(
+                        condominium=request.user.condominium,
+                        pk=self.kwargs.get("block_id"),
+                    ),
+                },
+            )
 
         # extract form cleaned data
         form_data = form.cleaned_data
@@ -723,21 +753,43 @@ class SetupApartmentMultipleCreateView(SetupViewsWithDecors):
 
     def _bulk_create(self, request):
         apartments_to_create = request.session["apartments_to_create"]
-        for apartment in apartments_to_create:
-            Apartment.objects.create(
+        if apartments_to_create:
+            # get block
+            block = Block.objects.get(
                 condominium=request.user.condominium,
-                block=Block.objects.get(
-                    condominium=request.user.condominium, pk=self.kwargs.get("block_id")
-                ),
-                number_or_name=apartment,
+                pk=self.kwargs.get("block_id"),
             )
-        messages.success(
-            request,
-            f"Apartments {', '.join(str(apt) for apt in apartments_to_create)} have been created successfully",
+            # prepare list of apartment objects to be bulk created
+            apartment_objects = [
+                Apartment(
+                    condominium=request.user.condominium,
+                    block=block,
+                    number_or_name=num_or_name,
+                )
+                for num_or_name in apartments_to_create
+            ]
+            # bulk_create objects in a single SQL operation
+            Apartment.objects.bulk_create(apartment_objects)
+
+            # delete session
+            del request.session["apartments_to_create"]
+
+            messages.success(
+                request,
+                f"Apartments {', '.join(str(apt) for apt in apartments_to_create)} have been created successfully",
+            )
+            return redirect(
+                "condo:condo_setup_apartment_list_by_block", block_id=block.id
+            )
+
+        messages.error(
+            request, "Please, fill in the blanks in order to create multiple apartments"
         )
         return redirect(
-            "condo:condo_setup_apartment_list_by_block",
-            block_id=self.kwargs.get("block_id"),
+            reverse(
+                "condo:condo_setup_apartment_multiple_create",
+                kwargs={"block_id": self.kwargs.get("block_id")},
+            )
         )
 
 
