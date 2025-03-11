@@ -738,22 +738,49 @@ class SetupApartmentMultipleCreateView(SetupViewsWithDecors):
         return render(request, self.confirmation_template, context=context)
 
     def _generate_apt_numbers(self, form_data):
-        first_level = form_data["first_level"]
-        last_level = form_data["last_level"]
-        apartments_per_level = form_data["apartments_per_level"]
+        first_floor = form_data["first_floor"]
+        last_floor = form_data["last_floor"]
+        apartments_per_floor = form_data["apartments_per_floor"]
 
         apartments_to_create = []
 
-        levels = list(range(first_level, last_level + 1))
+        floors = list(range(first_floor, last_floor + 1))
 
-        for level in levels:
-            for n in range(apartments_per_level):
-                apartments_to_create.append(level * 10 + (n + 1))
+        for floor in floors:
+            for n in range(apartments_per_floor):
+                apartments_to_create.append(str(floor * 10 + (n + 1)))
         return apartments_to_create
 
     def _bulk_create(self, request):
         apartments_to_create = request.session["apartments_to_create"]
         if apartments_to_create:
+            # check if apartments_to_create already exists in db
+            existing_apartments = [
+                apartment.number_or_name
+                for apartment in Apartment.objects.filter(
+                    condominium=request.user.condominium,
+                    block__id=self.kwargs.get("block_id"),
+                )
+            ]
+            duplicated_apartments = []
+            for apto in apartments_to_create:
+                if apto in existing_apartments:
+                    duplicated_apartments.append(apto)
+            if duplicated_apartments:
+                current_block = Block.objects.get(
+                    condominium=request.user.condominium, pk=self.kwargs.get("block_id")
+                )
+                messages.error(
+                    request,
+                    f"The whole operation was canceled because the following apartments already exist in {current_block.number_or_name}: {', '.join(duplicated_apartments)}. Please, consider creating manually (one by one) the apartments of this floor.",
+                )
+                return redirect(
+                    reverse(
+                        "condo:condo_setup_apartment_multiple_create",
+                        kwargs={"block_id": self.kwargs.get("block_id")},
+                    )
+                )
+
             # get block
             block = Block.objects.get(
                 condominium=request.user.condominium,
