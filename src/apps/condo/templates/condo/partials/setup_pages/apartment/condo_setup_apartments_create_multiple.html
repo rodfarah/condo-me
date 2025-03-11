@@ -17,13 +17,20 @@
     <div class="row justify-content-center">
       <div class="col-12">
         {% if messages %}
+        <div class="form-floating mb-3">
           {% for message in messages %}
-            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
-              {{ message }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
+            {% if message.tags == "error" %}
+              <div class="alert alert-danger" role="alert">
+                {{ message }}
+              </div>  
+            {% else %}
+              <div class="alert alert-{{ message.tags }}" role="alert">
+                {{ message }}
+              </div>
+            {% endif %}
           {% endfor %}
-        {% endif %}
+        </div>
+      {% endif %}
       </div>
     </div>
   </div>
@@ -53,8 +60,7 @@
     </div>
     <div class="col-lg-6">
       <h4 class="mb-3">Create Multiple Apartments in {{ current_block.number_or_name }}:</h4>
-
-
+        <p class="lead mb-4">You can create multiple apartments exclusively for numbered units. For example, if the first floor is 1, the last floor is 2, and there are 2 apartments per floor, the system will generate the following apartment numbers: 11, 12, 21, and 22.</p>
       <form
         id="ApartmentMultipleSetupForm"
         name="apartments_data"
@@ -68,43 +74,43 @@
         {% csrf_token %}
         <div class="row g-3">
           <div class="col-12">
-            <label for="{{ form.first_level.id_for_label }}">
-              {{ form.first_level.label }}
+            <label for="{{ form.first_floor.id_for_label }}">
+              {{ form.first_floor.label }}
             </label>
             <div class="input-group">
-              {{ form.first_level }}
+              {{ form.first_floor }}
             </div>
-            {% if form.first_level.errors %}
+            {% if form.first_floor.errors %}
               <div class="text-danger">
-                <small>{{ form.first_level.errors }}</small>
+                <small>{{ form.first_floor.errors }}</small>
               </div>
             {% endif %}
           </div>
 
           <div class="col-12">
-            <label for="{{ form.last_level.id_for_label }}">
-              {{ form.last_level.label }}
+            <label for="{{ form.last_floor.id_for_label }}">
+              {{ form.last_floor.label }}
             </label>
             <div class="input-group">
-              {{ form.last_level }}
+              {{ form.last_floor }}
             </div>
-            {% if form.last_level.errors %}
+            {% if form.last_floor.errors %}
               <div class="text-danger">
-                <small>{{ form.last_level.errors }}</small>
+                <small>{{ form.last_floor.errors }}</small>
               </div>
             {% endif %}
           </div>
 
           <div class="col-12">
-            <label for="{{ form.apartments_per_level.id_for_label }}">
-              {{ form.apartments_per_level.label }}
+            <label for="{{ form.apartments_per_floor.id_for_label }}">
+              {{ form.apartments_per_floor.label }}
             </label>
             <div class="input-group">
-              {{ form.apartments_per_level }}
+              {{ form.apartments_per_floor }}
             </div>
-            {% if form.apartments_per_level.errors %}
+            {% if form.apartments_per_floor.errors %}
               <div class="text-danger">
-                <small>{{ form.apartments_per_level.errors }}</small>
+                <small>{{ form.apartments_per_floor.errors }}</small>
               </div>
             {% endif %}
           </div>

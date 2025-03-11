@@ -245,43 +245,46 @@ class ApartmentSetupForm(forms.ModelForm):
 
 class ApartmentMultipleSetupForm(forms.Form):
 
-    first_level = forms.IntegerField(
-        label="Insert first level number",
+    first_floor = forms.IntegerField(
+        label="Insert first floor number",
+        min_value=0,
         widget=forms.NumberInput(
             attrs={
                 "class": "form-control",
                 "autofocus": True,
                 "autocomplete": "on",
-                "id": "first_level",
+                "id": "first_floor",
             }
         ),
-        error_messages={"required": "Please, insert first level number."},
+        error_messages={"required": "Please, insert first floor number."},
     )
 
-    last_level = forms.IntegerField(
-        label="Insert last level number",
+    last_floor = forms.IntegerField(
+        label="Insert last floor number",
+        min_value=0,
         widget=forms.NumberInput(
             attrs={
                 "class": "form-control",
                 "autofocus": False,
                 "autocomplete": "on",
-                "id": "last_level",
+                "id": "last_floor",
             }
         ),
-        error_messages={"required": "Please, insert last level number."},
+        error_messages={"required": "Please, insert last floor number."},
     )
 
-    apartments_per_level = forms.IntegerField(
-        label="Insert number of apartments per level",
+    apartments_per_floor = forms.IntegerField(
+        label="Insert number of apartments per floor",
+        min_value=1,
         widget=forms.NumberInput(
             attrs={
                 "class": "form-control",
                 "autofocus": False,
                 "autocomplete": "on",
-                "id": "apartments_per_level",
+                "id": "apartments_per_floor",
             }
         ),
-        error_messages={"required": "Please, insert number of apartments per level."},
+        error_messages={"required": "Please, insert number of apartments per floor."},
     )
 
     def __init__(self, *args, **kwargs) -> None:
@@ -297,27 +300,27 @@ class ApartmentMultipleSetupForm(forms.Form):
         self.block = block
         super().__init__(*args, **kwargs)
 
-    def clean_first_level(self):
-        first_level_in_form = self.cleaned_data.get("first_level")
+    def clean_first_floor(self):
+        first_floor_in_form = self.cleaned_data.get("first_floor")
 
-        if first_level_in_form is None or first_level_in_form < 0:
-            raise ValidationError("First level must be equal or higher than 0 (zero)")
-        return first_level_in_form
+        if first_floor_in_form is None or first_floor_in_form < 0:
+            raise ValidationError("First floor must be equal or higher than 0 (zero)")
+        return first_floor_in_form
 
-    def clean_last_level(self):
-        last_level_in_form = self.cleaned_data.get("last_level")
+    def clean_last_floor(self):
+        last_floor_in_form = self.cleaned_data.get("last_floor")
 
-        if last_level_in_form is None or last_level_in_form < self.cleaned_data.get(
-            "first_level"
+        if last_floor_in_form is None or last_floor_in_form < self.cleaned_data.get(
+            "first_floor"
         ):
             raise ValidationError(
-                "Last level number must be equal or higher than first level number"
+                "Last floor number must be equal or higher than first floor number"
             )
-        return last_level_in_form
+        return last_floor_in_form
 
-    def clean_apartments_per_level(self):
-        apartments_per_level_in_form = self.cleaned_data.get("apartments_per_level")
+    def clean_apartments_per_floor(self):
+        apartments_per_floor_in_form = self.cleaned_data.get("apartments_per_floor")
 
-        if apartments_per_level_in_form is None or apartments_per_level_in_form < 1:
-            raise ValidationError("You must have at least one apartment per level.")
-        return apartments_per_level_in_form
+        if apartments_per_floor_in_form is None or apartments_per_floor_in_form < 1:
+            raise ValidationError("You must have at least one apartment per floor.")
+        return apartments_per_floor_in_form
