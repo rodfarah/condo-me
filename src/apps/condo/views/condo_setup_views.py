@@ -276,7 +276,9 @@ class SetupBlockListView(SetupViewsWithDecors, ListView):
     }
 
     def get_queryset(self):
-        return Block.objects.filter(condominium=self.request.user.condominium)
+        return Block.objects.filter(condominium=self.request.user.condominium).order_by(
+            "number_or_name"
+        )
 
     def get_template_names(self):
         template = self.templates.get(self.template_purpose, self.templates["default"])
