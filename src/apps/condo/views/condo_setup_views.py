@@ -2,6 +2,8 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
+from django.db.models import Case, IntegerField, Value, When
+from django.db.models.functions import Cast
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
@@ -554,10 +556,37 @@ class SetupApartmentsByBlockListView(SetupViewsWithDecors, ListView):
 
     def get_queryset(self):
         block_id = self.kwargs.get("block_id")
-        return Apartment.objects.filter(
-            condominium=self.request.user.condominium,
-            # Apartment has "block" attribute. Django creates "block_id" automatically
-            block_id=block_id,
+        # return apartments in order (lowest to higher)
+        return (
+            Apartment.objects.filter(
+                condominium=self.request.user.condominium,
+                # Apartment has "block" attribute. Django creates "block_id" automatically
+                block_id=block_id,
+            ).annotate(
+                # 0 for numeric values, 1 for non numeric (group numbers first)
+                is_numeric=Case(
+                    When(number_or_name__regex=r"^\d+$", then=Value(0)),
+                    default=Value(1),
+                    output_field=IntegerField(),
+                ),
+                # convert num to int, uses 0 when text
+                numeric_val=Case(
+                    When(
+                        number_or_name__regex=r"^\d+$",
+                        then=Cast("number_or_name", IntegerField()),
+                    ),
+                    default=Value(0),
+                    output_field=IntegerField(),
+                ),
+            )
+            # group by type (numbers first, text after)
+            .order_by(
+                "is_numeric",
+                # For numbers, num asc sort
+                "numeric_val",
+                # For text, uses alphabetic sort
+                "number_or_name",
+            )
         )
 
     def get_context_data(self, **kwargs):
@@ -656,12 +685,47 @@ class SetupApartmentCreateView(SetupViewsWithDecors, CreateView):
 
 
 class SetupApartmentMultipleCreateView(SetupViewsWithDecors):
+    """
+    View for setting up and creating multiple apartments at once within a block.
+    This view handles the workflow for bulk creating apartments, including:
+    1. Initial form for specifying floor ranges and apartments per floor
+    2. Confirmation page before final creation
+    3. Apartment number generation based on floor ranges
+    4. Bulk creation of apartments in the database
+    The view verifies prerequisites such as:
+    - Existence of a condominium
+    - Existence of the specified block
+    - Prevention of duplicate apartment numbers
+    Flow:
+    - GET: Displays the initial form for apartment generation parameters
+    - POST: Processes the form and either shows confirmation or creates apartments
+    - Redirects to apartment list on successful creation
+    URL parameters:
+        block_id: ID of the block where apartments will be created
+    Session data:
+        apartments_to_create: List of apartment numbers generated for confirmation
+    """
+
     form_template = (
         "condo/pages/setup_pages/apartment/condo_setup_apartments_create_multiple.html"
     )
     confirmation_template = "condo/pages/setup_pages/apartment/condo_setup_apartments_confirm_create_multiple.html"
 
     def dispatch(self, request, *args, **kwargs):
+        """
+        Dispatch method for apartment creation view.
+        This method performs the following validations before proceeding:
+        1. Checks if the user has a condominium associated with their account
+        2. Verifies if the specified block exists within the user's condominium
+        Parameters:
+            request (HttpRequest): The HTTP request
+            *args: Variable length argument list
+            **kwargs: Arbitrary keyword arguments, expected to contain 'block_id'
+        Returns:
+            HttpResponse: Redirects to appropriate setup page if validations fail,
+                         otherwise proceeds with the standard dispatch
+        """
+
         # Verify if condominium exists
         if not request.user.condominium:
             messages.error(
@@ -683,6 +747,18 @@ class SetupApartmentMultipleCreateView(SetupViewsWithDecors):
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
+        """
+        Handles GET requests for apartment setup form.
+        Renders the apartment setup form template with an empty ApartmentMultipleSetupForm and the current block
+        information fetched from the database based on the user's condominium and the block_id from URL parameters.
+        Args:
+            request (HttpRequest): The HTTP request object.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments, should contain 'block_id'.
+        Returns:
+            HttpResponse: Rendered template with the form and current block context.
+        """
+
         form = ApartmentMultipleSetupForm()
         context = {
             "form": form,
@@ -694,6 +770,18 @@ class SetupApartmentMultipleCreateView(SetupViewsWithDecors):
         return render(request, self.form_template, context=context)
 
     def post(self, request, *args, **kwargs):
+        """
+        Handles POST requests to the condo setup view.
+        This method processes either an initial form submission or a confirmation
+        step, depending on the contents of the request.POST data.
+        Parameters:
+            request (HttpRequest): The request object containing POST data
+            *args: Variable length argument list
+            **kwargs: Arbitrary keyword arguments
+        Returns:
+            HttpResponse: Either redirects after bulk creation or renders the
+                         initial form processing response
+        """
         # verify if last confirmation step
         if "Confirm" in request.POST:
             return self._bulk_create(request)
@@ -702,6 +790,21 @@ class SetupApartmentMultipleCreateView(SetupViewsWithDecors):
             return self._process_initial_form(request)
 
     def _process_initial_form(self, request):
+        """
+        Process the initial form submission for setting up multiple apartments.
+        This method validates the form data from the request. If the form is not valid,
+        it re-renders the form template with error messages. If valid, it generates
+        apartment numbers based on the form data, stores them in the session, and
+        renders a confirmation template.
+        Parameters:
+        ----------
+        request : HttpRequest
+            The HTTP request object containing the form data in POST.
+        Returns:
+        -------
+        HttpResponse
+            Rendered template with either form errors or confirmation page.
+        """
         form = ApartmentMultipleSetupForm(request.POST)
 
         if not form.is_valid():
@@ -738,6 +841,20 @@ class SetupApartmentMultipleCreateView(SetupViewsWithDecors):
         return render(request, self.confirmation_template, context=context)
 
     def _generate_apt_numbers(self, form_data):
+        """
+        Generate apartment numbers based on floor and apartment configuration.
+        The function creates apartment numbers using a convention where each apartment number
+        is formed by concatenating the floor number with a sequential apartment number.
+        For example, apartment 2 on floor 3 would be numbered 32.
+        Args:
+            form_data (dict): A dictionary containing the following keys:
+                - first_floor (int): The starting floor number
+                - last_floor (int): The ending floor number (inclusive)
+                - apartments_per_floor (int): Number of apartments on each floor
+        Returns:
+            list: A list of strings representing apartment numbers
+        """
+
         first_floor = form_data["first_floor"]
         last_floor = form_data["last_floor"]
         apartments_per_floor = form_data["apartments_per_floor"]
@@ -752,6 +869,22 @@ class SetupApartmentMultipleCreateView(SetupViewsWithDecors):
         return apartments_to_create
 
     def _bulk_create(self, request):
+        """
+        Bulk creates multiple Apartment objects using data stored in the session.
+        This method extracts apartment data from the session, checks for potential duplicates,
+        and creates multiple apartments in a single database operation if validation passes.
+        Args:
+            request: The HTTP request object containing session data with apartments to create
+        Returns:
+            HttpResponseRedirect: Redirects to either the apartment list view on success or
+            back to the creation form on failure
+        Process:
+            1. Retrieves apartment names/numbers from session
+            2. Checks for existing apartments with the same names in the same block
+            3. If duplicates exist, cancels the operation and shows error message
+            4. Otherwise, creates all apartments in bulk and redirects to list view
+            5. Shows appropriate messages indicating success or failure
+        """
         apartments_to_create = request.session["apartments_to_create"]
         if apartments_to_create:
             # check if apartments_to_create already exists in db
