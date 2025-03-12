@@ -885,7 +885,7 @@ class SetupApartmentMultipleCreateView(SetupViewsWithDecors):
             4. Otherwise, creates all apartments in bulk and redirects to list view
             5. Shows appropriate messages indicating success or failure
         """
-        apartments_to_create = request.session["apartments_to_create"]
+        apartments_to_create = request.session.get("apartments_to_create")
         if apartments_to_create:
             # check if apartments_to_create already exists in db
             existing_apartments = [
