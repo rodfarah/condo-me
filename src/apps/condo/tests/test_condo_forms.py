@@ -1,12 +1,9 @@
-import pytest
 from django.contrib.auth.models import Group
 from django.contrib.messages import get_messages
-from django.forms import ValidationError
 from django.urls import reverse
 
-from apps.condo.forms import ApartmentSetupForm, CondoSetupForm
+from apps.condo.forms import CondoSetupForm
 from apps.condo.models import Apartment, Block, Condominium
-from apps.condo.views.condo_base_views import condominium
 from apps.condo_people.tests.base_test_condo_people import CondoPeopleTestBase
 
 
@@ -164,4 +161,33 @@ class CondoSetupApartmentFormsTest(BaseFormTest):
         self.assertIn(
             "Apartment number (or name) already exists in this block. Please, choose a different one.",
             form.errors["number_or_name"],
+        )
+
+
+class CondoSetupApartmentMultipleFormsTest(BaseFormTest):
+    def setUp(self):
+        super().setUp()
+        self.test_block = Block.objects.create(
+            number_or_name="Violet",
+            description="Just a test block",
+            condominium=self.test_user.condominium,
+        )
+
+    def test_apartment_multiple_setup_form_raises_error_if_last_floor_is_higher_then_first_floor(
+        self,
+    ):
+        url = reverse(
+            "condo:condo_setup_apartment_multiple_create",
+            kwargs={"block_id": self.test_block.id},
+        )
+        form_data = {"first_floor": 2, "last_floor": 1, "apartments_per_floor": 3}
+        # make request
+        response = self.client.post(path=url, data=form_data)
+
+        self.assertFormError(
+            form=response.context["form"],
+            field="last_floor",
+            errors=[
+                "Last floor number must be equal or higher than first floor number"
+            ],
         )
