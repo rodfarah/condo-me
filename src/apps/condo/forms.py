@@ -246,6 +246,7 @@ class ApartmentSetupForm(forms.ModelForm):
 class ApartmentMultipleSetupForm(forms.Form):
 
     first_floor = forms.IntegerField(
+        required=True,
         label="Insert first floor number",
         min_value=0,
         widget=forms.NumberInput(
@@ -260,6 +261,7 @@ class ApartmentMultipleSetupForm(forms.Form):
     )
 
     last_floor = forms.IntegerField(
+        required=True,
         label="Insert last floor number",
         min_value=0,
         widget=forms.NumberInput(
@@ -274,6 +276,7 @@ class ApartmentMultipleSetupForm(forms.Form):
     )
 
     apartments_per_floor = forms.IntegerField(
+        required=True,
         label="Insert number of apartments per floor",
         min_value=1,
         widget=forms.NumberInput(
@@ -287,13 +290,6 @@ class ApartmentMultipleSetupForm(forms.Form):
         error_messages={"required": "Please, insert number of apartments per floor."},
     )
 
-    def clean_first_floor(self):
-        first_floor_in_form = self.cleaned_data.get("first_floor")
-
-        if first_floor_in_form is None or first_floor_in_form < 0:
-            raise ValidationError("First floor must be equal or higher than 0 (zero)")
-        return first_floor_in_form
-
     def clean_last_floor(self):
         last_floor_in_form = self.cleaned_data.get("last_floor")
 
@@ -304,10 +300,3 @@ class ApartmentMultipleSetupForm(forms.Form):
                 "Last floor number must be equal or higher than first floor number"
             )
         return last_floor_in_form
-
-    def clean_apartments_per_floor(self):
-        apartments_per_floor_in_form = self.cleaned_data.get("apartments_per_floor")
-
-        if apartments_per_floor_in_form is None or apartments_per_floor_in_form < 1:
-            raise ValidationError("You must have at least one apartment per floor.")
-        return apartments_per_floor_in_form
