@@ -1,7 +1,7 @@
 """
 'test_setup_condominium_views' are applied to the condominium configuration page,
 accessible only to 'manager' users.
-These tests are DIFFERENT from 'test_condo_base_views' which are applied to the first page 
+These tests are DIFFERENT from 'test_condo_base_views' which are applied to the first page
 user will get when logged in.
 """
 
@@ -11,6 +11,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib.messages import get_messages
 from django.test import TestCase
+from django.test.client import Client
 from django.urls import reverse
 
 from apps.condo.models import Apartment, Block, Condominium
@@ -558,13 +559,12 @@ class SetupApartmentViewTest(BaseTestCase):
 
     def test_apartmentdeleteview_redirects_success_url_and_raises_success_message(self):
         # verify if apartment exists
-        self.assertTrue(
-            Apartment.objects.filter(
-                number_or_name="101",
-                block=self.block_one,
-                condominium=self.current_condominium,
-            ).exists()
+        current_apartment = Apartment.objects.get(
+            number_or_name="101",
+            block=self.block_one,
+            condominium=self.current_condominium,
         )
+        self.assertTrue(current_apartment)
         # make a delete request
         response = self.client.post(
             path=reverse(
@@ -583,9 +583,202 @@ class SetupApartmentViewTest(BaseTestCase):
 
         # verify success message was added
         messages = list(get_messages(response.wsgi_request))
-        self.assertIn("Apartment has been successfully deleted", str(messages[0]))
+        self.assertIn(
+            f"Apartment {current_apartment.number_or_name} has been successfully deleted from {current_apartment.block.number_or_name}.",
+            str(messages[0]),
+        )
 
         # verify apartment was really deleted
         self.assertFalse(
             Apartment.objects.filter(pk=self.apartment_one_o_one.pk).exists()
+        )
+
+    ######### SetupApartmentMultipleCreateView() #########
+    def test_apartmentmultiplecreateview_raises_error_if_condominium_doesnot_exist(
+        self,
+    ):
+        # delete all condominiums from db
+        Condominium.objects.all().delete()
+
+        url = reverse(
+            "condo:condo_setup_apartment_multiple_create",
+            kwargs={"block_id": self.block_one.pk},
+        )
+
+        form_data = {
+            "first_floor": 1,
+            "last_floor": 2,
+            "apartments_per_floor": 2,
+        }
+        # make a request
+        response = self.client.post(url, form_data, follow=True)
+
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(
+            str(messages[0]),
+            "In order to create apartments, you must create a condominium first.",
+        )
+
+    def test_apartmentmultiplecreateview_raises_error_if_block_doesnot_exist(self):
+        # create a valid but inexistent random block_id
+        block_id = uuid.uuid4()
+        url = reverse(
+            "condo:condo_setup_apartment_multiple_create", kwargs={"block_id": block_id}
+        )
+        form_data = {
+            "first_floor": 1,
+            "last_floor": 2,
+            "apartments_per_floor": 2,
+        }
+        # make request
+        response = self.client.post(url, form_data)
+
+        messages = list(get_messages(response.wsgi_request))
+
+        self.assertEqual(
+            str(messages[0]),
+            "You are trying to create apartments in a block that does not exist",
+        )
+
+    def test_apartmentmultiplecreateview_render_correct_get_template(self):
+        response = self.client.get(
+            path=reverse(
+                "condo:condo_setup_apartment_multiple_create",
+                kwargs={"block_id": self.block_one.pk},
+            )
+        )
+        self.assertTemplateUsed(
+            response,
+            "condo/pages/setup_pages/apartment/condo_setup_apartments_create_multiple.html",
+        )
+        # verify context
+        self.assertEqual(response.context["current_block"], self.block_one)
+
+    def test_apartmentmultiplecreateview_processes_initial_form_on_post_method(self):
+        url = reverse(
+            "condo:condo_setup_apartment_multiple_create",
+            kwargs={"block_id": self.block_one.pk},
+        )
+        form_data = {
+            "first_floor": 1,
+            "last_floor": 2,
+            "apartments_per_floor": 2,
+        }
+        # make request
+        response = self.client.post(url, form_data)
+
+        # verify is confirmation template is rendered
+        self.assertTemplateUsed(
+            response,
+            "condo/pages/setup_pages/apartment/condo_setup_apartments_confirm_create_multiple.html",
+        )
+        # verify context
+        self.assertEqual(response.context["current_block"], self.block_one)
+
+    def test_apartmentmultiplecreate_bulk_creates_with_second_post_request(
+        self,
+    ):
+        url = reverse(
+            "condo:condo_setup_apartment_multiple_create",
+            kwargs={"block_id": self.block_one.pk},
+        )
+        form_data = {
+            "first_floor": 1,
+            "last_floor": 2,
+            "apartments_per_floor": 2,
+        }
+        # make initial request that prepares the data through first form
+        self.client.post(url, form_data)
+
+        # make second POST request with "confirm" parameter to start bulk creation
+        second_response = self.client.post(
+            url, data={"Confirm": "Confirm"}, follow=True
+        )
+
+        # verify redirect after apartments confirmation
+        expected_url = reverse(
+            "condo:condo_setup_apartment_list_by_block",
+            kwargs={"block_id": self.block_one.pk},
+        )
+        self.assertRedirects(second_response, expected_url)
+
+        # verify success message
+        messages = list(get_messages(second_response.wsgi_request))
+        self.assertIn("have been created", str(messages[0]))
+
+        # verify session data is deleted
+        self.assertNotIn("apartments_to_create", self.client.session)
+
+        # verify created apartment number_or_name
+        created_apartments = Apartment.objects.filter(
+            condominium=self.current_condominium, block=self.block_one
+        ).order_by("number_or_name")
+        apt_numbers = [apt.number_or_name for apt in created_apartments]
+        self.assertEqual(set(apt_numbers), {"11", "12", "21", "22", "101"})
+
+    def test_apartmentmultiplecreate_raises_error_if_duplicated_apartment(self):
+        url = reverse(
+            "condo:condo_setup_apartment_multiple_create",
+            kwargs={"block_id": self.block_one.pk},
+        )
+        form_data = {
+            "first_floor": 10,  # apartment 101 already exists in db!
+            "last_floor": 11,
+            "apartments_per_floor": 2,
+        }
+
+        # make requests (first to form, second to confirm)
+        self.client.post(url, form_data)
+        second_response = self.client.post(url, data={"Confirm": "Confirm"})
+
+        # verify error message
+        messages = list(get_messages(second_response.wsgi_request))
+        self.assertIn(
+            "The whole operation was canceled because the following apartments already exist",
+            str(messages[0]),
+        )
+        # verify redirect is correct
+        self.assertRedirects(
+            second_response,
+            reverse(
+                "condo:condo_setup_apartment_multiple_create",
+                kwargs={"block_id": self.block_one.pk},
+            ),
+        )
+
+    def test_apartmentmultiplecreate_raises_error_if_session_doesnt_exist(self):
+        url = reverse(
+            "condo:condo_setup_apartment_multiple_create",
+            kwargs={"block_id": self.block_one.pk},
+        )
+        form_data = {
+            "first_floor": 1,
+            "last_floor": 2,
+            "apartments_per_floor": 2,
+        }
+
+        # make request to form
+        self.client.post(url, form_data)
+
+        # create a new client in order to be sure session data does not exist
+        new_client = Client()
+        new_client.login(username="johndoe", password="P@ssw0rd")
+
+        # new_client makes a request to confirm (submit form)
+        second_response = new_client.post(url, {"Confirm": "Confirm"})
+
+        # No session data. Verify error message
+        messages = list(get_messages(second_response.wsgi_request))
+        self.assertEqual(
+            "Please, fill in the blanks in order to create multiple apartments",
+            str(messages[0]),
+        )
+
+        # verify correct redirect
+        self.assertRedirects(
+            second_response,
+            reverse(
+                "condo:condo_setup_apartment_multiple_create",
+                kwargs={"block_id": self.block_one.pk},
+            ),
         )
