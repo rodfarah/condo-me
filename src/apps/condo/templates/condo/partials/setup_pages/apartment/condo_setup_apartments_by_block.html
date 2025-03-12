@@ -54,7 +54,7 @@
           <table class="table">
             <thead>
               <tr>
-                <th scope="col">#</th>
+                <th scope="col">APTO</th>
                 <th scope="col">Block</th>
                 <th scope="col">Resident Name</th>
                 <th scope="col">Resident ID</th>
@@ -67,7 +67,7 @@
 
               {% for apartment in apartments_in_block %}
               <tr>
-                <th scope="row">{{ apartment.number_or_name }}</th>
+                <th class="text-center bg-warning" scope="row">{{ apartment.number_or_name }}</th>
                 <td>{{ current_block.number_or_name }}</td>
                 {% if apartment.condo_person.first %}
                 <td>{{ apartment.condo_person.first }}</td>
