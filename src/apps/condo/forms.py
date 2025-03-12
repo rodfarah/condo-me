@@ -287,19 +287,6 @@ class ApartmentMultipleSetupForm(forms.Form):
         error_messages={"required": "Please, insert number of apartments per floor."},
     )
 
-    def __init__(self, *args, **kwargs) -> None:
-        """A block must not have two apartments with identical number_or_name (see clean
-            method bellow), so we must receive the "condominium" and "block" objects from
-            the view once we can not access them from form fields.
-        Notice that SetupApartmentCreateView() sends "condominium" and "block" through
-        "get_form_kwargs()".
-        """
-        condominium = kwargs.pop("current_condominium", None)
-        self.condominium = condominium
-        block = kwargs.pop("current_block", None)
-        self.block = block
-        super().__init__(*args, **kwargs)
-
     def clean_first_floor(self):
         first_floor_in_form = self.cleaned_data.get("first_floor")
 
