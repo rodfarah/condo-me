@@ -290,7 +290,7 @@ class SetupBlockViewsTest(BaseTestCase):
         self.assertEqual(
             str(messages[0]),
             "The block you are trying to edit does not exist, or you do not have\
-                      permitions to do so.",
+                      permissions to do so.",
         )
 
     def test_setupblockeditview_add_error_to_form_if_new_number_or_name_already_exists(

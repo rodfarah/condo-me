@@ -395,7 +395,7 @@ class SetupBlockEditView(SetupViewsWithDecors, UpdateView, SetupProgressMixin):
             messages.error(
                 request,
                 "The block you are trying to edit does not exist, or you do not have\
-                      permitions to do so.",
+                      permissions to do so.",
             )
             return redirect(reverse("condo:condo_setup_block_list"))
         return super().dispatch(request, *args, **kwargs)
@@ -953,6 +953,119 @@ class SetupApartmentMultipleCreateView(SetupViewsWithDecors):
                 kwargs={"block_id": self.kwargs.get("block_id")},
             )
         )
+
+
+class SetupApartmentEditView(SetupViewsWithDecors, UpdateView, SetupProgressMixin):
+    """
+    View for editing an apartment in the condo setup process.
+    This class handles the update operations for an Apartment object, providing both
+    GET requests for displaying the edit form and POST requests for processing form submissions.
+    It ensures that only users with access to the condominium can edit its apartments.
+    Attributes:
+        http_method_names (list): Allowed HTTP methods (POST and GET)
+        context_object_name (str): Name used for the apartment object in the template context
+        form_class: Form class used for apartment editing
+        model: The Apartment model that this view operates on
+        pk_url_kwarg (str): URL parameter name for the apartment ID
+        template_name (str): Path to the template for rendering the edit form
+    Methods:
+        dispatch: Validates user permissions and apartment existence before proceeding
+        get_queryset: Filters apartments to those belonging to the user's condominium
+        get_context_data: Adds the block_id to the context for template rendering
+        get_success_url: Determines the redirect URL after successful form submission
+        form_valid: Handles form validation including checking for duplicate apartment names
+                    within the same block before saving
+    """
+
+    http_method_names = ["post", "get"]
+    context_object_name = "current_apartment"
+    form_class = ApartmentSetupForm
+    model = Apartment
+    pk_url_kwarg = "apartment_id"
+    template_name = "condo/pages/setup_pages/apartment/condo_setup_apartments_edit.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Override dispatch method to verify that the requested apartment exists and
+        belongs to the user's condominium before proceeding with the view execution.
+        If the apartment doesn't exist or doesn't belong to the user's condominium,
+        an error message is shown and the user is redirected to the blocks-to-apartments setup page.
+        Args:
+            request: The HTTP request.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments, including apartment_id.
+        Returns:
+            HttpResponse: Either a redirect response if validation fails or the result of the parent's dispatch method.
+        """
+
+        apartment_queryset = Apartment.objects.filter(
+            condominium=request.user.condominium,
+            pk=self.kwargs.get("apartment_id"),
+        )
+
+        if not apartment_queryset.exists():
+            messages.error(
+                request,
+                "The apartment you are trying to edit does not exist\
+                            or you do not have permissions to do so.",
+            )
+            return redirect(
+                reverse(
+                    "condo:condo_setup_blocks_to_apartments",
+                )
+            )
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        """
+        Retrieves apartments belonging to the user's condominium as a security measure.
+
+        This method ensures that users can only access apartment data from their own condominium,
+        implementing a security boundary that prevents unauthorized access to other condominiums' data.
+
+            QuerySet: Filtered apartment objects belonging to the authenticated user's condominium.
+        """
+
+        return Apartment.objects.filter(
+            condominium=self.request.user.condominium,
+        )
+
+    def get_context_data(self, **kwargs) -> dict:
+        context = super().get_context_data(**kwargs)
+        context["block_id"] = self.object.block.id
+        return context
+
+    def get_success_url(self) -> str:
+        return reverse(
+            "condo:condo_setup_apartment_list_by_block",
+            kwargs={"block_id": self.object.block.id},
+        )
+
+    def form_valid(self, form):
+        # get form without saving it
+        self.object = form.save(commit=False)
+
+        # verify if apartment number already exists in block
+        if (
+            Apartment.objects.filter(
+                condominium=self.request.user.condominium,
+                block=self.object.block,
+                number_or_name__iexact=self.object.number_or_name,
+            )
+            .exclude(pk=self.object.pk)
+            .exists()
+        ):
+            form.add_error(
+                "number_or_name",
+                "Apartment number (or name) already exists in this block. Please, choose a different one.",
+            )
+            return self.form_invalid(form)
+
+        # save updated apartment
+        self.object.save()
+
+        messages.success(self.request, "Apartment has been updated successfully.")
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class SetupApartmentDeleteView(SetupViewsWithDecors, DeleteView):
