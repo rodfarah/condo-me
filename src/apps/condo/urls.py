@@ -17,62 +17,64 @@ urlpatterns = [
     # CONDO SETUP (only 'manager' group users have access to condo setup)
     path(
         "condo-setup/home/",
-        condo_setup_views.SetupAreaView.as_view(),
+        condo_setup_views.base.SetupAreaView.as_view(),
         name="condo_setup_home",
     ),
     path(
         "condo-setup/condominium/",
-        condo_setup_views.SetupCondominiumView.as_view(),
+        condo_setup_views.setup_condominium_views.SetupCondominiumView.as_view(),
         name="condo_setup_condominium",
     ),
     path(
         "condo-setup/block-list/",
-        condo_setup_views.SetupBlockListView.as_view(),
+        condo_setup_views.setup_block_views.SetupBlockListView.as_view(),
         name="condo_setup_block_list",
     ),
     path(
         "condo-setup/block/create/",
-        condo_setup_views.SetupBlockCreateView.as_view(),
+        condo_setup_views.setup_block_views.SetupBlockCreateView.as_view(),
         name="condo_setup_block_create",
     ),
     path(
         "condo-setup/block/edit/<uuid:block_id>/",
-        condo_setup_views.SetupBlockEditView.as_view(),
+        condo_setup_views.setup_block_views.SetupBlockEditView.as_view(),
         name="condo_setup_block_edit",
     ),
     path(
         "condo-setup/block/delete/<uuid:block_id>/",
-        condo_setup_views.SetupBlockDeleteView.as_view(),
+        condo_setup_views.setup_block_views.SetupBlockDeleteView.as_view(),
         name="condo_setup_block_delete",
     ),
     path(
         "condo-setup/blocks-to-apartments/",
-        condo_setup_views.SetupBlockListView.as_view(template_purpose="apartments"),
+        condo_setup_views.setup_block_views.SetupBlockListView.as_view(
+            template_purpose="apartments"
+        ),
         name="condo_setup_blocks_to_apartments",
     ),
     path(
         "condo-setup/block/<uuid:block_id>/apartments/",
-        condo_setup_views.SetupApartmentsByBlockListView.as_view(),
+        condo_setup_views.setup_apartment_views.SetupApartmentsByBlockListView.as_view(),
         name="condo_setup_apartment_list_by_block",
     ),
     path(
         "condo-setup/block/<uuid:block_id>/apartments/create/",
-        condo_setup_views.SetupApartmentCreateView.as_view(),
+        condo_setup_views.setup_apartment_views.SetupApartmentCreateView.as_view(),
         name="condo_setup_apartment_create",
     ),
     path(
         "condo-setup/block/<uuid:block_id>/apartments/create/multiple/",
-        condo_setup_views.SetupApartmentMultipleCreateView.as_view(),
+        condo_setup_views.setup_apartment_views.SetupApartmentMultipleCreateView.as_view(),
         name="condo_setup_apartment_multiple_create",
     ),
     path(
         "condo-setup/apartments/<uuid:apartment_id>/edit/",
-        condo_setup_views.SetupApartmentEditView.as_view(),
+        condo_setup_views.setup_apartment_views.SetupApartmentEditView.as_view(),
         name="condo_setup_apartment_edit",
     ),
     path(
         "condo-setup/apartments/<uuid:apartment_id>/delete/",
-        condo_setup_views.SetupApartmentDeleteView.as_view(),
+        condo_setup_views.setup_apartment_views.SetupApartmentDeleteView.as_view(),
         name="condo_setup_apartment_delete",
     ),
 ]
