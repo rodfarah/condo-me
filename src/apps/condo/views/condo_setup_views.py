@@ -1006,8 +1006,8 @@ class SetupApartmentEditView(SetupViewsWithDecors, UpdateView, SetupProgressMixi
         if not apartment_queryset.exists():
             messages.error(
                 request,
-                "The apartment you are trying to edit does not exist\
-                            or you do not have permissions to do so.",
+                "The apartment you are trying to edit does not exist "
+                "or you do not have permissions to do so.",
             )
             return redirect(
                 reverse(

@@ -782,3 +782,93 @@ class SetupApartmentViewTest(BaseTestCase):
                 kwargs={"block_id": self.block_one.pk},
             ),
         )
+
+    ######### SetupApartmentMultipleCreateView() #########
+    def test_apartmenteditview_raises_dispatch_error_if_queryset_doesnot_exist(self):
+        fake_id = uuid.uuid4()
+
+        response = self.client.post(
+            reverse(
+                "condo:condo_setup_apartment_edit", kwargs={"apartment_id": fake_id}
+            )
+        )
+
+        messages = list(get_messages(response.wsgi_request))
+
+        self.assertEqual(
+            str(messages[0]),
+            "The apartment you are trying to edit does not exist or "
+            "you do not have permissions to do so.",
+        )
+
+        self.assertRedirects(
+            response, reverse("condo:condo_setup_blocks_to_apartments")
+        )
+
+    def test_apartmenteditview_get_queryset_returns_correct_queryset(self):
+        # access edit page that render edit form
+        response = self.client.get(
+            reverse(
+                "condo:condo_setup_apartment_edit",
+                kwargs={"apartment_id": self.apartment_one_o_one.pk},
+            )
+        )
+        # access the form from the context
+        queryset = response.context["form"]
+
+        self.assertEqual(queryset.instance, self.apartment_one_o_one)
+
+    def test_apartmenteditview_get_context_data_returns_correct_context(self):
+        response = self.client.get(
+            reverse(
+                "condo:condo_setup_apartment_edit",
+                kwargs={"apartment_id": self.apartment_one_o_one.pk},
+            )
+        )
+        self.assertEqual(response.context["block_id"], self.block_one.pk)
+
+    def test_apartmenteditview_raises_error_if_duplicated_number_or_name(self):
+        # create second apartment
+        Apartment.objects.create(
+            condominium=self.current_condominium,
+            block=self.block_one,
+            number_or_name="202",
+        )
+
+        # send a request in order to try to change 101 to 202 (that already exists as
+        # above)
+        form_data = {"number_or_name": "202"}
+        response = self.client.post(
+            reverse(
+                "condo:condo_setup_apartment_edit",
+                kwargs={"apartment_id": self.apartment_one_o_one.pk},
+            ),
+            data=form_data,
+        )
+
+        self.assertIn(
+            "Apartment number (or name) already exists in this block. "
+            "Please, choose a different one.",
+            str(response.context["form"].errors.get("number_or_name")),
+        )
+
+    def test_apartmenteditview_raises_success_message_and_redirects_correctly(self):
+        form_data = {"number_or_name": "202"}
+        response = self.client.post(
+            reverse(
+                "condo:condo_setup_apartment_edit",
+                kwargs={"apartment_id": self.apartment_one_o_one.pk},
+            ),
+            data=form_data,
+        )
+        messages = list(get_messages(response.wsgi_request))
+
+        self.assertEqual(str(messages[0]), "Apartment has been updated successfully.")
+
+        self.assertRedirects(
+            response,
+            reverse(
+                "condo:condo_setup_apartment_list_by_block",
+                kwargs={"block_id": self.block_one.pk},
+            ),
+        )
