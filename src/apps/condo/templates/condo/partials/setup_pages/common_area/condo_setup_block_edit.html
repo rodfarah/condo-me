@@ -13,7 +13,7 @@
   <div class="row g-5 justify-content-center">
     <div class="col-lg-8 col-md-10">
       <a href="{% url "condo:condo_setup_block_list" %}" class="text-decoration-none">
-        <i class="bi bi-arrow-left"></i>Back to Setup Blocks</a>
+        <i class="bi bi-arrow-left"></i>Back to Blocks Setup</a>
     </div>
   </div>
 </div>
@@ -43,11 +43,11 @@
 <div class="py-2 container-fluid">
   <div class="row g-5 justify-content-center">
     <div class="col-lg-8 col-md-10">
-      <h4 class="mb-3">Create a Block:</h4>
+      <h4 class="mb-3">Edit a Block:</h4>
         <form id="BlockForm" 
         name="block_data"
         autocomplete="on"
-        action="{% url 'condo:condo_setup_block_create' %}" 
+        action="{% url 'condo:condo_setup_block_edit' block_id %}" 
         method="POST" 
         class="needs-validation"
         novalidate=""
@@ -77,11 +77,6 @@
                   <small>{{ form.description.errors }}</small>
                 </div>
                 {% endif %}
-                {% comment %} {% if block_exists %}
-                <div class="mt-1">
-                  <button type="button"  class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('description')">Edit</button>
-                </div>
-                {% endif %} {% endcomment %}
               </div>
 
               <div class="col-12">
@@ -109,6 +104,9 @@
             </div>
           </div>
           <button class="w-100 btn btn-warning btn-sm btn-lg" id="editButton" type="submit">Save</button>
+          {% if block_id %}
+            <a href="{% url 'condo:condo_setup_block_delete' block_id %}" class="w-100 btn btn-danger btn-sm btn-lg">Delete</a>
+          {% endif %}
         </form>
     </div>
   </div>

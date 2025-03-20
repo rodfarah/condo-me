@@ -1,0 +1,57 @@
+{% load static %}
+
+<div class="container-fluid py-4">
+  <div class="row mb-4">
+    <div class="col-12 text-center">
+      <h1 class="fw-light">Block Setup</h1>
+      <p class="lead text-body-secondary">Here you can register, edit or delete information and details about a condominium Block.</p>
+    </div>
+  </div>
+
+
+  <div class="row align-items-center justify-content-center">
+    <div class="col-lg-5 order-lg-2 mb-4 mb-lg-0">
+      <div class="position-relative">
+        <img 
+          
+          src="{% if current_block.get_cover_url %}{{ current_block.get_cover_url }}
+          {% else %}{% static 'condo/covers/setup_blocks.jpg' %}
+          {% endif %}"
+          class="img-fluid rounded shadow-sm"
+          alt="Apartments Image"
+          loading="lazy"
+        >
+        <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark opacity-25 rounded"></div>
+      </div>
+    </div>
+
+    <div class="col-lg-5 order-lg-1">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4 text-center">
+          <div class="mb-4">
+            <i class="bi bi-exclamation-triangle text-danger display-4"></i>
+          </div>
+          <h4 class="card-title text-danger mb-3">Delete Confirmation</h4>
+          <p class="card-text mb-4">
+            Are you sure you want to delete<br>
+            <strong> {{ current_block.number_or_name }}</strong>?<br>
+          </p>
+          <p class="text-muted small mb-4">This operation cannot be undone!</p>
+
+          <div class="d-grid gap-2">
+            <form method="POST" action="{% url 'condo:condo_setup_block_delete' current_block.id %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger btn-lg w-100 mb-2">
+                <i class="bi bi-trash me-2"></i>Yes, delete it
+              </button>
+            </form>
+            <a href="{% url 'condo:condo_setup_block_edit' current_block.id %}" 
+               class="btn btn-outline-secondary btn-lg">
+               <i class="bi bi-x-circle me-2"></i>No, cancel
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

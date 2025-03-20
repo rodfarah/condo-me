@@ -18,4 +18,5 @@ from .setup_block_views import (
     SetupBlockEditView,
     SetupBlockListView,
 )
+from .setup_common_area_views import SetupCommonAreaCreateView, SetupCommonAreaListView
 from .setup_condominium_views import SetupCondominiumView

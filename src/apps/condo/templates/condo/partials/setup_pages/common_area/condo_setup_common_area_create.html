@@ -1,0 +1,275 @@
+{% load static %}
+
+<section class="py-2 text-center container-fluid">
+  <div class="row py-lg-5 justify-content-center">
+    <div class="col-lg-8 col-md-10">
+      <h1 class="fw-light">Common Area Setup</h1>
+      <p class="lead text-body-secondary">Here you can register, edit or delete information and details about a condominium Common Area.</p>
+    </div>
+  </div>
+</section>
+
+<div class="py-2 container-fluid">
+  <div class="row g-5 justify-content-center">
+    <div class="col-lg-8 col-md-10">
+      <a href="{% url "condo:condo_setup_common_area_list" %}" class="text-decoration-none">
+        <i class="bi bi-arrow-left"></i>Back to Setup Common Areas</a>
+    </div>
+  </div>
+</div>
+
+<div class="py-2 container-fluid">
+  <div class="row g-5 justify-content-center">
+    <div class="col-lg-8 col-md-10">
+      {% if messages %}
+        <div class="form-floating mb-3">
+          {% for message in messages %}
+            {% if message.tags == "error" %}
+              <div class="alert alert-danger" role="alert">
+                {{ message }}
+              </div>  
+            {% else %}
+              <div class="alert alert-{{ message.tags }}" role="alert">
+                {{ message }}
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="py-2 container-fluid">
+  <div class="row g-5 justify-content-center">
+    <div class="col-lg-8 col-md-10">
+      <h4 class="mb-3">Create a Common Area:</h4>
+      <form id="CommonAreaForm" 
+            name="common_area_data"
+            autocomplete="on"
+            action="{% url 'condo:condo_setup_common_area_create' %}" 
+            method="POST" 
+            class="needs-validation"
+            novalidate=""
+            enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row g-3">
+          <div class="col-12">
+            <label for="{{ form.name.id_for_label }}">{{form.name.label}}</label>
+            <div class="input-group">
+              {{ form.name }}
+            </div>
+            {% if form.name.errors %}
+              <div class="text-danger">
+                <small>{{ form.name.errors }}</small>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="col-12">
+            <label for="{{ form.description.id_for_label }}">{{form.description.label}}</label>
+            <div class="input-group">
+              {{ form.description }}
+            </div>
+            {% if form.description.errors %}
+              <div class="text-danger">
+                <small>{{ form.description.errors }}</small>
+              </div>
+            {% endif %}
+          </div>
+          
+          <div class="col-12">
+            <label for="{{ form.opens_at.id_for_label }}">{{form.opens_at.label}}</label>
+            <div class="input-group">
+              {{ form.opens_at }}
+            </div>
+            {% if form.opens_at.errors %}
+              <div class="text-danger">
+                <small>{{ form.opens_at.errors }}</small>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="col-12">
+            <label for="{{ form.closes_at.id_for_label }}">{{form.closes_at.label}}</label>
+            <div class="input-group">
+              {{ form.closes_at }}
+            </div>
+            {% if form.closes_at.errors %}
+              <div class="text-danger">
+                <small>{{ form.closes_at.errors }}</small>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="col-12">
+            <div class="d-flex align-items-center">
+              <label for="{{ form.whole_day.id_for_label }}" class="me-2">
+                {{ form.whole_day.label }}
+              </label>
+              {{ form.whole_day }}
+            </div>
+            <small id="wholeDayHelp" class="form-text text-muted">
+              Click this checkbox if a single reservation grants the resident the right to use the common area for the entire day.
+            </small>
+            {% if form.whole_day.errors %}
+              <div class="text-danger">
+                <small>{{ form.whole_day.errors }}</small>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="col-12">
+            <div class="d-flex align-items-center">
+              <label for="{{ form.paid_area.id_for_label }}" class="me-2">
+                {{ form.paid_area.label }}
+              </label>
+              {{ form.paid_area }}
+            </div>
+            <small id="paidAreaHelp" class="form-text text-muted">
+              Click this checkbox if the resident is required to pay to use this common area.
+            </small>
+            {% if form.paid_area.errors %}
+              <div class="text-danger">
+                <small>{{ form.paid_area.errors }}</small>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="col-12">
+              <label for="{{ form.price.id_for_label }}">
+                {{form.price.label}}
+              </label>
+                <div class="input-group" style="max-width: 100px">
+                  {{ form.price }}
+                </div>
+              {% if form.price.errors %}
+                <div class="text-danger">
+                  <small>{{ form.price.errors }}</small>
+                </div>
+              {% endif %}
+          </div>
+
+          <div class="col-12">
+              <label for="{{ form.minimum_using_minutes.id_for_label }}">
+                {{ form.minimum_using_minutes.label }}
+              </label>
+              <br>
+              <small id="minimumUsingMinutesHelp" class="form-text text-muted">
+                Please leave blank in case of whole day use.
+              </small>
+              <div class="input-group" style="max-width: 100px">
+              {{ form.minimum_using_minutes }}
+              </div>
+            {% if form.minimum_using_minutes.errors %}
+              <div class="text-danger">
+                <small>{{ form.minimum_using_minutes.errors }}</small>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="col-12">
+            <label for="{{ form.maximum_using_fraction.id_for_label }}">
+              {{ form.maximum_using_fraction.label }}
+            </label>
+            <br>
+            <small id="maximumUsingFractionHelp" class="form-text text-muted">
+              i.e: If the minimum usage time is 30 minutes and a resident can use this common area for 90 minutes, then the maximum usage fraction is 3
+            </small>
+            <div class="input-group" style="max-width: 100px">
+            {{ form.maximum_using_fraction }}
+            </div>
+          {% if form.maximum_using_fraction.errors %}
+            <div class="text-danger">
+              <small>{{ form.maximum_using_fraction.errors }}</small>
+            </div>
+          {% endif %}
+          </div>
+
+          <div class="col-12">
+            <label for="{{ form.maximum_using_time.id_for_label }}">
+              {{ form.maximum_using_time.label }}
+            </label>
+            <br>
+            <div class="input-group" style="max-width: 100px">
+            {{ form.maximum_using_time }}
+            </div>
+          {% if form.maximum_using_time.errors %}
+            <div class="text-danger">
+              <small>{{ form.maximum_using_time.errors }}</small>
+            </div>
+          {% endif %}
+        </div>
+          <div class="col-12">
+            <label for="{{ form.cover.id_for_label }}">{{ form.cover.label }}</label>
+            <div>
+              {{ form.cover }}
+              {% if form.cover.errors %}
+                <div class="text-danger">
+                  <small>{{ form.cover.errors }}</small>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        <button class="w-100 btn btn-warning btn-sm btn-lg" id="editButton" type="submit">Save</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Wait for the DOM to be fully loaded
+  document.addEventListener('DOMContentLoaded', function() {
+    // Get all the necessary elements
+    const paidAreaCheckbox = document.getElementById('{{ form.paid_area.id_for_label }}');
+    const priceFieldContainer = document.querySelector('#{{ form.price.id_for_label }}').closest('.col-12');
+    
+    const minTimeInput = document.getElementById('{{ form.minimum_using_minutes.id_for_label }}');
+    const maxFractionInput = document.getElementById('{{ form.maximum_using_fraction.id_for_label }}');
+    const maxTimeInput = document.getElementById('{{ form.maximum_using_time.id_for_label }}');
+    const maxTimeContainer = maxTimeInput.closest('.col-12');
+    
+    // Initially hide the price field and maximum time field
+    priceFieldContainer.style.display = 'none';
+    maxTimeContainer.style.display = 'none';
+    
+    // Check initial state of paid area checkbox
+    if (paidAreaCheckbox.checked) {
+      priceFieldContainer.style.display = 'block';
+    }
+    
+    // Function to calculate and show max time
+    function updateMaxTime() {
+      const minTime = parseFloat(minTimeInput.value) || 0;
+      const maxFraction = parseFloat(maxFractionInput.value) || 0;
+      
+      if (minTime > 0 && maxFraction > 0) {
+        // Calculate and display the result
+        const maxTime = minTime * maxFraction;
+        maxTimeInput.value = maxTime;
+        maxTimeContainer.style.display = 'block';
+      } else {
+        maxTimeContainer.style.display = 'none';
+      }
+    }
+    
+    // Add event listener to the paid area checkbox
+    paidAreaCheckbox.addEventListener('change', function() {
+      if (this.checked) {
+        priceFieldContainer.style.display = 'block';
+      } else {
+        priceFieldContainer.style.display = 'none';
+        // Clear the price field when unchecked
+        document.getElementById('{{ form.price.id_for_label }}').value = '';
+      }
+    });
+    
+    // Add event listeners to min time and max fraction inputs
+    minTimeInput.addEventListener('input', updateMaxTime);
+    maxFractionInput.addEventListener('input', updateMaxTime);
+    
+    // Run once on page load to handle pre-filled values
+    updateMaxTime();
+  });
+</script>

@@ -20,11 +20,13 @@ urlpatterns = [
         condo_setup_views.base.SetupAreaView.as_view(),
         name="condo_setup_home",
     ),
+    ########### CONDOMINIUM ###########
     path(
         "condo-setup/condominium/",
         condo_setup_views.setup_condominium_views.SetupCondominiumView.as_view(),
         name="condo_setup_condominium",
     ),
+    ########### BLOCK ###########
     path(
         "condo-setup/block-list/",
         condo_setup_views.setup_block_views.SetupBlockListView.as_view(),
@@ -52,6 +54,7 @@ urlpatterns = [
         ),
         name="condo_setup_blocks_to_apartments",
     ),
+    ########### APARTMENT ###########
     path(
         "condo-setup/block/<uuid:block_id>/apartments/",
         condo_setup_views.setup_apartment_views.SetupApartmentsByBlockListView.as_view(),
@@ -76,5 +79,16 @@ urlpatterns = [
         "condo-setup/apartments/<uuid:apartment_id>/delete/",
         condo_setup_views.setup_apartment_views.SetupApartmentDeleteView.as_view(),
         name="condo_setup_apartment_delete",
+    ),
+    ########### COMMON AREA ###########
+    path(
+        "condo-setup/common-areas/list/",
+        condo_setup_views.setup_common_area_views.SetupCommonAreaListView.as_view(),
+        name="condo_setup_common_area_list",
+    ),
+    path(
+        "condo-setup/common-areas/create/",
+        condo_setup_views.setup_common_area_views.SetupCommonAreaCreateView.as_view(),
+        name="condo_setup_common_area_create",
     ),
 ]

@@ -1,8 +1,10 @@
+from datetime import timedelta
+
 from django import forms
 from django.core.exceptions import ValidationError
 from django_countries import countries
 
-from apps.condo.models import Apartment, Block, Condominium
+from apps.condo.models import Apartment, Block, CommonArea, Condominium
 
 
 class CondoSetupForm(forms.ModelForm):
@@ -300,3 +302,156 @@ class ApartmentMultipleSetupForm(forms.Form):
                 "Last floor number must be equal or higher than first floor number"
             )
         return last_floor_in_form
+
+
+class CommonAreaSetupForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # maximum using time is automatically calculated on models and must be a read
+        # only field in form
+        if "maximum_using_time" in self.fields:
+            self.fields["maximum_using_time"].widget.attrs["readonly"] = True
+
+    class Meta:
+        model = CommonArea
+
+        fields = [
+            "name",
+            "description",
+            "opens_at",
+            "closes_at",
+            "whole_day",
+            "paid_area",
+            "price",
+            "minimum_using_minutes",
+            "maximum_using_fraction",
+            "maximum_using_time",
+            "cover",
+        ]
+
+        labels = {
+            "name": "Common Area Name",
+            "description": "Description",
+            "opens_at": "Oppening time",
+            "closes_at": "Closing time",
+            "whole_day": "Whole day reservation?",
+            "paid_area": "Residents must pay in order to use this common area?",
+            "price": "If this is a paid common area, please, enter the price per use:",
+            "minimum_using_minutes": "Minimum usage time (in minutes) for a reservation:",
+            "maximum_using_fraction": "Maximum using fraction:",
+            "maximum_using_time": "Maximum number of minutes a user may use this common area per day",
+            "cover": "Common area image",
+        }
+
+        widgets = {
+            "name": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "autofocus": False,
+                    "autocomplete": "on",
+                    "id": "name",
+                }
+            ),
+            "description": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "autocomplete": "on",
+                    "id": "description",
+                },
+            ),
+            "opens_at": forms.TimeInput(
+                attrs={
+                    "class": "form-control",
+                    "autocomplete": "on",
+                    "id": "opens_at",
+                    "type": "time",
+                    "step": "60",
+                },
+                format="%H:%M",
+            ),
+            "closes_at": forms.TimeInput(
+                attrs={
+                    "class": "form-control",
+                    "autocomplete": "on",
+                    "id": "closes_at",
+                    "type": "time",
+                    "step": "60",
+                },
+                format="%H:%M",
+            ),
+            "whole_day": forms.CheckboxInput(
+                attrs={
+                    "class": "form-check-input",
+                    "autocomplete": "on",
+                    "id": "whole_day",
+                    "data-toggle": "tooltip",
+                    "title": "Click if resident may use the common area for the entire day with only one reservation",
+                    "aria-describedby": "wholeDayHelp",
+                },
+            ),
+            "paid_area": forms.CheckboxInput(
+                attrs={
+                    "class": "form-check-input",
+                    "autocomplete": "on",
+                    "id": "paid_area",
+                    "data-toggle": "tooltip",
+                    "title": "Click this checkbox if this common area is pay-per-use.",
+                    "aria-describedby": "paidAreaHelp",
+                },
+            ),
+            "price": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "autocomplete": "on",
+                    "id": "price",
+                    "min": "0.01",
+                    "step": "0.01",
+                    "data-toggle": "tooltip",
+                    "title": "Decimals are separated by '.'",
+                },
+            ),
+            "minimum_using_minutes": forms.Select(
+                attrs={
+                    "class": "form-control",
+                    "autocomplete": "on",
+                    "id": "minimum_using_minutes",
+                    "data-toggle": "tooltip",
+                    "title": "Choose a value from the list",
+                    "aria-describedby": "minimumUsingMinutesHelp",
+                },
+            ),
+            "maximum_using_fraction": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "autocomplete": "on",
+                    "id": "maximum_using_fraction",
+                    "min": "1",
+                    "data-toggle": "tooltip",
+                    "title": "Enter a positive integer",
+                    "aria-describedby": "maximumUsingFractionHelp",
+                },
+            ),
+            "maximum_using_time": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "autocomplete": "on",
+                    "id": "maximum_using_time",
+                },
+            ),
+            "cover": forms.ClearableFileInput(
+                attrs={"class": "form-control", "id": "cover"}
+            ),
+        }
+
+    def clean_closes_at(self):
+        closing_time_in_form = self.cleaned_data.get("closes_at")
+        oppening_time_in_form = self.cleaned_data.get("opens_at")
+
+        if (
+            oppening_time_in_form
+            and closing_time_in_form
+            and closing_time_in_form <= oppening_time_in_form
+        ):
+            raise ValidationError("Closing time must be higher than oppening time.")
+        return closing_time_in_form

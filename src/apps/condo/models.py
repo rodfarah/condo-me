@@ -180,17 +180,19 @@ class Apartment(DateLogsBaseModel):
 class CommonArea(DateLogsBaseModel):
     MINIMUM_USING_MINUTES = [(30, "30"), (60, "60")]
 
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, blank=False)
     condominium = models.ForeignKey(
         to=Condominium, on_delete=models.CASCADE, related_name="common_areas"
     )
     description = models.TextField(
-        help_text="Write details and rules about this Common Area."
+        help_text="Provide the details and rules for this common area."
     )
     opens_at = models.TimeField(auto_now=False, blank=False)
     closes_at = models.TimeField(auto_now=False, blank=False)
     whole_day = models.BooleanField(verbose_name="Must be a whole day reservation?")
-    paid_area = models.BooleanField(verbose_name="User have to pay for use?")
+    paid_area = models.BooleanField(
+        verbose_name="Resident must pay for using this common area?"
+    )
     price = models.DecimalField(
         "Price",
         max_digits=5,
@@ -227,6 +229,14 @@ class CommonArea(DateLogsBaseModel):
     def __str__(self) -> str:
         return self.name
 
+    def get_cover_url(self):
+        """Returns the URL of the cover image or a default image
+        if none exists
+        """
+        if self.cover and hasattr(self.cover, "url"):
+            return self.cover.url
+        return None
+
     def calc_maximum_usage(self):
         if self.minimum_using_minutes and self.maximum_using_fraction:
             return self.minimum_using_minutes * self.maximum_using_fraction
@@ -261,6 +271,7 @@ class CommonArea(DateLogsBaseModel):
             )
 
     class Meta:
+        ordering = ["name"]
         app_label = "condo"
 
 

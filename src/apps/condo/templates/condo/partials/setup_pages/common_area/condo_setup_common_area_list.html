@@ -1,0 +1,84 @@
+{% load static %}
+
+<section class="py-2 text-center container-fluid">
+  <div class="row py-lg-5">
+    <div class="col-lg-6 col-md-8 mx-auto">
+      <h1 class="fw-light">Common Area Setup</h1>
+      <p class="lead text-body-secondary">Here you can enter or edit information and details about the condominium Common Areas.</p>
+    </div>
+  </div>
+</section>
+
+<div class="px-4">
+<div class="py-3">
+  <div class="row justify-content-center">
+    <div class="col-12">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="py-3">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="{% url 'condo:condo_setup_home' %}" class="text-decoration-none">
+          <i class="bi bi-arrow-left"></i> Back to Setup Area
+        </a>
+      </li>
+    </ol>
+  </nav>
+</div>
+
+<div class="py-4">
+  <div class="row g-4">
+
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card h-100 shadow-sm ">
+        <img src="{% static 'condo/covers/setup_common_areas.jpg' %}" 
+             class="card-img-top"
+             height="200"
+             style="object-fit: cover">
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title text-center">Create New Common Area</h5>
+          <div class="mt-auto text-center">
+            <a href="{% url 'condo:condo_setup_common_area_create' %}" 
+               class="btn btn-outline-primary">
+               <i class="bi bi-plus-circle"></i> Create Common Area
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% if common_area_list %}
+      {% for common_area in common_area_list %}
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card h-100 shadow-sm">
+            <img src="{% if common_area.get_cover_url %}{{ common_area.get_cover_url }}{% else %}{% static 'condo/covers/setup_common_areas.jpg' %}{% endif %}" 
+                 class="card-img-top"
+                 height="200"
+                 style="object-fit: cover">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title text-center">{{ common_area.name }}</h5>
+              <div class="mt-auto text-center">
+                <a href="{% url 'condo:condo_setup_common_area_list' %}" 
+                   class="btn btn-outline-warning">
+                   <i class="bi bi-pencil-square"></i> View & Edit
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+</div>
+</div>

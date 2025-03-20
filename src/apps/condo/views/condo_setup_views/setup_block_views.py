@@ -98,11 +98,12 @@ class SetupBlockCreateView(SetupViewsWithDecors, CreateView, SetupProgressMixin)
         ):
             form.add_error(
                 "number_or_name",
-                "Block number (or name) already exists in this condominium. Please, choose a different one.",
+                "Block number (or name) already exists in this condominium. Please, "
+                "choose a different one.",
             )
             return self.form_invalid(form)
 
-        # associate user's condominium with block been created
+        # associate user's condominium with block being created
         self.object.condominium = self.request.user.condominium
 
         # save new block

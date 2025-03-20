@@ -112,14 +112,12 @@
           <div class="card-body">
             <p class="card-text text-center"><strong>Common Areas</strong></p>
             <div class="d-flex justify-content-center align-items-center">
-
-
               <div class="btn-group">
-                <button type="button" class="btn btn-sm btn-outline-warning">{% if common_area_exists %}
+                <a href="{% url "condo:condo_setup_common_area_create" %}" type="button" class="btn btn-sm btn-outline-warning">{% if common_area_exists %}
                   <i class="bi bi-pencil-square"></i> View & Edit
                   {% else %}
                   <i class="bi bi-plus-circle"></i> Create Common Area
-                  {% endif %}</button>
+                  {% endif %}</a>
               </div>
             </div>
           </div>
