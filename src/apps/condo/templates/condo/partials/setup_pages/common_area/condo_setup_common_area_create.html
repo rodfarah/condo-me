@@ -4,7 +4,8 @@
   <div class="row py-lg-5 justify-content-center">
     <div class="col-lg-8 col-md-10">
       <h1 class="fw-light">Common Area Setup</h1>
-      <p class="lead text-body-secondary">Here you can register, edit or delete information and details about a condominium Common Area.</p>
+      <p class="lead text-body-secondary">Here you can register, edit or delete 
+        information and details about a condominium Common Area.</p>
     </div>
   </div>
 </section>
@@ -79,8 +80,10 @@
           </div>
           
           <div class="col-12">
-            <label for="{{ form.opens_at.id_for_label }}">{{form.opens_at.label}}</label>
-            <div class="input-group">
+            <label for="{{ form.opens_at.id_for_label }}">
+              {{form.opens_at.label}}
+            </label>
+            <div class="input-group" style="max-width: 140px">
               {{ form.opens_at }}
             </div>
             {% if form.opens_at.errors %}
@@ -91,8 +94,10 @@
           </div>
 
           <div class="col-12">
-            <label for="{{ form.closes_at.id_for_label }}">{{form.closes_at.label}}</label>
-            <div class="input-group">
+            <label for="{{ form.closes_at.id_for_label }}">
+              {{form.closes_at.label}}
+            </label>
+            <div class="input-group" style="max-width: 140px">
               {{ form.closes_at }}
             </div>
             {% if form.closes_at.errors %}
@@ -120,6 +125,54 @@
           </div>
 
           <div class="col-12">
+            <label for="{{ form.minimum_using_minutes.id_for_label }}">
+              {{ form.minimum_using_minutes.label }}
+            </label>
+            <br>
+            <div class="input-group" style="max-width: 140px">
+            {{ form.minimum_using_minutes }}
+            </div>
+            {% if form.minimum_using_minutes.errors %}
+              <div class="text-danger">
+                <small>{{ form.minimum_using_minutes.errors }}</small>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="col-12">
+            <label for="{{ form.maximum_using_fraction.id_for_label }}">
+              {{ form.maximum_using_fraction.label }}
+            </label>
+            <br>
+            <small id="maximumUsingFractionHelp" class="form-text text-muted">
+              i.e: If the minimum usage time is 30 minutes and a resident can use this common area for 90 minutes, then the maximum usage fraction is 3
+            </small>
+            <div class="input-group" style="max-width: 140px">
+            {{ form.maximum_using_fraction }}
+            </div>
+          {% if form.maximum_using_fraction.errors %}
+            <div class="text-danger">
+              <small>{{ form.maximum_using_fraction.errors }}</small>
+            </div>
+          {% endif %}
+          </div>
+
+          <div class="col-12">
+            <label for="{{ form.maximum_using_time.id_for_label }}">
+              {{ form.maximum_using_time.label }}
+            </label>
+            <br>
+            <div class="input-group" style="max-width: 140px">
+            {{ form.maximum_using_time }}
+            </div>
+          {% if form.maximum_using_time.errors %}
+            <div class="text-danger">
+              <small>{{ form.maximum_using_time.errors }}</small>
+            </div>
+          {% endif %}
+        </div>
+
+          <div class="col-12">
             <div class="d-flex align-items-center">
               <label for="{{ form.paid_area.id_for_label }}" class="me-2">
                 {{ form.paid_area.label }}
@@ -140,7 +193,7 @@
               <label for="{{ form.price.id_for_label }}">
                 {{form.price.label}}
               </label>
-                <div class="input-group" style="max-width: 100px">
+                <div class="input-group" style="max-width: 140px">
                   {{ form.price }}
                 </div>
               {% if form.price.errors %}
@@ -150,56 +203,6 @@
               {% endif %}
           </div>
 
-          <div class="col-12">
-              <label for="{{ form.minimum_using_minutes.id_for_label }}">
-                {{ form.minimum_using_minutes.label }}
-              </label>
-              <br>
-              <small id="minimumUsingMinutesHelp" class="form-text text-muted">
-                Please leave blank in case of whole day use.
-              </small>
-              <div class="input-group" style="max-width: 100px">
-              {{ form.minimum_using_minutes }}
-              </div>
-            {% if form.minimum_using_minutes.errors %}
-              <div class="text-danger">
-                <small>{{ form.minimum_using_minutes.errors }}</small>
-              </div>
-            {% endif %}
-          </div>
-
-          <div class="col-12">
-            <label for="{{ form.maximum_using_fraction.id_for_label }}">
-              {{ form.maximum_using_fraction.label }}
-            </label>
-            <br>
-            <small id="maximumUsingFractionHelp" class="form-text text-muted">
-              i.e: If the minimum usage time is 30 minutes and a resident can use this common area for 90 minutes, then the maximum usage fraction is 3
-            </small>
-            <div class="input-group" style="max-width: 100px">
-            {{ form.maximum_using_fraction }}
-            </div>
-          {% if form.maximum_using_fraction.errors %}
-            <div class="text-danger">
-              <small>{{ form.maximum_using_fraction.errors }}</small>
-            </div>
-          {% endif %}
-          </div>
-
-          <div class="col-12">
-            <label for="{{ form.maximum_using_time.id_for_label }}">
-              {{ form.maximum_using_time.label }}
-            </label>
-            <br>
-            <div class="input-group" style="max-width: 100px">
-            {{ form.maximum_using_time }}
-            </div>
-          {% if form.maximum_using_time.errors %}
-            <div class="text-danger">
-              <small>{{ form.maximum_using_time.errors }}</small>
-            </div>
-          {% endif %}
-        </div>
           <div class="col-12">
             <label for="{{ form.cover.id_for_label }}">{{ form.cover.label }}</label>
             <div>
@@ -223,10 +226,13 @@
   document.addEventListener('DOMContentLoaded', function() {
     // Get all the necessary elements
     const paidAreaCheckbox = document.getElementById('{{ form.paid_area.id_for_label }}');
+    const wholeDayCheckbox = document.getElementById('{{ form.whole_day.id_for_label }}');
     const priceFieldContainer = document.querySelector('#{{ form.price.id_for_label }}').closest('.col-12');
     
     const minTimeInput = document.getElementById('{{ form.minimum_using_minutes.id_for_label }}');
+    const minTimeContainer = minTimeInput.closest('.col-12');
     const maxFractionInput = document.getElementById('{{ form.maximum_using_fraction.id_for_label }}');
+    const maxFractionContainer = maxFractionInput.closest('.col-12');
     const maxTimeInput = document.getElementById('{{ form.maximum_using_time.id_for_label }}');
     const maxTimeContainer = maxTimeInput.closest('.col-12');
     
@@ -239,18 +245,46 @@
       priceFieldContainer.style.display = 'block';
     }
     
+    // Check initial state of whole day checkbox
+    if (wholeDayCheckbox.checked) {
+      minTimeContainer.style.display = 'none';
+      maxFractionContainer.style.display = 'none';
+      maxTimeContainer.style.display = 'none';
+    }
+    
     // Function to calculate and show max time
     function updateMaxTime() {
       const minTime = parseFloat(minTimeInput.value) || 0;
       const maxFraction = parseFloat(maxFractionInput.value) || 0;
       
-      if (minTime > 0 && maxFraction > 0) {
+      if (minTime > 0 && maxFraction > 0 && !wholeDayCheckbox.checked) {
         // Calculate and display the result
         const maxTime = minTime * maxFraction;
         maxTimeInput.value = maxTime;
         maxTimeContainer.style.display = 'block';
       } else {
         maxTimeContainer.style.display = 'none';
+      }
+    }
+    
+    // Function to handle whole day checkbox changes
+    function handleWholeDayChange() {
+      if (wholeDayCheckbox.checked) {
+        // Hide all time-related fields when whole day is selected
+        minTimeContainer.style.display = 'none';
+        maxFractionContainer.style.display = 'none';
+        maxTimeContainer.style.display = 'none';
+        
+        // Clear values
+        minTimeInput.value = '';
+        maxFractionInput.value = '';
+        maxTimeInput.value = '';
+      } else {
+        // Show min time and max fraction fields
+        minTimeContainer.style.display = 'block';
+        maxFractionContainer.style.display = 'block';
+        // max time visibility depends on whether values are provided
+        updateMaxTime();
       }
     }
     
@@ -265,11 +299,15 @@
       }
     });
     
+    // Add event listener to the whole day checkbox
+    wholeDayCheckbox.addEventListener('change', handleWholeDayChange);
+    
     // Add event listeners to min time and max fraction inputs
     minTimeInput.addEventListener('input', updateMaxTime);
     maxFractionInput.addEventListener('input', updateMaxTime);
     
     // Run once on page load to handle pre-filled values
+    handleWholeDayChange();
     updateMaxTime();
   });
 </script>

@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 from django import forms
 from django.core.exceptions import ValidationError
 from django_countries import countries
@@ -333,11 +331,11 @@ class CommonAreaSetupForm(forms.ModelForm):
         labels = {
             "name": "Common Area Name",
             "description": "Description",
-            "opens_at": "Oppening time",
+            "opens_at": "Opening time",
             "closes_at": "Closing time",
             "whole_day": "Whole day reservation?",
             "paid_area": "Residents must pay in order to use this common area?",
-            "price": "If this is a paid common area, please, enter the price per use:",
+            "price": "Please, enter the price per use:",
             "minimum_using_minutes": "Minimum usage time (in minutes) for a reservation:",
             "maximum_using_fraction": "Maximum using fraction:",
             "maximum_using_time": "Maximum number of minutes a user may use this common area per day",
@@ -453,5 +451,5 @@ class CommonAreaSetupForm(forms.ModelForm):
             and closing_time_in_form
             and closing_time_in_form <= oppening_time_in_form
         ):
-            raise ValidationError("Closing time must be higher than oppening time.")
+            raise ValidationError("Closing time must be higher than opening time.")
         return closing_time_in_form
