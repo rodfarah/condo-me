@@ -2,7 +2,7 @@ from django.contrib.auth.models import Group
 from django.contrib.messages import get_messages
 from django.urls import reverse
 
-from apps.condo.forms import CondoSetupForm
+from apps.condo.forms import CommonAreaSetupForm, CondoSetupForm
 from apps.condo.models import Apartment, Block, Condominium
 from apps.condo_people.tests.base_test_condo_people import CondoPeopleTestBase
 
@@ -191,3 +191,52 @@ class CondoSetupApartmentMultipleFormsTest(BaseFormTest):
                 "Last floor number must be equal or higher than first floor number"
             ],
         )
+
+
+class CondoSetupCommonAreaFormsTest(BaseFormTest):
+    def test_closing_time_lower_than_opening_time_raises_validation_error(self):
+        form_data = {
+            "name": "Common Area Test",
+            "opens_at": "11:00",
+            "closes_at": "10:00",  # lower than opening time
+        }
+
+        form = CommonAreaSetupForm(form_data)
+
+        self.assertFalse(form.is_valid())
+        self.assertEqual(
+            form.errors["closes_at"][0],
+            "Closing time must be higher than opening time.",
+        )
+
+    def test_closing_time_higher_than_opening_time(self):
+        form_data = {
+            "name": "Common Area Test",
+            "opens_at": "11:00",
+            "closes_at": "12:00",  # higher than opening time
+        }
+
+        form = CommonAreaSetupForm(form_data)
+
+        # to fill cleaned_data
+        form.is_valid()
+
+        clean_closes_at = form.clean_closes_at()
+
+        self.assertEqual(clean_closes_at.strftime("%H:%M"), "12:00")
+
+    def test_if_maximum_using_time_then_readonly_equals_true(self):
+        form_data = {
+            "name": "Common Area Test",
+            "opens_at": "11:00",
+            "closes_at": "12:00",
+            # the following bellow will automatically create maximum_using_time
+            "minimum_using_minutes": "30",
+            "maximum_using_fraction": 2,
+        }
+
+        form = CommonAreaSetupForm(form_data)
+
+        mut = form.fields.get("maximum_using_time")
+
+        self.assertTrue(mut.widget.attrs.get("readonly"))

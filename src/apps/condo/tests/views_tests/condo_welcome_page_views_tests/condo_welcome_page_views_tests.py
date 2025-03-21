@@ -1,6 +1,7 @@
 """
-'test_condo_base_views' are applied to the first page user will get when logged in.
-These tests are DIFFERENT from 'test_setup_condominium_views', which are applied to the condominium
+'test_condo_welcome_page_views' are applied to the first page user will get when logged in.
+"Welcome {{ USER }}!"
+These tests are DIFFERENT from 'condo_setup_views', which are applied to the condominium
 configuration page accessible only to 'manager' users.
 """
 
