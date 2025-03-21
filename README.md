@@ -189,19 +189,19 @@ This project follows a Django and Docker-based structure optimized for scalabili
 ```
 ---
 
-## What's been done so far (FEB/2025)
+## What's been done so far (MAR/2025)
 
 - **prelogin** Basicaly static templates, basic info about the product, faq, prices, etc.
 - **Registration and authentication** Although payment features are not implemented yet, a user may "buy" the product, register and login. This user will belong to the "manager" group. There are also two more groups (already programmed), "caretaker" and "resident", but they are not in use yet.
 - **Condominium Setup** 
    ├── "manager" user may create the condominium object.
    ├── "manager" user may create block objects.
-   ├── "manager" user may create apartment objects (IN PROGRESS).
+   ├── "manager" user may create apartment objects.
+   ├── "manager" user may create common_area objects (IN PROGRESS).
 
 ---
 ## Main things that are yet to be done
 - **Condominium Setup** 
-   ├── "manager" user may create common_area objects.
    ├── "manager" user may define an create rules for reservation objects.
    ├── "manager" user may send invitations for caretakers and residents in order to join the system.
    ├── Program and configure Reports.
