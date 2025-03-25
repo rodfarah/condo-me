@@ -1,13 +1,14 @@
 """
-Testing SETUP Apartment VIEWS
+Testing SETUP APARTMENT VIEWS
 """
 
 import uuid
 
-from apps.condo.models import Apartment, Block, Condominium
 from django.contrib.messages import get_messages
 from django.test.client import Client
 from django.urls import reverse
+
+from apps.condo.models import Apartment, Block, Condominium
 
 from .base_test_case import BaseTestCase
 
