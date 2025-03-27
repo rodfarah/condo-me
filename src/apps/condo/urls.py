@@ -91,4 +91,14 @@ urlpatterns = [
         condo_setup_views.setup_common_area_views.SetupCommonAreaCreateView.as_view(),
         name="condo_setup_common_area_create",
     ),
+    path(
+        "condo-setup/common-areas/<uuid:common_area_id>/edit/",
+        condo_setup_views.setup_common_area_views.SetupCommonAreaEditView.as_view(),
+        name="condo_setup_common_area_edit",
+    ),
+    path(
+        "condo-setup/common-areas/<uuid:common_area_id>/delete/",
+        condo_setup_views.setup_common_area_views.SetupCommonAreaDeleteView.as_view(),
+        name="condo_setup_common_area_delete",
+    ),
 ]
