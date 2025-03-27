@@ -47,7 +47,7 @@
         <form id="BlockForm" 
         name="block_data"
         autocomplete="on"
-        action="{% url 'condo:condo_setup_block_edit' block_id %}" 
+        action="{% url 'condo:condo_setup_block_edit' current_block.id %}" 
         method="POST" 
         class="needs-validation"
         novalidate=""
@@ -104,8 +104,8 @@
             </div>
           </div>
           <button class="w-100 btn btn-warning btn-sm btn-lg" id="editButton" type="submit">Save</button>
-          {% if block_id %}
-            <a href="{% url 'condo:condo_setup_block_delete' block_id %}" class="w-100 btn btn-danger btn-sm btn-lg">Delete</a>
+          {% if current_block.id %}
+            <a href="{% url 'condo:condo_setup_block_delete' current_block.id %}" class="w-100 btn btn-danger btn-sm btn-lg">Delete</a>
           {% endif %}
         </form>
     </div>
