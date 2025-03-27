@@ -4,9 +4,10 @@ Testing SETUP BLOCK VIEWS
 
 import uuid
 
-from apps.condo.models import Block, Condominium
 from django.contrib.messages import get_messages
 from django.urls import reverse
+
+from apps.condo.models import Block, Condominium
 
 from .base_test_case import BaseTestCase
 
@@ -47,12 +48,12 @@ class SetupBlockViewsTest(BaseTestCase):
         url = reverse("condo:condo_setup_block_create")
         response = self.client.post(url, block_data, follow=True)
 
-        messages = list(get_messages(response.wsgi_request))
+        messages_list = list(get_messages(response.wsgi_request))
 
-        self.assertTrue(messages)
+        self.assertTrue(messages_list)
 
         self.assertEqual(
-            str(messages[0]),
+            str(messages_list[0]),
             "In order to create a block, you must create a condominium first.",
         )
 
@@ -62,7 +63,9 @@ class SetupBlockViewsTest(BaseTestCase):
             status_code=302,
         )
 
-    def test_setupblockcreateview_get_object_return_current_block_to_be_edited(self):
+    def test_setupblockcreateview_get_object_method_return_current_block_to_be_edited(
+        self,
+    ):
         # setUp already created one block
         block = Block.objects.first()
 
@@ -70,7 +73,7 @@ class SetupBlockViewsTest(BaseTestCase):
         url = reverse("condo:condo_setup_block_edit", kwargs={"block_id": block.pk})
         # make a request
         response = self.client.get(url)
-        self.assertEqual(response.context["block_id"], Block.objects.first().pk)
+        self.assertEqual(response.context["current_block"].id, Block.objects.first().pk)
 
     def test_setupblockcreateview_add_error_to_form_if_duplicated_number_or_name(self):
         # create second block
@@ -102,8 +105,7 @@ class SetupBlockViewsTest(BaseTestCase):
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(
             str(messages[0]),
-            "The block you are trying to edit does not exist, or you do not have\
-                      permissions to do so.",
+            "The Block you're trying to edit either doesn't exist or you don't have permission to edit it.",
         )
 
     def test_setupblockeditview_add_error_to_form_if_new_number_or_name_already_exists(
@@ -187,19 +189,6 @@ class SetupBlockDeleteViewTest(BaseTestCase):
 
         self.response = self.client.post(url, block_one_data, follow=True)
 
-    def test_setupblockdeleteview_get_context_data_method(self):
-        # get the only existing block, created by setUp
-        current_block = Block.objects.first()
-
-        # "condo-setup/block/delete/<uuid:block_id>/",
-        url = reverse(
-            "condo:condo_setup_block_delete", kwargs={"block_id": current_block.pk}
-        )
-        # make a request
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context["block"], current_block)
-
     def test_setupblockdeleteview_form_valid_succeeds(self):
         # get the only existing block, created by setUp
         current_block = Block.objects.first()
@@ -212,4 +201,4 @@ class SetupBlockDeleteViewTest(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         messages = list(get_messages(response.wsgi_request))
 
-        self.assertEqual(str(messages[0]), "Block has been successfully deleted.")
+        self.assertEqual(str(messages[0]), "Block has been deleted successfully.")

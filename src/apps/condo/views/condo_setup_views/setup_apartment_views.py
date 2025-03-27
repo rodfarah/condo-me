@@ -610,6 +610,31 @@ class SetupApartmentDeleteView(SetupViewsWithDecors, DeleteView):
     )
     pk_url_kwarg = "apartment_id"
 
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Overridden dispatch method to check if the user has permission to access the apartment.
+        This method verifies that:
+        1. The apartment with the given ID exists in the user's condominium
+        2. The user has appropriate permissions to access/modify it
+        If the apartment does not exist or the user doesn't have permission, it shows
+        an error message and continues with the standard dispatch behavior.
+        Parameters:
+            request (HttpRequest): The HTTP request object containing user information
+            *args: Variable length argument list
+            **kwargs: Arbitrary keyword arguments, including 'apartment_id'
+        Returns:
+            HttpResponse: The result of the parent class's dispatch method
+        """
+
+        if not Apartment.objects.filter(
+            condominium=request.user.condominium, pk=self.kwargs.get("apartment_id")
+        ).exists():
+            messages.error(
+                request,
+                "The apartment you're trying to delete either doesn't exist or you don't have permission to delete it.",
+            )
+        return super().dispatch(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["apartment_id"] = self.object.id

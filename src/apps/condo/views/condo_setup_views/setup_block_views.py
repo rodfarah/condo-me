@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
@@ -150,20 +150,14 @@ class SetupBlockEditView(SetupViewsWithDecors, UpdateView, SetupProgressMixin):
 
     def dispatch(self, request, *args, **kwargs):
         if not Block.objects.filter(
-            condominium=self.request.user.condominium, pk=self.kwargs.get("block_id")
+            condominium=request.user.condominium, pk=self.kwargs.get("block_id")
         ).exists():
             messages.error(
                 request,
-                "The block you are trying to edit does not exist, or you do not have\
-                      permissions to do so.",
+                "The Block you're trying to edit either doesn't exist or you don't have permission to edit it.",
             )
             return redirect(reverse("condo:condo_setup_block_list"))
         return super().dispatch(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs) -> dict:
-        context = super().get_context_data(**kwargs)
-        context["block_id"] = self.kwargs.get("block_id")
-        return context
 
     def form_valid(self, form):
         # get form instance without saving it
@@ -218,25 +212,33 @@ class SetupBlockDeleteView(SetupViewsWithDecors, DeleteView, SetupProgressMixin)
     template_name = "condo/pages/setup_pages/block/condo_setup_block_delete.html"
     success_url = reverse_lazy("condo:condo_setup_block_list")
     pk_url_kwarg = "block_id"
+    context_object_name = "current_block"
 
-    def get_context_data(self, **kwargs):
+    def dispatch(self, request, *args, **kwargs):
         """
-        Extends context data with block-specific information.
-
+        Overrides the dispatch method to handle the request before it is passed to the appropriate HTTP method (GET, POST, etc.).
+        This method checks if the Block identified by 'block_id' exists in the user's condominium.
+        If the Block does not exist or the user does not have permission to access it,
+        an error message is displayed and the user is redirected to the block list page.
         Args:
-            **kwargs: Additional context parameters
-
+            request (HttpRequest): The HTTP request object.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments including 'block_id'.
         Returns:
-            dict: Context dictionary containing:
-                - block_id: UUID of the block
-                - block_name: number_or_name of the block
-                - All other context data from parent classes
+            HttpResponse: Either a redirect response to the block list page if the permission check fails,
+                          or the result of the parent class's dispatch method.
         """
-        context = super().get_context_data(**kwargs)
-        block_id = self.kwargs.get("block_id")
-        block = get_object_or_404(Block, pk=block_id)
-        context["current_block"] = block
-        return context
+
+        if not Block.objects.filter(
+            condominium=request.user.condominium, pk=self.kwargs.get("block_id")
+        ).exists():
+            messages.error(
+                request,
+                "The Block you're trying to delete either doesn't\
+                            exist or you don't have permission to delete it.",
+            )
+            return redirect("condo:condo_setup_block_list")
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         """
@@ -253,5 +255,5 @@ class SetupBlockDeleteView(SetupViewsWithDecors, DeleteView, SetupProgressMixin)
         """
         success_url = self.get_success_url()
         self.object.delete()
-        messages.success(self.request, "Block has been successfully deleted.")
+        messages.success(self.request, "Block has been deleted successfully.")
         return HttpResponseRedirect(success_url)
