@@ -633,6 +633,9 @@ class SetupApartmentDeleteView(SetupViewsWithDecors, DeleteView):
                 request,
                 "The apartment you're trying to delete either doesn't exist or you don't have permission to delete it.",
             )
+            return redirect(
+                "condo:condo_setup_home",
+            )
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
