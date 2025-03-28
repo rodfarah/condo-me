@@ -389,7 +389,7 @@ class SetupApartmentViewTest(BaseTestCase):
             ),
         )
 
-    ######### SetupApartmentMultipleCreateView() #########
+    ######### SetupApartmentEditView() #########
     def test_apartmenteditview_raises_dispatch_error_if_queryset_doesnot_exist(self):
         fake_id = uuid.uuid4()
 
@@ -477,4 +477,52 @@ class SetupApartmentViewTest(BaseTestCase):
                 "condo:condo_setup_apartment_list_by_block",
                 kwargs={"block_id": self.block_one.pk},
             ),
+        )
+
+    ######### SetupApartmentDeleteView() #########
+    def test_apartmentdeleteview_raises_error_if_user_unauthorized_or_apto_doesnt_exist(
+        self,
+    ):
+        # supose apartment does not exist
+        fake_id = uuid.uuid4()
+
+        # make a request with fake apartment uuid
+        response = self.client.post(
+            reverse(
+                "condo:condo_setup_apartment_delete",
+                kwargs={"apartment_id": fake_id},
+            ),
+            follow=True,
+        )
+        # verify if status code is 404
+        self.assertEqual(response.status_code, 404)
+
+        # verify if error message is rendered
+        messages_list = list(get_messages(response.wsgi_request))
+
+        self.assertEqual(
+            str(messages_list[0]),
+            "The apartment you're trying to delete either doesn't exist or you don't have permission to delete it.",
+        )
+
+        # supose apartment exists, but user does not belong to current condominium
+        Condominium.objects.all().delete()
+
+        response2 = self.client.post(
+            reverse(
+                "condo:condo_setup_apartment_delete",
+                kwargs={"apartment_id": self.apartment_one_o_one.id},
+            ),
+            follow=True,
+        )
+
+        # verify if status code is 404
+        self.assertEqual(response2.status_code, 404)
+
+        # verify if error message is rendered
+
+        messages_list_2 = list(get_messages(response2.wsgi_request))
+        self.assertEqual(
+            str(messages_list_2[0]),
+            "The apartment you're trying to delete either doesn't exist or you don't have permission to delete it.",
         )
