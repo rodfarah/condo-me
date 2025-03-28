@@ -176,7 +176,6 @@ class SetupCommonAreaEditView(SetupViewsWithDecors, UpdateView, SetupProgressMix
 
 class SetupCommonAreaDeleteView(SetupViewsWithDecors, DeleteView):
     context_object_name = "current_common_area"
-    form_class = CommonAreaSetupForm
     http_method_names = ["get", "post"]
     model = CommonArea
     pk_url_kwarg = "common_area_id"
@@ -210,11 +209,19 @@ class SetupCommonAreaDeleteView(SetupViewsWithDecors, DeleteView):
         return super().dispatch(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
+        """
+        Handles DELETE request for the common area.
+        Retrieves the object to be deleted, stores the success URL,
+        deletes the object, and then redirects to the success URL.
+        Parameters:
+            request (HttpRequest): The HTTP request object.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+        Returns:
+            HttpResponseRedirect: Redirects to the success URL after deletion.
+        """
 
-        return super().delete(request, *args, **kwargs)
-
-    # def form_valid(self, form):
-    #     success_url = self.get_success_url()
-    #     self.object.delete()
-    #     messages.success(self.request, "Common Area has been deleted successfully.")
-    #     return HttpResponseRedirect(success_url)
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        self.object.delete()
+        return HttpResponseRedirect(success_url)
