@@ -223,3 +223,95 @@
     </div>
   </div>
 </div>
+
+
+<script>
+  // Wait for the DOM to be fully loaded
+  document.addEventListener('DOMContentLoaded', function() {
+    // Get all the necessary elements
+    const paidAreaCheckbox = document.getElementById('{{ form.paid_area.id_for_label }}');
+    const wholeDayCheckbox = document.getElementById('{{ form.whole_day.id_for_label }}');
+    const priceFieldContainer = document.querySelector('#{{ form.price.id_for_label }}').closest('.col-12');
+    
+    const minTimeInput = document.getElementById('{{ form.minimum_using_minutes.id_for_label }}');
+    const minTimeContainer = minTimeInput.closest('.col-12');
+    const maxFractionInput = document.getElementById('{{ form.maximum_using_fraction.id_for_label }}');
+    const maxFractionContainer = maxFractionInput.closest('.col-12');
+    const maxTimeInput = document.getElementById('{{ form.maximum_using_time.id_for_label }}');
+    const maxTimeContainer = maxTimeInput.closest('.col-12');
+    
+    // Initially hide the price field and maximum time field
+    priceFieldContainer.style.display = 'none';
+    maxTimeContainer.style.display = 'none';
+    
+    // Check initial state of paid area checkbox
+    if (paidAreaCheckbox.checked) {
+      priceFieldContainer.style.display = 'block';
+    }
+    
+    // Check initial state of whole day checkbox
+    if (wholeDayCheckbox.checked) {
+      minTimeContainer.style.display = 'none';
+      maxFractionContainer.style.display = 'none';
+      maxTimeContainer.style.display = 'none';
+    }
+    
+    // Function to calculate and show max time
+    function updateMaxTime() {
+      const minTime = parseFloat(minTimeInput.value) || 0;
+      const maxFraction = parseFloat(maxFractionInput.value) || 0;
+      
+      if (minTime > 0 && maxFraction > 0 && !wholeDayCheckbox.checked) {
+        // Calculate and display the result
+        const maxTime = minTime * maxFraction;
+        maxTimeInput.value = maxTime;
+        maxTimeContainer.style.display = 'block';
+      } else {
+        maxTimeContainer.style.display = 'none';
+      }
+    }
+    
+    // Function to handle whole day checkbox changes
+    function handleWholeDayChange() {
+      if (wholeDayCheckbox.checked) {
+        // Hide all time-related fields when whole day is selected
+        minTimeContainer.style.display = 'none';
+        maxFractionContainer.style.display = 'none';
+        maxTimeContainer.style.display = 'none';
+        
+        // Clear values
+        minTimeInput.value = '';
+        maxFractionInput.value = '';
+        maxTimeInput.value = '';
+      } else {
+        // Show min time and max fraction fields
+        minTimeContainer.style.display = 'block';
+        maxFractionContainer.style.display = 'block';
+        // max time visibility depends on whether values are provided
+        updateMaxTime();
+      }
+    }
+    
+    // Add event listener to the paid area checkbox
+    paidAreaCheckbox.addEventListener('change', function() {
+      if (this.checked) {
+        priceFieldContainer.style.display = 'block';
+      } else {
+        priceFieldContainer.style.display = 'none';
+        // Clear the price field when unchecked
+        document.getElementById('{{ form.price.id_for_label }}').value = '';
+      }
+    });
+    
+    // Add event listener to the whole day checkbox
+    wholeDayCheckbox.addEventListener('change', handleWholeDayChange);
+    
+    // Add event listeners to min time and max fraction inputs
+    minTimeInput.addEventListener('input', updateMaxTime);
+    maxFractionInput.addEventListener('input', updateMaxTime);
+    
+    // Run once on page load to handle pre-filled values
+    handleWholeDayChange();
+    updateMaxTime();
+  });
+</script>

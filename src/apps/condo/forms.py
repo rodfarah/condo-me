@@ -330,7 +330,7 @@ class CommonAreaSetupForm(forms.ModelForm):
 
         labels = {
             "name": "Common Area Name",
-            "description": "Description",
+            "description": "Terms of Use",
             "opens_at": "Opening time",
             "closes_at": "Closing time",
             "whole_day": "Whole day reservation?",
