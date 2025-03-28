@@ -8,27 +8,28 @@
 </section>
 
 
-<div class="py-2 container-fluid">
-  <div class="row g-5 justify-content-center">
-    <div class="col-lg-8 col-md-10">
-      {% if messages %}
-        <div class="form-floating mb-3">
+<div class="px-4">
+  <div class="py-3">
+    <div class="row justify-content-center">
+      <div class="col-12">
+        {% if messages %}
           {% for message in messages %}
             {% if message.tags == "error" %}
-              <div class="alert alert-danger" role="alert">
+              <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
               </div>  
             {% else %}
-              <div class="alert alert-{{ message.tags }}" role="alert">
+              <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
                 {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
               </div>
-           {% endif %}
+            {% endif %}
           {% endfor %}
-        </div>
-      {% endif %}
+        {% endif %}
+      </div>
     </div>
   </div>
-</div>
     
 <div class="py-2 container-fluid">
   <div class="row g-5 justify-content-center">

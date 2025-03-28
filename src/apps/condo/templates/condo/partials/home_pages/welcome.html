@@ -2,20 +2,20 @@
 
 <div class="container px-4 py-5" id="custom-cards">
   {% if messages %}
-        <div class="form-floating mb-3">
-          {% for message in messages %}
-            {% if message.tags == "error" %}
-              <div class="alert alert-danger" role="alert">
-                {{ message }}
-              </div>  
-            {% else %}
-              <div class="alert alert-{{ message.tags }}" role="alert">
-                {{ message }}
-              </div>
-            {% endif %}
-          {% endfor %}
-        </div>
-      {% endif %}
+  {% for message in messages %}
+    {% if message.tags == "error" %}
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>  
+    {% else %}
+      <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endif %}
+  {% endfor %}
+{% endif %}
     <h2 class="pb-2 border-bottom">Welcome {{ user.first_name }}!</h2>
     <div class="row row-cols-1 row-cols-lg-3 align-items-stretch g-4 py-5">
       <div class="col">
