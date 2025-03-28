@@ -39,25 +39,31 @@
             <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#buildings"></use></svg>
             Condominium
                   </a>
-             </li>
+            </li>
+            {% if request.user.condominium %}
             <li>
                 <a href="{% url "condo:condo_setup_block_list" %}" class="nav-link">
                     <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#blocks"></use></svg>
                     Blocks
                 </a>
             </li>
+            {% endif %}
+            {% if request.user.condominium.num_of_blocks > 0 %}
             <li>
                 <a href="{% url "condo:condo_setup_blocks_to_apartments" %}" class="nav-link">
                     <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#apartments"></use></svg>
                     Apartments
                 </a>
             </li>
+            {% endif %}
+            {% if request.user.condominium %}
             <li>
                 <a href="{% url "condo:condo_setup_common_area_list" %}" class="nav-link">
                     <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#dice"></use></svg>
                     Common Areas
                 </a>
             </li>
+            {% endif %}
             <hr>
             <li>
                 <a href="#" class="nav-link">
