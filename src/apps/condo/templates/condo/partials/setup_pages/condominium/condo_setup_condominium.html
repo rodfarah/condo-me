@@ -48,120 +48,120 @@
         <div class="row g-3">
           
           <div class="col-12">
-            <label for="{{ form.name.id_for_label }}" >{{form.name.label}}</label>
+            <div class="d-flex  align-items-center mb-2">
+              <label for="{{ form.name.id_for_label }}" class="mb-0 me-2">{{form.name.label}}</label>
+                {% if condo_exists %}
+                    <button type="button" class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('name')">Edit</button>
+                {% endif %}
+            </div>
             <div class="input-group">
               {{ form.name }}
             </div>
-              {% if form.name.errors %}
-              <div class="text-danger">
-                <small>{{ form.name.errors }}</small>
-              </div>
-              {% endif %}
-              {% if condo_exists %}
-                <div class="mt-1">
-                  <button type="button" class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('name')">Edit</button>
-                </div>
-              {% endif %}
+            {% if form.name.errors %}
+            <div class="text-danger">
+              <small>{{ form.name.errors }}</small>
             </div>
+            {% endif %}
+          </div>
 
           <div class="col-12">
-            <label for="{{ form.description.id_for_label }}">{{form.description.label}}</label>
+            <div class="d-flex  align-items-center mb-2">
+              <label for="{{ form.description.id_for_label }}" class="mb-0 me-2">{{form.description.label}}</label>
+                {% if condo_exists %}
+                    <button type="button" class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('description')">Edit</button>
+                {% endif %}
+            </div>
             <div class="input-group">
               {{ form.description }}
             </div>
-              {% if form.description.errors %}
-              <div class="text-danger">
-                <small>{{ form.description.errors }}</small>
-              </div>
-              {% endif %}
-              {% if condo_exists %}
-              <div class="mt-1">
-                <button type="button" class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('description')">Edit</button>
-              </div>
-              {% endif %}
+            {% if form.description.errors %}
+            <div class="text-danger">
+              <small>{{ form.description.errors }}</small>
             </div>
+            {% endif %}
+          </div>
 
           <div class="col-12">
-            <label for="{{ form.cnpj.id_for_label }}">{{form.cnpj.label}}</label>
+            <div class="d-flex  align-items-center mb-2">
+              <label for="{{ form.cnpj.id_for_label }}" class="mb-0 me-2">{{form.cnpj.label}}</label>
+                {% if condo_exists %}
+                    <button type="button" class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('cnpj')">Edit</button>
+                {% endif %}
+            </div>
             <div class="input-group">
               {{ form.cnpj }}
             </div>
-              {% if form.cnpj.errors %}
-              <div class="text-danger">
-                <small>{{ form.cnpj.errors }}</small>
-              </div>
-              {% endif %}
-              {% if condo_exists %}
-                <div class="mt-1">
-                  <button type="button" class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('cnpj')">Edit</button>
-                </div>
-              {% endif %}
+            {% if form.cnpj.errors %}
+            <div class="text-danger">
+              <small>{{ form.cnpj.errors }}</small>
             </div>
-
-            <div class="col-12">
-              <label for="{{ form.address1.id_for_label }}">{{form.address1.label}}</label>
-              <div class="input-group">
-              {{ form.address1 }}
-              </div>
-              {% if form.address1.errors %}
-                <div class="text-danger">
-                  <small>{{ form.address1.errors }}</small>
-                </div>
-              {% endif %}
-              {% if condo_exists %}
-                <div class="mt-1">
-                  <button type="button" class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('address1')">Edit</button>
-                </div>
-              {% endif %}
-            </div>
+            {% endif %}
+          </div>
 
           <div class="col-12">
-            <label for="{{ form.address2.id_for_label }}">{{ form.address2.label }}</label>
+            <div class="d-flex  align-items-center mb-2">
+              <label for="{{ form.address1.id_for_label }}" class="mb-0 me-2">{{form.address1.label}}</label>
+                {% if condo_exists %}
+                    <button type="button" class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('address1')">Edit</button>
+                {% endif %}
+            </div>
             <div class="input-group">
-            {{ form.address2 }}
+              {{ form.address1 }}
+            </div>
+            {% if form.address1.errors %}
+            <div class="text-danger">
+              <small>{{ form.address1.errors }}</small>
+            </div>
+            {% endif %}
+          </div>
+
+          <div class="col-12">
+            <div class="d-flex  align-items-center mb-2">
+              <label for="{{ form.address2.id_for_label }}" class="mb-0 me-2">{{form.address2.label}}</label>
+                {% if condo_exists %}
+                    <button type="button" class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('address2')">Edit</button>
+                {% endif %}
+            </div>
+            <div class="input-group">
+              {{ form.address2 }}
             </div>
             {% if form.address2.errors %}
-              <div class="text-danger">
-                <small>{{ form.address2.errors }}</small>
-              </div>
-            {% endif %}
-            {% if condo_exists %}
-              <div class="mt-1">
-                <button type="button" class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('address2')">Edit</button>
-              </div>
+            <div class="text-danger">
+              <small>{{ form.address2.errors }}</small>
+            </div>
             {% endif %}
           </div>
 
           <div class="col-12">
-            <label for="{{ form.city.id_for_label }}">{{ form.city.label }}</label>
+            <div class="d-flex  align-items-center mb-2">
+              <label for="{{ form.city.id_for_label }}" class="mb-0 me-2">{{form.city.label}}</label>
+                {% if condo_exists %}
+                    <button type="button" class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('city')">Edit</button>
+                {% endif %}
+            </div>
             <div class="input-group">
-            {{ form.city }}
+              {{ form.city }}
             </div>
             {% if form.city.errors %}
-              <div class="text-danger">
-                <small>{{ form.city.errors }}</small>
-              </div>
-            {% endif %}
-            {% if condo_exists %}
-            <div class="mt-1">
-              <button type="button" class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('city')">Edit</button>
+            <div class="text-danger">
+              <small>{{ form.city.errors }}</small>
             </div>
             {% endif %}
           </div>
 
           <div class="col-12">
-            <label for="{{ form.state.id_for_label }}">{{ form.state.label }}</label>
+            <div class="d-flex  align-items-center mb-2">
+              <label for="{{ form.state.id_for_label }}" class="mb-0 me-2">{{form.state.label}}</label>
+                {% if condo_exists %}
+                    <button type="button" class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('state')">Edit</button>
+                {% endif %}
+            </div>
             <div class="input-group">
-            {{ form.state }}
+              {{ form.state }}
             </div>
             {% if form.state.errors %}
-              <div class="text-danger">
-                <small>{{ form.state.errors }}</small>
-              </div>
-            {% endif %}
-            {% if condo_exists %}
-            <div class="mt-1">
-              <button type="button" class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('state')">Edit</button>
+            <div class="text-danger">
+              <small>{{ form.state.errors }}</small>
             </div>
             {% endif %}
           </div>
@@ -180,19 +180,19 @@
           </div>
 
           <div class="col-12">
-            <label for="{{ form.postal_code.id_for_label }}">{{ form.postal_code.label }}</label>
+            <div class="d-flex  align-items-center mb-2">
+              <label for="{{ form.postal_code.id_for_label }}" class="mb-0 me-2">{{form.postal_code.label}}</label>
+                {% if condo_exists %}
+                    <button type="button" class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('postal_code')">Edit</button>
+                {% endif %}
+            </div>
             <div class="input-group">
-            {{ form.postal_code }}
+              {{ form.postal_code }}
             </div>
             {% if form.postal_code.errors %}
-              <div class="text-danger">
-                <small>{{ form.postal_code.errors }}</small>
-              </div>
-            {% endif %}
-            {% if  condo_exists %}
-              <div class="mt-1">
-                <button type="button" class="btn btn-outline-secondary btn-sm" role="button" onclick="enableField('postal_code')">Edit</button>
-              </div>
+            <div class="text-danger">
+              <small>{{ form.postal_code.errors }}</small>
+            </div>
             {% endif %}
           </div>
 
